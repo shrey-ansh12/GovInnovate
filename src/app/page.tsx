@@ -1,69 +1,95 @@
-import Image from "next/image";
+"use client";
+
+import React from "react";
+import { useApp } from "@/context/AppContext";
+import { NavigationBar } from "@/components/NavigationBar";
+import { LandingPage } from "@/components/LandingPage";
+import { GovernmentDashboard } from "@/components/GovernmentDashboard";
+import { StartupDashboard } from "@/components/StartupDashboard";
+import { EvaluatorDashboard } from "@/components/EvaluatorDashboard";
+import { CreateChallenge } from "@/components/CreateChallenge";
+import { ChallengeDetails } from "@/components/ChallengeDetails";
+import { AiStartupMatches } from "@/components/AiStartupMatches";
+import { StartupProfile } from "@/components/StartupProfile";
+import { ApplicationReview } from "@/components/ApplicationReview";
+import { EvaluationScorecard } from "@/components/EvaluationScorecard";
+import { PilotManagement } from "@/components/PilotManagement";
+import { KpiMonitoring } from "@/components/KpiMonitoring";
+import { ValidationReport } from "@/components/ValidationReport";
+import { ProcurementRecommendation } from "@/components/ProcurementRecommendation";
+import { ScaleUp } from "@/components/ScaleUp";
+import { DocumentsView } from "@/components/DocumentsView";
+import { NotificationsView } from "@/components/NotificationsView";
+import { AuditTrail } from "@/components/AuditTrail";
+import { AuthModal } from "@/components/AuthModal";
 
 export default function Home() {
+  const { activeView } = useApp();
+
+  const renderActiveView = () => {
+    switch (activeView) {
+      case "landing":
+        return <LandingPage />;
+      case "gov_dashboard":
+        return <GovernmentDashboard />;
+      case "startup_dashboard":
+        return <StartupDashboard />;
+      case "evaluator_dashboard":
+        return <EvaluatorDashboard />;
+      case "create_challenge":
+        return <CreateChallenge />;
+      case "challenge_details":
+        return <ChallengeDetails />;
+      case "ai_startup_matches":
+        return <AiStartupMatches />;
+      case "startup_profile":
+        return <StartupProfile />;
+      case "application_review":
+        return <ApplicationReview />;
+      case "evaluation_scorecard":
+        return <EvaluationScorecard />;
+      case "pilot_management":
+        return <PilotManagement />;
+      case "kpi_monitoring":
+        return <KpiMonitoring />;
+      case "validation_report":
+        return <ValidationReport />;
+      case "procurement_recommendation":
+        return <ProcurementRecommendation />;
+      case "scale_up":
+        return <ScaleUp />;
+      case "documents":
+        return <DocumentsView />;
+      case "notifications":
+        return <NotificationsView />;
+      case "audit_trail":
+        return <AuditTrail />;
+      default:
+        return <LandingPage />;
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+      <NavigationBar />
+      <AuthModal />
+      <main className="flex-1">
+        {renderActiveView()}
       </main>
+      <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-8 px-4 text-xs">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <span className="font-bold text-white">GovInnovate Sandbox Platform</span> • Startup-Friendly Public Procurement Mechanism
+          </div>
+          <div className="flex items-center gap-4 text-slate-400">
+            <span>GFR 2017 Start-up Exemption Framework</span>
+            <span>•</span>
+            <span>DPIIT Bridge Integration</span>
+            <span>•</span>
+            <span>PFMS Milestone Direct Credit</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
