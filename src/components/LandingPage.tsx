@@ -43,57 +43,85 @@ export const LandingPage: React.FC = () => {
         </div>
       </div>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION WITH RIGHT SIDE PROJECT IMAGE */}
       <section className="max-w-[1360px] mx-auto px-6 sm:px-8 pt-12 pb-14 border-b border-[#E2DED6]">
-        <div className="max-w-4xl space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#F2EFEB] border border-[#E2DED6] text-xs text-[#0F3854] font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#147452]"></span>
-            <span>Public Sector Sandbox Framework • DPIIT Aligned</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          {/* Left Column: Headline, Summary & CTAs */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#F2EFEB] border border-[#E2DED6] text-xs text-[#0F3854] font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#147452]"></span>
+              <span>Public Sector Sandbox Framework • DPIIT Aligned</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-bold text-[#0A2540] leading-[1.12] tracking-tight">
+              A Transparent Procurement-to-Pilot Platform for Startups.
+            </h1>
+
+            <p className="text-base sm:text-lg text-[#5B6A78] leading-relaxed max-w-2xl">
+              Bridging public sector challenges with verified startup innovations. Transform civic procurement from rigid multi-year tenders into transparent 90-day sandbox pilots with empirical validation, structured milestone tracking, and complete audit clarity.
+            </p>
+
+            {/* Action CTAs */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setRole("government");
+                  setActiveView("gov_dashboard");
+                }}
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded bg-[#0F3854] text-white text-[15px] font-semibold hover:bg-[#1D4E72] shadow-sm transition-all"
+              >
+                <span>Explore Demo</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              <button
+                onClick={scrollToWorkflow}
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded bg-white text-[#0A2540] text-[15px] font-semibold border border-[#E2DED6] hover:bg-[#F2EFEB] transition-all"
+              >
+                <span>View Workflow</span>
+                <Layers className="h-4 w-4 text-[#5B6A78]" />
+              </button>
+            </div>
+
+            <div className="pt-2 flex flex-wrap items-center gap-5 text-xs text-[#5B6A78] font-medium">
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-[#147452]" />
+                Subject to GFR & Approval
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-[#147452]" />
+                DPIIT Startup Relaxations
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-[#147452]" />
+                Evidence-Linked Milestones
+              </span>
+            </div>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#0A2540] leading-[1.12] tracking-tight">
-            A Transparent Procurement-to-Pilot Platform for Startups.
-          </h1>
+          {/* Right Column: Project-Related Civic Sandbox Visual Card */}
+          <div className="lg:col-span-5">
+            <div className="relative rounded-lg overflow-hidden border border-[#E2DED6] bg-white shadow-md">
+              {/* Graphic / Image Container */}
+              <div className="relative h-[320px] sm:h-[360px] w-full bg-[#0F3854] overflow-hidden flex items-center justify-center">
+                <img
+                  src="/hero-pilot.svg"
+                  alt="GovInnovate Municipal IoT Water Sandbox Architecture"
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-          <p className="text-lg sm:text-xl text-[#5B6A78] leading-relaxed max-w-3xl">
-            Bridging public sector challenges with verified startup innovations. Transform civic procurement from rigid multi-year tenders into transparent 90-day sandbox pilots with empirical validation, structured milestone tracking, and complete audit clarity.
-          </p>
-
-          {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <button
-              onClick={() => {
-                setRole("government");
-                setActiveView("gov_dashboard");
-              }}
-              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded bg-[#0F3854] text-white text-[15px] font-semibold hover:bg-[#1D4E72] shadow-sm transition-all"
-            >
-              <span>Explore Demo</span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
-
-            <button
-              onClick={scrollToWorkflow}
-              className="inline-flex items-center gap-2 px-5 py-3.5 rounded bg-white text-[#0A2540] text-[15px] font-semibold border border-[#E2DED6] hover:bg-[#F2EFEB] transition-all"
-            >
-              <span>View Workflow</span>
-              <Layers className="h-4 w-4 text-[#5B6A78]" />
-            </button>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center gap-6 text-xs text-[#5B6A78] font-medium">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-[#147452]" />
-              Subject to GFR & Competent Authority Approval
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-[#147452]" />
-              DPIIT Startup Eligibility Relaxations
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-[#147452]" />
-              Evidence-Linked Milestone Disbursements
-            </span>
+              {/* Bottom Caption Strip */}
+              <div className="p-4 bg-white border-t border-[#EDE9E1] flex items-center justify-between font-mono text-xs">
+                <div>
+                  <div className="font-bold text-[#0A2540]">Active Jal Shakti Sandbox Pilot</div>
+                  <div className="text-[11px] text-[#5B6A78]">5 Municipal Intake Zones • TRL-8 Sensors</div>
+                </div>
+                <span className="px-2.5 py-1 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2] text-[10px] font-bold uppercase shrink-0">
+                  Live Telemetry
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
