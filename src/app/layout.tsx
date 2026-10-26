@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
+import { GoogleTranslateProvider } from "@/components/GoogleTranslateProvider";
 
 export const metadata: Metadata = {
   title: "GovInnovate | Startup-Friendly Public Procurement Mechanism",
@@ -13,9 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
         <AppProvider>
+          <GoogleTranslateProvider />
           {children}
         </AppProvider>
       </body>
