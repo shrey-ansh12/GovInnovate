@@ -17,8 +17,9 @@ export type ChallengeStatus =
   | "Shortlisted"
   | "Pilot Active"
   | "Validation Done"
-  | "Procurement Approved"
-  | "Scale-Up";
+  | "Scale-Up Approved"
+  | "Rejected"
+  | "Further Review";
 
 export interface Startup {
   id: string;
@@ -30,14 +31,25 @@ export interface Startup {
   location: string;
   founders: string[];
   techStack: string[];
+  sector?: string;
   products: {
     title: string;
     description: string;
     stage: string;
   }[];
   patents: number;
+  trlLevel: number;
+  localContentPercentage: number;
   matchScore: number;
   matchReasons: string[];
+  matchBreakdown?: {
+    sectorMatch: boolean;
+    techMatch: boolean;
+    eligibilityMatch: boolean;
+    trlMatch: boolean;
+    score: number;
+    details: string[];
+  };
   riskAnalysis: {
     level: "Low" | "Medium" | "High";
     factors: string[];
@@ -57,10 +69,31 @@ export interface Challenge {
   summary: string;
   problemStatement: string;
   expectedOutcomes: string[];
+  technicalThresholds?: string[];
   targetLocations: number;
   scaleLocations: number;
   matchedCount: number;
   applicationsCount: number;
+}
+
+export interface EvaluatorScore {
+  innovation: number;   // 0-20
+  feasibility: number;  // 0-20
+  impact: number;       // 0-20
+  scalability: number;  // 0-20
+  viability: number;    // 0-20 (Replaces old generic cost/security)
+  total: number;        // 0-100
+  justifications: {
+    innovation: string;
+    feasibility: string;
+    impact: string;
+    scalability: string;
+    viability: string;
+  };
+  evidenceReferences?: string;
+  feedback: string;
+  evaluatorName: string;
+  evaluatedAt: string;
 }
 
 export interface Application {
@@ -69,25 +102,18 @@ export interface Application {
   startupId: string;
   startupName: string;
   appliedDate: string;
-  status: "Submitted" | "Eligibility Verified" | "Evaluated" | "Shortlisted" | "Pilot Active" | "Completed";
+  status: "Submitted" | "Eligibility Verified" | "Evaluated" | "Shortlisted" | "Pilot Active" | "Completed" | "Rejected";
   dpiitVerified: boolean;
   financialTurnover: string;
   proposalSummary: string;
-  aiProposalHighlights: string[];
   solutionOverview: string;
   proposedCost: string;
   deploymentTime: string;
-  evaluatorScore?: {
-    innovation: number;
-    feasibility: number;
-    impact: number;
-    scalability: number;
-    cost: number;
-    security: number;
-    total: number;
-    feedback: string;
-    evaluatorName: string;
-  };
+  trlLevel: number;
+  localContentPercentage: number;
+  patentsCount: number;
+  evidenceLinks?: string[];
+  evaluatorScore?: EvaluatorScore;
 }
 
 export interface PilotKPI {
@@ -98,6 +124,31 @@ export interface PilotKPI {
   unit: string;
   status: "Ahead" | "On Track" | "Needs Attention";
   trend: number[];
+  lastUpdated?: string;
+}
+
+export interface PilotMilestone {
+  id: string;
+  name: string;
+  dueDate: string;
+  status: "Pending Evidence" | "Submitted for Review" | "Approved" | "Rejected";
+  payout: string;
+  paymentRef?: string; // Demo Payment Reference (Simulated)
+  evidenceDescription?: string;
+  evidenceUrl?: string;
+  submittedAt?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  reviewNotes?: string;
+}
+
+export interface FinalDecision {
+  type: "Scale-Up" | "Rejected" | "Further Review";
+  reason: string;
+  decidedBy: string;
+  decidedAt: string;
+  targetLocations?: number;
+  scaleBudget?: string;
 }
 
 export interface Pilot {
@@ -109,21 +160,15 @@ export interface Pilot {
   totalDays: number;
   locationsCount: number;
   scaleLocationsCount: number;
-  phase: "Deployment" | "Live Data Gathering" | "Evaluation" | "Validation Completed";
+  phase: "Deployment" | "Live Data Gathering" | "Evaluation" | "Validation Completed" | "Concluded";
   overallScore: number;
   kpis: PilotKPI[];
-  milestones: {
-    name: string;
-    dueDate: string;
-    status: "Completed" | "In Progress" | "Upcoming";
-    payout: string;
-    isPaid: boolean;
-  }[];
-  aiPilotRecommendation: {
-    verdict: "Strongly Recommended for Commercial Procurement";
-    confidence: number;
-    reasons: string[];
-    costBenefitRatio: string;
+  milestones: PilotMilestone[];
+  finalDecision?: FinalDecision;
+  recommendationSummary?: {
+    verdict: string;
+    score: number;
+    notes: string;
   };
 }
 
@@ -134,7 +179,7 @@ export interface AuditLog {
   role: UserRole;
   action: string;
   details: string;
-  badge: "Security" | "Procurement" | "AI Decision" | "Evaluation" | "Payment";
+  badge: "Security" | "Procurement" | "Matching" | "Evaluation" | "Payment" | "Milestone" | "Decision";
 }
 
 export interface NotificationItem {
