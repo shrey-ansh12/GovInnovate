@@ -13,6 +13,11 @@ import {
   ChallengeStatus 
 } from "@/types";
 import { 
+  SupportedLanguage, 
+  SUPPORTED_LANGUAGES, 
+  getTranslation 
+} from "@/lib/translations";
+import { 
   initialChallenge, 
   sampleStartups, 
   sampleApplications, 
@@ -47,6 +52,9 @@ interface AppContextType {
   setRole: (role: UserRole) => void;
   activeView: ActiveView;
   setActiveView: (view: ActiveView) => void;
+  language: SupportedLanguage;
+  setLanguage: (lang: SupportedLanguage) => void;
+  t: (key: string) => string;
   challenge: Challenge;
   setChallenge: React.Dispatch<React.SetStateAction<Challenge>>;
   startups: Startup[];
@@ -92,6 +100,32 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [role, setRole] = useState<UserRole>("government");
   const [activeView, setActiveView] = useState<ActiveView>("landing");
+  const [language, setLanguageState] = useState<SupportedLanguage>("en");
+
+  // Load language preference from localStorage if available
+  useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem("govinnovate_lang") as SupportedLanguage;
+      if (savedLang && ["en", "hi", "ta", "te", "bn", "mr", "gu"].includes(savedLang)) {
+        setLanguageState(savedLang);
+      }
+    } catch (e) {
+      // Ignore localStorage access errors
+    }
+  }, []);
+
+  const setLanguage = (lang: SupportedLanguage) => {
+    setLanguageState(lang);
+    try {
+      localStorage.setItem("govinnovate_lang", lang);
+    } catch (e) {
+      // Ignore
+    }
+  };
+
+  const t = (key: string): string => {
+    return getTranslation(language, key);
+  };
   const [challenge, setChallenge] = useState<Challenge>(initialChallenge);
   const [startups, setStartups] = useState<Startup[]>(sampleStartups);
   const [applications, setApplications] = useState<Application[]>(sampleApplications);
@@ -403,6 +437,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setRole,
       activeView,
       setActiveView,
+      language,
+      setLanguage,
+      t,
       challenge,
       setChallenge,
       startups,
