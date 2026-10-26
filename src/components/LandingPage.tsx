@@ -99,26 +99,26 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Project-Related Civic Sandbox Visual Card */}
+          {/* Right Column: Project-Related Civic Infrastructure Image */}
           <div className="lg:col-span-5">
             <div className="relative rounded-lg overflow-hidden border border-[#E2DED6] bg-white shadow-md">
-              {/* Graphic / Image Container */}
-              <div className="relative h-[320px] sm:h-[360px] w-full bg-[#0F3854] overflow-hidden flex items-center justify-center">
+              {/* Clean Realistic Civic IoT / Infrastructure Photo */}
+              <div className="relative h-[320px] sm:h-[370px] w-full bg-[#0F3854] overflow-hidden">
                 <img
-                  src="/hero-pilot.svg"
-                  alt="GovInnovate Municipal IoT Water Sandbox Architecture"
+                  src="/hero-civic.jpg"
+                  alt="Public Sector Water & Environmental Sensor Innovation Sandbox"
                   className="w-full h-full object-cover"
                 />
               </div>
 
-              {/* Bottom Caption Strip */}
+              {/* Bottom Civic Descriptor */}
               <div className="p-4 bg-white border-t border-[#EDE9E1] flex items-center justify-between font-mono text-xs">
                 <div>
-                  <div className="font-bold text-[#0A2540]">Active Jal Shakti Sandbox Pilot</div>
-                  <div className="text-[11px] text-[#5B6A78]">5 Municipal Intake Zones • TRL-8 Sensors</div>
+                  <div className="font-bold text-[#0A2540]">Public Innovation Sandbox Infrastructure</div>
+                  <div className="text-[11px] text-[#5B6A78]">Municipal Sensor Telemetry & Field Validation Rails</div>
                 </div>
                 <span className="px-2.5 py-1 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2] text-[10px] font-bold uppercase shrink-0">
-                  Live Telemetry
+                  Verified Rails
                 </span>
               </div>
             </div>
