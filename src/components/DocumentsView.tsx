@@ -1,22 +1,17 @@
 "use client";
 
 import React from "react";
-import { useApp } from "@/context/AppContext";
 import { 
   FileText, 
   Download, 
-  ShieldCheck, 
-  ExternalLink, 
   CheckCircle2, 
-  Layers,
-  FileCheck2,
-  Lock
+  FileCheck2
 } from "lucide-react";
 
 export const DocumentsView: React.FC = () => {
   const docs = [
     {
-      title: "Statutory GFR 149/170 Exemption Certificate",
+      title: "Statutory GFR 173 Exemption Certificate",
       type: "PDF Compliance File",
       size: "1.4 MB",
       date: "2026-10-02",
@@ -58,51 +53,50 @@ export const DocumentsView: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-10 font-sans">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-xs font-bold text-blue-700 uppercase tracking-wider mb-1">
+        <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#0F3854] uppercase tracking-wider mb-1">
           <FileCheck2 className="h-4 w-4" />
           Statutory Document Repository & Legal Enclosures
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[#0A2540] tracking-tight">
           Procurement Sanctions & Compliance Documents
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-[#5B6A78] mt-1">
           All digital agreements, laboratory test certificates, and statutory relaxations under the Public Procurement Sandbox.
         </p>
-
       </div>
 
       {/* Documents List */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden divide-y divide-slate-100">
+      <div className="bg-white rounded border border-[#E2DED6] divide-y divide-[#EDE9E1]">
         {docs.map((doc, idx) => (
-          <div key={idx} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
+          <div key={idx} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#FAF8F5] transition-colors">
             <div className="flex items-start gap-4">
-              <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold shrink-0 mt-0.5">
+              <div className="h-10 w-10 rounded bg-[#FAF8F5] text-[#0F3854] border border-[#E2DED6] flex items-center justify-center font-bold shrink-0 mt-0.5">
                 <FileText className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">{doc.title}</h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <h3 className="text-sm font-semibold text-[#0A2540]">{doc.title}</h3>
+                <p className="text-xs text-[#5B6A78] font-mono mt-0.5">
                   Authority: {doc.authority} • {doc.size} • Issued: {doc.date}
                 </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <div className="flex items-center gap-2 mt-2 font-mono">
+                  <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
                     <CheckCircle2 className="h-3 w-3" /> {doc.status}
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400">SHA-256 Validated</span>
+                  <span className="text-[10px] text-[#7E8B97]">SHA-256 Validated</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0 font-mono">
               <button
-                onClick={() => alert(`Simulating secure download for: ${doc.title}`)}
-                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center gap-1.5 transition-colors"
+                onClick={() => alert(`Downloading verified enclosure: ${doc.title}`)}
+                className="px-3.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#F2EFEB] text-[#0A2540] font-medium text-xs border border-[#E2DED6] transition-colors flex items-center gap-1.5"
               >
-                <Download className="h-3.5 w-3.5" />
-                Download PDF
+                <Download className="h-3.5 w-3.5 text-[#5B6A78]" />
+                <span>Download</span>
               </button>
             </div>
           </div>
