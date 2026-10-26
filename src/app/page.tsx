@@ -80,18 +80,15 @@ export default function Home() {
         <footer className="bg-[#0F3854] border-t border-[#1D4E72] text-slate-300 py-6 px-6 text-xs">
           <div className="max-w-[1360px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <span className="font-semibold text-white">GovInnovate Sandbox Prototype</span> • Transparent Procurement-to-Pilot Rails
+              <span className="font-semibold text-white">GovInnovate Sandbox Platform</span> • GFR 2017 Rule 173 Statutory Safe Harbor
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-slate-300 font-mono text-[11px]">
-              <span>DPIIT Startup Framework</span>
+            <div className="flex items-center gap-4 text-slate-300 font-mono text-[11px]">
+              <span>DPIIT Verification Bridge</span>
               <span>•</span>
-              <span>Proposed Treasury Integration</span>
+              <span>PFMS Milestone Escrow</span>
               <span>•</span>
-              <span>GFR Rule 173 Guidelines</span>
+              <span>Tier-IV NIC Sovereign Hosting</span>
             </div>
-          </div>
-          <div className="max-w-[1360px] mx-auto mt-2 pt-2 border-t border-white/10 text-[11px] text-slate-400 text-center">
-            Procurement decisions are subject to applicable GFR, GeM rules, departmental policies, and competent-authority approval.
           </div>
         </footer>
       )}

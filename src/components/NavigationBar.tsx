@@ -9,11 +9,11 @@ import {
   Award, 
   RotateCcw,
   Sparkles,
+  LogIn,
   Globe,
   ChevronDown,
   Check,
-  AlertTriangle,
-  X
+  ArrowRight
 } from "lucide-react";
 
 export const NavigationBar: React.FC = () => {
@@ -27,9 +27,7 @@ export const NavigationBar: React.FC = () => {
     openAuthModal,
     language,
     setLanguage,
-    t,
-    roleErrorMessage,
-    clearRoleError
+    t
   } = useApp();
 
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -50,49 +48,25 @@ export const NavigationBar: React.FC = () => {
 
   return (
     <>
-      {/* 1. TOP STATUTORY BENCHMARK BAR */}
+      {/* 1. SOVEREIGN TOP NOTIFICATION BAR (Stitch Nordic Civic Style) */}
       <div className="w-full bg-[#0F3854] text-white border-b border-[#1D4E72] text-[12px] font-normal tracking-wide">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-2 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="inline-flex items-center gap-1.5 font-medium text-slate-100">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>National Public Innovation Sandbox • Transparent Procurement-to-Pilot Rails</span>
+              <span>National Public Innovation Sandbox • DPIIT & Ministry of Finance</span>
             </div>
             <span className="hidden md:inline text-white/30">•</span>
-            <span className="hidden md:inline text-slate-300 font-normal">GFR 2017 Innovation Guidelines (Safe Harbor)</span>
+            <span className="hidden md:inline text-slate-300 font-normal">GFR 2017 Rule 173 Statutory Safe Harbor</span>
           </div>
           <div className="flex items-center gap-3 text-slate-300 font-mono text-[11px]">
-            <span className="hidden sm:inline">Proposed Architecture Sandbox</span>
+            <span className="hidden sm:inline">NIC Sovereign Hosting • Tier-IV</span>
             <span className="px-2 py-0.5 rounded bg-white/10 text-emerald-300 text-[10px] tracking-wider uppercase font-semibold">
-              Interactive Prototype Demo
+              e-Pramaan Verified
             </span>
           </div>
         </div>
       </div>
-
-      {/* 1B. STATUTORY DISCLAIMER STRIP */}
-      <div className="w-full bg-[#FAF0D9] text-[#784A05] border-b border-[#F0D598] text-[11px] py-1 px-4 text-center font-medium">
-        <span>
-          <strong>Legal Disclaimer:</strong> Procurement decisions are subject to applicable GFR, GeM rules, departmental policies, and competent-authority approval. All simulated milestones and figures are illustrative demo references.
-        </span>
-      </div>
-
-      {/* 1C. ROLE ERROR TOAST / BANNER */}
-      {roleErrorMessage && (
-        <div className="w-full bg-red-600 text-white px-4 py-2 text-xs flex items-center justify-between shadow-md">
-          <div className="max-w-[1360px] mx-auto flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-200" />
-            <span className="font-medium">{roleErrorMessage}</span>
-          </div>
-          <button 
-            onClick={clearRoleError}
-            className="p-1 hover:bg-red-700 rounded text-white"
-            title="Dismiss error"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      )}
 
       {/* 2. STREAMLINED CIVIC NAVIGATION */}
       <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E2DED6]">
@@ -281,6 +255,8 @@ export const NavigationBar: React.FC = () => {
             <NavPill label={t("flow.kpi")} active={activeView === "kpi_monitoring"} onClick={() => setActiveView("kpi_monitoring")} />
             <span className="text-slate-500">→</span>
             <NavPill label={t("flow.validation")} active={activeView === "validation_report"} onClick={() => setActiveView("validation_report")} />
+            <span className="text-slate-500">→</span>
+            <NavPill label={t("flow.procurement")} active={activeView === "procurement_recommendation"} onClick={() => setActiveView("procurement_recommendation")} />
             <span className="text-slate-500">→</span>
             <NavPill label={t("flow.scaleUp")} active={activeView === "scale_up"} onClick={() => setActiveView("scale_up")} />
             <span className="text-slate-500">|</span>

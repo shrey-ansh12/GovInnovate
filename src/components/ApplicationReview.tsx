@@ -1,42 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useApp } from "@/context/AppContext";
 import { 
   ShieldCheck, 
   Award, 
   CheckCircle2, 
   ArrowRight, 
-  Building2, 
-  Scale, 
-  X, 
-  AlertTriangle,
-  ExternalLink,
-  SlidersHorizontal
+  Building2
 } from "lucide-react";
 
 export const ApplicationReview: React.FC = () => {
   const { 
     applications, 
-    startups,
     verifyEligibilityAction, 
     shortlistApplicationAction, 
     createPilotAction, 
-    setActiveView,
-    setRole,
-    role
+    setActiveView 
   } = useApp();
-
-  const [compareModalOpen, setCompareModalOpen] = useState(false);
-
-  // Match application with startup for rich data comparison
-  const enrichedApplications = applications.map(app => {
-    const startup = startups.find(s => s.id === app.startupId);
-    return {
-      ...app,
-      startup
-    };
-  });
 
   return (
     <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-10 font-sans">
@@ -47,64 +28,35 @@ export const ApplicationReview: React.FC = () => {
             <Building2 className="h-4 w-4" />
             Tender Applications & Shortlisting Queue
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-[#0A2540] tracking-tight">
             Review Submitted Startup Proposals ({applications.length})
           </h1>
           <p className="text-xs text-[#5B6A78] mt-1">
-            Review DPIIT eligibility, inspect 5-pillar technical scores, compare candidates side-by-side, and sanction sandbox pilots.
+            Validate DPIIT statutory exemptions under Rule 173, review expert panel scores, and sanction 90-day sandbox pilots.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Side-by-Side Comparison Button */}
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => setCompareModalOpen(true)}
-            className="px-4 py-2 rounded bg-white hover:bg-[#F2EFEB] text-[#0A2540] border border-[#E2DED6] font-semibold text-xs flex items-center gap-2 transition-all shadow-2xs"
-          >
-            <Scale className="h-4 w-4 text-[#0F3854]" />
-            <span>Side-by-Side Comparison</span>
-          </button>
-
-          <button
-            onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
+            onClick={() => setActiveView("evaluation_scorecard")}
             className="px-4 py-2 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-medium text-xs flex items-center gap-1.5 transition-colors"
           >
             <Award className="h-4 w-4 text-emerald-400" />
-            <span>Score as Evaluator</span>
+            <span>Score as Evaluator (95/100)</span>
           </button>
         </div>
       </div>
 
-      {/* Role Notice if not Government */}
-      {role !== "government" && (
-        <div className="mb-6 p-3.5 rounded bg-[#FEF7EA] border border-[#F6E1B9] text-xs text-[#8A5B0B] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 shrink-0" />
-            <span>
-              You are currently viewing in <strong>{role}</strong> mode. Shortlisting and commissioning pilots require the <strong>government</strong> role.
-            </span>
-          </div>
-          <button
-            onClick={() => setRole("government")}
-            className="font-bold underline ml-2"
-          >
-            Switch to Government
-          </button>
-        </div>
-      )}
-
       {/* Applications Cards */}
       <div className="space-y-6">
-        {enrichedApplications.map((app) => {
+        {applications.map((app) => {
           const isAquaSense = app.startupId === "ST-AQUASENSE";
 
           return (
             <div
               key={app.id}
               className={`bg-white rounded border p-6 transition-all ${
-                app.status === "Shortlisted" || app.status === "Pilot Active" 
-                  ? "border-2 border-[#0F3854]" 
-                  : "border-[#E2DED6]"
+                isAquaSense ? "border-2 border-[#0F3854]" : "border-[#E2DED6]"
               }`}
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-[#EDE9E1] gap-4">
@@ -113,18 +65,18 @@ export const ApplicationReview: React.FC = () => {
                     <span className="text-xs font-mono font-medium text-[#0F3854] bg-[#FAF8F5] border border-[#E2DED6] px-2 py-0.5 rounded">
                       ID: {app.id}
                     </span>
-                    <h2 className="text-lg font-bold text-[#0A2540]">{app.startupName}</h2>
+                    <h2 className="text-lg font-semibold text-[#0A2540]">{app.startupName}</h2>
                     <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
-                      <ShieldCheck className="h-3 w-3" /> DPIIT Recognized
+                      <ShieldCheck className="h-3 w-3" /> DPIIT Exemption Verified
                     </span>
                   </div>
                   <p className="text-xs text-[#5B6A78] font-mono mt-1">
-                    Applied: {app.appliedDate} • TRL: Level {app.trlLevel || 7} • Local Content: {app.localContentPercentage || 65}% • Patents: {app.patentsCount || 1}
+                    Applied on: {app.appliedDate} • Financial Turnover: {app.financialTurnover}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3 font-mono">
-                  <span className={`text-xs px-2.5 py-1 rounded border font-semibold ${
+                  <span className={`text-xs px-2.5 py-1 rounded border font-medium ${
                     app.status === "Shortlisted" || app.status === "Pilot Active"
                       ? "bg-[#EBF6F0] text-[#147452] border-[#C2E5D2]"
                       : app.status === "Evaluated"
@@ -148,88 +100,41 @@ export const ApplicationReview: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 text-xs font-mono text-[#5B6A78]">
-                    <div className="bg-[#FAF8F5] p-2.5 rounded border border-[#E2DED6]">
-                      <span className="block text-[10px] uppercase text-[#7E8B97]">Proposed Budget</span>
-                      <strong className="text-[#0A2540] text-sm">{app.proposedCost}</strong>
+                  <div className="flex items-center gap-4 text-xs font-mono text-[#5B6A78]">
+                    <div>
+                      <span>Proposed Budget: </span>
+                      <strong className="text-[#0A2540]">{app.proposedCost}</strong>
                     </div>
-                    <div className="bg-[#FAF8F5] p-2.5 rounded border border-[#E2DED6]">
-                      <span className="block text-[10px] uppercase text-[#7E8B97]">Deployment Lead Time</span>
-                      <strong className="text-[#0A2540] text-sm">{app.deploymentTime}</strong>
+                    <div>
+                      <span>Lead Time: </span>
+                      <strong className="text-[#0A2540]">{app.deploymentTime}</strong>
                     </div>
                   </div>
-
-                  {app.evidenceLinks && app.evidenceLinks.length > 0 && (
-                    <div className="pt-2">
-                      <div className="text-[11px] font-mono text-[#5B6A78] uppercase mb-1">Submitted Evidence Documents:</div>
-                      <div className="flex flex-wrap gap-2">
-                        {app.evidenceLinks.map((link, idx) => (
-                          <a
-                            key={idx}
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[11px] font-mono text-[#0F3854] hover:underline inline-flex items-center gap-1 bg-[#F2EFEB] px-2 py-0.5 rounded border border-[#E2DED6]"
-                          >
-                            <span>Doc Reference #{idx + 1}</span>
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Score & Committee Actions */}
                 <div className="flex flex-col justify-between space-y-4">
                   {app.evaluatorScore ? (
-                    <div className="bg-[#FAF8F5] p-4 rounded border border-[#E2DED6] text-xs text-[#0A2540] space-y-2">
-                      <div className="flex items-center justify-between font-semibold font-mono pb-2 border-b border-[#EDE9E1]">
+                    <div className="bg-[#FAF8F5] p-3.5 rounded border border-[#E2DED6] text-xs text-[#0A2540]">
+                      <div className="flex items-center justify-between font-semibold mb-1 font-mono">
                         <span className="flex items-center gap-1.5 text-[#0F3854]">
                           <Award className="h-4 w-4" />
-                          5-Pillar Committee Score
+                          Expert Committee Score
                         </span>
-                        <span className="text-base text-[#147452] font-bold">
+                        <span className="text-base text-[#147452]">
                           {app.evaluatorScore.total} / 100
                         </span>
                       </div>
-
-                      <div className="grid grid-cols-5 gap-1 text-[10px] font-mono text-center pt-1">
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
-                          <div className="text-[#7E8B97]">Inn</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.innovation}/20</div>
-                        </div>
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
-                          <div className="text-[#7E8B97]">Feas</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.feasibility}/20</div>
-                        </div>
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
-                          <div className="text-[#7E8B97]">Imp</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.impact}/20</div>
-                        </div>
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
-                          <div className="text-[#7E8B97]">Scal</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.scalability}/20</div>
-                        </div>
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
-                          <div className="text-[#7E8B97]">Viab</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.viability}/20</div>
-                        </div>
-                      </div>
-
-                      <p className="text-[11px] text-[#5B6A78] italic pt-1">
+                      <p className="text-[11px] text-[#5B6A78] italic">
                         &quot;{app.evaluatorScore.feedback}&quot;
                       </p>
-                      <div className="text-[10px] font-mono text-[#7E8B97]">
-                        Evaluated by: {app.evaluatorScore.evaluatorName}
-                      </div>
                     </div>
                   ) : (
                     <div className="bg-[#FAF8F5] p-3.5 rounded border border-[#E2DED6] text-xs text-[#5B6A78] flex items-center justify-between">
-                      <span>Evaluator scoring pending for this proposal</span>
+                      <span>Evaluator review pending for this proposal</span>
                       <button
-                        onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
-                        className="text-xs font-semibold text-[#0F3854] hover:underline"
+                        onClick={() => setActiveView("evaluation_scorecard")}
+                        className="text-xs font-medium text-[#0F3854] hover:underline"
                       >
                         Score Now →
                       </button>
@@ -241,7 +146,7 @@ export const ApplicationReview: React.FC = () => {
                     {app.status === "Submitted" && (
                       <button
                         onClick={() => verifyEligibilityAction(app.id)}
-                        className="px-3.5 py-2 rounded bg-[#0A2540] hover:bg-[#141F2B] text-white font-medium text-xs transition-colors"
+                        className="px-3.5 py-1.5 rounded bg-[#0A2540] hover:bg-[#141F2B] text-white font-medium text-xs transition-colors"
                       >
                         Verify DPIIT Status
                       </button>
@@ -250,19 +155,19 @@ export const ApplicationReview: React.FC = () => {
                     {app.status !== "Shortlisted" && app.status !== "Pilot Active" && (
                       <button
                         onClick={() => shortlistApplicationAction(app.id)}
-                        className="px-3.5 py-2 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-medium text-xs transition-colors"
+                        className="px-3.5 py-1.5 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-medium text-xs transition-colors"
                       >
-                        Shortlist for Pilot
+                        Shortlist as Rank #1 Bidder
                       </button>
                     )}
 
                     {(app.status === "Shortlisted" || app.status === "Pilot Active" || isAquaSense) && (
                       <button
-                        onClick={() => createPilotAction()}
-                        className="px-4 py-2 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs"
+                        onClick={createPilotAction}
+                        className="px-4 py-2 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-medium text-xs flex items-center gap-1.5 transition-colors"
                       >
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                        <span>Commission 90-Day Pilot Sandbox</span>
+                        <span>Sanction 90-Day Pilot Sandbox (5 Sites)</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </button>
                     )}
@@ -273,160 +178,6 @@ export const ApplicationReview: React.FC = () => {
           );
         })}
       </div>
-
-      {/* SIDE-BY-SIDE COMPARISON MODAL */}
-      {compareModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-2xl border border-[#E2DED6] max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="p-6 border-b border-[#EDE9E1] flex items-center justify-between sticky top-0 bg-white z-10">
-              <div className="flex items-center gap-2">
-                <Scale className="h-5 w-5 text-[#0F3854]" />
-                <h3 className="text-xl font-bold text-[#0A2540]">
-                  Side-by-Side Candidate Comparison
-                </h3>
-              </div>
-              <button
-                onClick={() => setCompareModalOpen(false)}
-                className="p-1 rounded text-[#5B6A78] hover:text-[#141F2B] hover:bg-[#F2EFEB]"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Comparison Matrix Table */}
-            <div className="p-6">
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-[#E2DED6] bg-[#FAF8F5]">
-                      <th className="p-3 font-mono font-semibold text-[#5B6A78] uppercase w-1/4">Evaluation Attribute</th>
-                      {enrichedApplications.map(app => (
-                        <th key={app.id} className="p-3 font-bold text-[#0A2540] text-sm">
-                          {app.startupName}
-                          <div className="font-mono text-[10px] text-[#7E8B97] font-normal">{app.id}</div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#EDE9E1]">
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">DPIIT Registration</td>
-                      {enrichedApplications.map(app => (
-                        <td key={app.id} className="p-3">
-                          <span className="inline-flex items-center gap-1 font-mono text-[11px] text-[#147452] bg-[#EBF6F0] px-2 py-0.5 rounded border border-[#C2E5D2]">
-                            <CheckCircle2 className="h-3 w-3" /> Verified (Active)
-                          </span>
-                        </td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">Technology Readiness (TRL)</td>
-                      {enrichedApplications.map(app => (
-                        <td key={app.id} className="p-3 font-bold text-[#0A2540]">
-                          TRL Level {app.trlLevel || 7}
-                          <span className="text-[10px] text-[#7E8B97] block font-normal font-mono">
-                            {app.trlLevel && app.trlLevel >= 8 ? "Commercial Deployment Ready" : "Field Prototype"}
-                          </span>
-                        </td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">Domestic Local Content %</td>
-                      {enrichedApplications.map(app => (
-                        <td key={app.id} className="p-3 font-mono font-bold text-[#0F3854]">
-                          {app.localContentPercentage || 65}% (Class-I Supplier)
-                        </td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">Patents & IP Rights</td>
-                      {enrichedApplications.map(app => (
-                        <td key={app.id} className="p-3 font-mono font-semibold text-[#0A2540]">
-                          {app.patentsCount || 1} Granted Patents
-                        </td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">5-Pillar Score (Total / 100)</td>
-                      {enrichedApplications.map(app => (
-                        <td key={app.id} className="p-3">
-                          {app.evaluatorScore ? (
-                            <span className="text-base font-bold text-[#147452]">
-                              {app.evaluatorScore.total} / 100
-                            </span>
-                          ) : (
-                            <span className="text-slate-400 font-mono">Pending Evaluation</span>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">Proposed Pilot Cost</td>
-                      {enrichedApplications.map(app => (
-                        <td key={app.id} className="p-3 font-mono font-bold text-[#0A2540]">
-                          {app.proposedCost}
-                        </td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">Deployment Lead Time</td>
-                      {enrichedApplications.map(app => (
-                        <td key={app.id} className="p-3 font-mono text-[#5B6A78]">
-                          {app.deploymentTime}
-                        </td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">Reagent / Consumable Requirement</td>
-                      <td className="p-3 text-xs text-[#147452] font-semibold">
-                        Zero Reagents (Optical Spectrophotometry)
-                      </td>
-                      <td className="p-3 text-xs text-[#5B6A78]">
-                        Standard Buoy Telemetry (Surface physical params)
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">Procurement Committee Action</td>
-                      {enrichedApplications.map(app => (
-                        <td key={app.id} className="p-3">
-                          {app.status === "Shortlisted" || app.status === "Pilot Active" ? (
-                            <span className="font-mono text-xs text-[#147452] font-bold">Shortlisted Candidate</span>
-                          ) : (
-                            <button
-                              onClick={() => {
-                                shortlistApplicationAction(app.id);
-                                setCompareModalOpen(false);
-                              }}
-                              className="px-3 py-1.5 rounded bg-[#0F3854] text-white text-xs font-semibold hover:bg-[#1D4E72]"
-                            >
-                              Select as Preferred
-                            </button>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="mt-6 p-4 rounded bg-[#FAF8F5] border border-[#E2DED6] text-xs text-[#5B6A78]">
-                <strong>Procurement Assessment Summary:</strong> AquaSense AI Innovations demonstrates higher technical readiness (TRL-8 vs TRL-7), 78% local content, 3 granted patents, and an objective score of 95/100, fulfilling all statutory requirements for the 5-location sandbox pilot.
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-4 border-t border-[#EDE9E1] flex justify-end bg-[#FAF8F5]">
-              <button
-                onClick={() => setCompareModalOpen(false)}
-                className="px-4 py-2 rounded bg-white border border-[#E2DED6] text-[#0A2540] text-xs font-semibold hover:bg-[#F2EFEB]"
-              >
-                Close Comparison
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
