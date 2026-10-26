@@ -70,26 +70,28 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#141F2B] flex flex-col font-sans">
       <NavigationBar />
       <AuthModal />
       <main className="flex-1">
         {renderActiveView()}
       </main>
-      <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-8 px-4 text-xs">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <span className="font-bold text-white">GovInnovate Sandbox Platform</span> • Startup-Friendly Public Procurement Mechanism
+      {activeView !== "landing" && (
+        <footer className="bg-[#0F3854] border-t border-[#1D4E72] text-slate-300 py-6 px-6 text-xs">
+          <div className="max-w-[1360px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <span className="font-semibold text-white">GovInnovate Sandbox Platform</span> • GFR 2017 Rule 173 Statutory Safe Harbor
+            </div>
+            <div className="flex items-center gap-4 text-slate-300 font-mono text-[11px]">
+              <span>DPIIT Verification Bridge</span>
+              <span>•</span>
+              <span>PFMS Milestone Escrow</span>
+              <span>•</span>
+              <span>Tier-IV NIC Sovereign Hosting</span>
+            </div>
           </div>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span>GFR 2017 Start-up Exemption Framework</span>
-            <span>•</span>
-            <span>DPIIT Bridge Integration</span>
-            <span>•</span>
-            <span>PFMS Milestone Direct Credit</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }
