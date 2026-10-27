@@ -95,6 +95,7 @@ interface AppContextType {
   // Challenges List & Selection
   challenges: Challenge[];
   selectChallengeAction: (challengeId: string) => void;
+  selectChallenge: (challengeId: string) => void;
 
   // Blockchain Modal
   blockchainModalOpen: boolean;
@@ -380,6 +381,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       recalculateMatchesAction(found);
     }
   };
+  const selectChallenge = selectChallengeAction;
   const setChallenge = appMode === "real" ? setRealChallenge : setDemoChallenge;
   const startups = appMode === "real" ? realStartups : demoStartups;
   const setStartups = appMode === "real" ? setRealStartups : setDemoStartups;
@@ -1865,6 +1867,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       appMode,
       challenges,
       selectChallengeAction,
+      selectChallenge,
       blockchainModalOpen,
       openBlockchainModal,
       closeBlockchainModal,

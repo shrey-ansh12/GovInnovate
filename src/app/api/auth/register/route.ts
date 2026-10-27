@@ -47,27 +47,61 @@ export async function POST(req: NextRequest) {
 
     const supabase = getSupabaseServerClient();
 
-    // Create auth user in Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          role: assignedRole,
-          organization_name: organizationName,
-        },
-      },
-    });
+    let authUser: { id: string; email?: string } | null = null;
+    let authErrorMsg: string | null = null;
 
-    if (authError || !authData.user) {
-      return NextResponse.json({ error: authError?.message || "Failed to create user account." }, { status: 400 });
+    // If service role key is available, use admin.createUser to auto-confirm email
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const { data: adminData, error: adminError } = await supabase.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: {
+            full_name: fullName,
+            role: assignedRole,
+            organization_name: organizationName,
+          },
+        });
+        if (!adminError && adminData.user) {
+          authUser = adminData.user;
+        } else if (adminError) {
+          authErrorMsg = adminError.message;
+        }
+      } catch (adminErr) {
+        console.warn("Admin createUser fallback to standard signUp:", adminErr);
+      }
     }
 
-    const userId = authData.user.id;
+    // Standard signUp if admin createUser was not applicable or didn't run
+    if (!authUser) {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            role: assignedRole,
+            organization_name: organizationName,
+          },
+        },
+      });
 
-    // Create Profile record
-    const { error: profileError } = await supabase.from("profiles").insert({
+      if (authError || !authData.user) {
+        let friendly = authError?.message || authErrorMsg || "Failed to create user account.";
+        if (friendly.includes("Database error saving new user")) {
+          friendly = "Supabase Auth trigger conflict: Run DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users; in Supabase SQL Editor.";
+        }
+        return NextResponse.json({ error: friendly, raw: authError?.message }, { status: 400 });
+      }
+
+      authUser = authData.user;
+    }
+
+    const userId = authUser.id;
+
+    // Create or Upsert Profile record
+    const { error: profileError } = await supabase.from("profiles").upsert({
       id: userId,
       full_name: fullName,
       email,
@@ -82,34 +116,42 @@ export async function POST(req: NextRequest) {
       console.error("Profile creation error:", profileError);
     }
 
-    // If Startup, create startup_profiles record
+    // If Startup, create or upsert startup_profiles record
     if (assignedRole === "startup") {
-      await supabase.from("startup_profiles").insert({
-        user_id: userId,
-        startup_name: organizationName,
-        dpiit_number: identifier || `DPIIT-${Math.floor(10000 + Math.random() * 90000)}`,
-        founder_name: fullName,
-        description: `${sector || "Civic Tech"} startup focusing on municipal innovation.`,
-        industry: sector || "CleanTech & Water",
-        location: city || "New Delhi, India",
-        trl_level: 7,
-        local_content_percentage: 65.0,
-        patents_count: 1,
-        verification_status: "verified",
-      });
+      try {
+        await supabase.from("startup_profiles").upsert({
+          user_id: userId,
+          startup_name: organizationName,
+          dpiit_number: identifier || `DPIIT-${Math.floor(10000 + Math.random() * 90000)}`,
+          founder_name: fullName,
+          description: `${sector || "Civic Tech"} startup focusing on municipal innovation.`,
+          industry: sector || "CleanTech & Water",
+          location: city || "New Delhi, India",
+          trl_level: 7,
+          local_content_percentage: 65.0,
+          patents_count: 1,
+          verification_status: "verified",
+        });
+      } catch (stErr) {
+        console.warn("Startup profile upsert error:", stErr);
+      }
     }
 
-    // Insert Audit Log
-    await supabase.from("audit_logs").insert({
-      actor_user_id: userId,
-      actor_name: fullName,
-      actor_role: assignedRole,
-      action: "USER_REGISTERED",
-      details: `User ${fullName} registered with role ${assignedRole} (${verificationStatus}).`,
-      badge: "Security",
-      entity_type: "user",
-      entity_id: userId,
-    });
+    // Insert Audit Log (best-effort)
+    try {
+      await supabase.from("audit_logs").insert({
+        actor_user_id: userId,
+        actor_name: fullName,
+        actor_role: assignedRole,
+        action: "USER_REGISTERED",
+        details: `User ${fullName} registered with role ${assignedRole} (${verificationStatus}).`,
+        badge: "Security",
+        entity_type: "user",
+        entity_id: userId,
+      });
+    } catch (auditErr) {
+      console.warn("Audit log insert skipped:", auditErr);
+    }
 
     return NextResponse.json({
       success: true,

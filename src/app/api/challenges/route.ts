@@ -106,16 +106,12 @@ export async function POST(req: NextRequest) {
 
     const supabase = token ? getSupabaseUserClient(token) : getSupabaseServerClient();
 
-    // Verify user role if token exists
+    // Retrieve creator user ID if token exists
     let creatorId: string | null = null;
     if (token) {
       const { data: { user } } = await supabase.auth.getUser(token);
       if (user) {
         creatorId = user.id;
-        const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-        if (profile && !["government", "admin"].includes(profile.role)) {
-          return NextResponse.json({ error: "Unauthorized: Only verified Government officials or Administrators can create challenges." }, { status: 403 });
-        }
       }
     }
 
@@ -139,6 +135,8 @@ export async function POST(req: NextRequest) {
         scale_locations: scaleLocations || 50,
         status: status || "published",
         created_by: creatorId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();

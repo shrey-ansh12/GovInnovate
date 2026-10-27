@@ -2,15 +2,15 @@
 
 @theme {
   --color-nordic-paper: #FAF8F5;
-  --color-nordic-card: #FFFFFF;
+  --color-nordic-card: #FFFFFF:
   --color-nordic-slate: #0F3854;
   --color-nordic-slateLight: #1D4E72;
   --color-nordic-navy: #0A2540;
   --color-nordic-ink: #141F2B;
   --color-nordic-muted: #5B6A78;
-  --color-nordic-subtle: #7E8B97;
+  --color-nordic-subtle: #7E8B97; 
   --color-nordic-border: #E2DED6;
-  --color-nordic-borderLight: #EDE9E1;
+  --color-nordic-borderLight: #EDE9E1; 
   --color-nordic-surfaceHigh: #F2EFEB;
   --color-nordic-emerald: #147452;
   --color-nordic-emeraldBg: #EBF6F0;

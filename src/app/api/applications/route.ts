@@ -73,6 +73,8 @@ export async function POST(req: NextRequest) {
           patentsCount: patentsCount || 1,
           evidenceLinks: evidenceLinks || [],
           status: "Submitted",
+        submitted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
           appliedDate: new Date().toISOString().slice(0, 10),
         },
       });
@@ -125,6 +127,8 @@ export async function POST(req: NextRequest) {
         patents_count: patentsCount || 1,
         evidence_links: evidenceLinks || [],
         status: "Submitted",
+        submitted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
