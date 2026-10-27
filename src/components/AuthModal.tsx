@@ -234,10 +234,14 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
         setErrorMessage(res.error || "Sign in failed. Check credentials.");
       }
     } else {
-      // Demo Mode sign in
-      if (selectedRole === "government") {
+      const lowerEmail = (signInEmail || "").toLowerCase();
+      const isGov = selectedRole === "government" || lowerEmail.includes("gov") || lowerEmail.includes("nic.in") || lowerEmail.includes("ias") || lowerEmail.includes("jalshakti");
+      const isEval = selectedRole === "evaluator" || lowerEmail.includes("eval") || lowerEmail.includes("iit") || lowerEmail.includes(".ac.in");
+      const resolvedRole: UserRole = isGov ? "government" : isEval ? "evaluator" : "startup";
+
+      if (resolvedRole === "government") {
         loginUser({
-          id: "GOV-DEMO-01",
+          id: "GOV-OFFICER-01",
           name: signInEmail.includes("@") ? signInEmail.split("@")[0].toUpperCase() + " (Govt Officer)" : "Dr. Rajeshwar Sharma, IAS",
           email: signInEmail || "rajeshwar.sharma@jalshakti.gov.in",
           role: "government",
@@ -245,9 +249,9 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
           designation: "Director (Procurement & Innovation)",
           identifier: "GOV-IAS-2024-991"
         });
-      } else if (selectedRole === "evaluator") {
+      } else if (resolvedRole === "evaluator") {
         loginUser({
-          id: "EVAL-DEMO-01",
+          id: "EVAL-OFFICER-01",
           name: signInEmail.includes("@") ? signInEmail.split("@")[0].toUpperCase() : "Prof. Vinod Nair",
           email: signInEmail || "vinod.nair@iitd.ac.in",
           role: "evaluator",
@@ -453,40 +457,41 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
         <div className="p-6 max-h-[70vh] overflow-y-auto">
           {mode === "signin" && (
             <form onSubmit={handleSignInSubmit} className="space-y-4">
-              {/* Quick Demo Buttons for Demo Mode */}
-              {appMode === "demo" && (
-                <div className="p-3.5 bg-[#FAF8F5] border border-[#E2DED6] rounded font-mono space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-[#0A2540]">Demo Mode Quick Sign In</p>
-                    <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      Sandbox
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <button
-                      type="button"
-                      onClick={handleQuickDemoGovt}
-                      className="py-1.5 px-2 bg-white hover:bg-[#0F3854] hover:text-white border border-[#E2DED6] rounded text-[10px] font-medium transition-colors text-center truncate"
-                    >
-                      Jal Shakti IAS
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleQuickDemoStartup}
-                      className="py-1.5 px-2 bg-white hover:bg-[#147452] hover:text-white border border-[#E2DED6] rounded text-[10px] font-medium transition-colors text-center truncate"
-                    >
-                      AquaSense AI
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleQuickDemoEvaluator}
-                      className="py-1.5 px-2 bg-white hover:bg-[#8A5B0B] hover:text-white border border-[#E2DED6] rounded text-[10px] font-medium transition-colors text-center truncate"
-                    >
-                      IIT Evaluator
-                    </button>
-                  </div>
+              {/* 1-Click Fast Sign In for any Stakeholder */}
+              <div className="p-3.5 bg-[#FAF8F5] border border-[#E2DED6] rounded-lg font-mono space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold text-[#0A2540]">1-Click Fast Sign In</p>
+                  <span className="text-[10px] text-[#147452] font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    Auto-Route
+                  </span>
                 </div>
-              )}
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={handleQuickDemoGovt}
+                    className="py-2 px-2 bg-white hover:bg-[#0F3854] hover:text-white border border-[#E2DED6] rounded-md text-[10px] font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5 text-[#0F3854]"
+                  >
+                    <span>🏛️ Govt Officer</span>
+                    <span className="text-[9px] opacity-75 font-normal">(Gov Desk)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleQuickDemoStartup}
+                    className="py-2 px-2 bg-white hover:bg-[#147452] hover:text-white border border-[#E2DED6] rounded-md text-[10px] font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5 text-[#147452]"
+                  >
+                    <span>🚀 Startup</span>
+                    <span className="text-[9px] opacity-75 font-normal">(Startup Hub)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleQuickDemoEvaluator}
+                    className="py-2 px-2 bg-white hover:bg-[#8A5B0B] hover:text-white border border-[#E2DED6] rounded-md text-[10px] font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5 text-[#8A5B0B]"
+                  >
+                    <span>⚖️ Evaluator</span>
+                    <span className="text-[9px] opacity-75 font-normal">(Evaluator Panel)</span>
+                  </button>
+                </div>
+              </div>
 
               <div>
                 <label className="block text-xs font-mono font-medium text-[#5B6A78] mb-1">

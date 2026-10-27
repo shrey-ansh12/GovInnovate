@@ -5,6 +5,7 @@ import { useApp } from "@/context/AppContext";
 import { SUPPORTED_LANGUAGES } from "@/lib/translations";
 import { DashboardSwitcher } from "@/components/DashboardSwitcher";
 import { ProcessRoadmap } from "@/components/ProcessRoadmap";
+import { TextToSpeechButton } from "@/components/TextToSpeechButton";
 import { 
   RotateCcw,
   Sparkles,
@@ -13,19 +14,13 @@ import {
   Check,
   AlertTriangle,
   X,
-  Database,
-  PlayCircle,
   LogOut,
-  FileText,
   History,
-  Blocks,
   ShieldCheck
 } from "lucide-react";
 
 export const NavigationBar: React.FC = () => {
   const { 
-    role, 
-    setRole, 
     activeView, 
     setActiveView, 
     resetDemoAction, 
@@ -36,9 +31,6 @@ export const NavigationBar: React.FC = () => {
     t,
     roleErrorMessage,
     clearRoleError,
-    appMode,
-    setAppMode,
-    isLiveDbConnected,
     currentUser,
     logoutUser
   } = useApp();
@@ -70,37 +62,17 @@ export const NavigationBar: React.FC = () => {
             </span>
             <span className="text-white/30">•</span>
             <span className="text-slate-300 font-normal">
-              National Public Innovation Sandbox
+              National Public Sector Innovation Sandbox
             </span>
           </div>
 
           <div className="flex items-center gap-3 text-slate-300 font-mono text-[11px]">
-            {/* Mode Indicator */}
-            {appMode === "demo" ? (
-              <div className="flex items-center gap-1.5">
-                <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold uppercase text-[10px] flex items-center gap-1">
-                  <PlayCircle className="h-3 w-3" /> Demo Mode
-                </span>
-                <button
-                  onClick={() => setAppMode("real")}
-                  className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-slate-200 text-[10px] transition-colors"
-                >
-                  Exit Demo
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5">
-                <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold uppercase text-[10px] flex items-center gap-1">
-                  <Database className="h-3 w-3" /> Live DB ({isLiveDbConnected ? "Online" : "Connecting"})
-                </span>
-                <button
-                  onClick={() => setAppMode("demo")}
-                  className="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[10px] transition-colors"
-                >
-                  Enter Demo
-                </button>
-              </div>
-            )}
+            {/* Text-to-Speech Accessible Reader */}
+            <TextToSpeechButton 
+              text="GovInnovate sandbox prototype. Connects government procurement challenges with DPIIT verified startups for 90-day evidence-backed innovation pilots."
+              label="Listen"
+              size="sm"
+            />
 
             {/* Language Selector */}
             <div className="relative" ref={langDropdownRef}>
@@ -180,14 +152,15 @@ export const NavigationBar: React.FC = () => {
 
           {/* RIGHT ACTIONS */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Blockchain Proof Button */}
+            {/* Subtle Cryptographic Audit Ledger Seal */}
             <button
               onClick={openBlockchainModal}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border bg-emerald-50 text-[#147452] border-emerald-300 hover:bg-emerald-100 shadow-2xs"
-              title="Open Blockchain Proof of Data Safety & Smart Contract Registry"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border border-[#E2DED6] bg-[#FAF8F5] hover:bg-[#F2EFEB] text-[#0A2540]"
+              title="Verify SHA-256 Cryptographic Audit Ledger & Smart Contract State"
             >
-              <Blocks className="h-3.5 w-3.5 text-emerald-600" />
-              <span className="hidden sm:inline">Blockchain Safety</span>
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+              <span className="hidden sm:inline">Audit Ledger</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
             </button>
 
             {/* Audit Log Quick Link */}
@@ -229,16 +202,14 @@ export const NavigationBar: React.FC = () => {
               </button>
             )}
 
-            {/* Reset Demo */}
-            {appMode === "demo" && (
-              <button
-                onClick={resetDemoAction}
-                className="p-1.5 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                title={t("nav.resetDemo")}
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-              </button>
-            )}
+            {/* Reset Session */}
+            <button
+              onClick={resetDemoAction}
+              className="p-1.5 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+              title={t("nav.resetDemo")}
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+            </button>
           </div>
         </div>
       </header>

@@ -4,6 +4,7 @@ import React from "react";
 import { useApp } from "@/context/AppContext";
 import { DashboardSwitcher } from "@/components/DashboardSwitcher";
 import { ProcessRoadmap } from "@/components/ProcessRoadmap";
+import { TextToSpeechButton } from "@/components/TextToSpeechButton";
 import { 
   Building2, 
   Rocket, 
@@ -13,7 +14,8 @@ import {
   Sparkles,
   Blocks,
   CheckCircle2,
-  Lock
+  Lock,
+  FileCheck
 } from "lucide-react";
 
 export const LandingPage: React.FC = () => {
@@ -54,9 +56,14 @@ export const LandingPage: React.FC = () => {
             Public Innovation, Made Simple.
           </h1>
 
-          <p className="text-base sm:text-lg text-[#5B6A78] leading-relaxed">
-            One unified platform with three dedicated workspaces for <strong>Government</strong>, <strong>Startups</strong>, and <strong>Evaluators</strong> to test and scale civic solutions in 90 days.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <p className="text-base sm:text-lg text-[#5B6A78] leading-relaxed">
+              One unified platform with three dedicated workspaces for <strong>Government</strong>, <strong>Startups</strong>, and <strong>Evaluators</strong> to test and scale civic solutions in 90 days.
+            </p>
+            <div className="shrink-0">
+              <TextToSpeechButton text="Welcome to GovInnovate. One unified platform with three dedicated workspaces for Government, Startups, and Evaluators to test and scale civic solutions in 90 days." label="Listen" />
+            </div>
+          </div>
         </div>
 
         {/* 2. PROMINENT ONE-CLICK SWITCHER BAR */}
@@ -239,27 +246,27 @@ export const LandingPage: React.FC = () => {
           <ProcessRoadmap variant="full-cards" />
         </div>
 
-        {/* 5. BLOCKCHAIN DATA SAFETY EXPLANATION (CLEAN & CONFIDENT) */}
-        <div className="bg-gradient-to-r from-emerald-900 to-[#0F3854] text-white rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-emerald-300 text-xs font-mono font-bold uppercase tracking-wider">
-              <Lock className="h-4 w-4" />
-              <span>Data Safety & Tamper-Proofing</span>
+        {/* 5. INSTITUTIONAL AUDIT TRAIL & DATA INTEGRITY */}
+        <div className="bg-white rounded-2xl border border-[#E2DED6] p-6 sm:p-7 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-xs">
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#147452] bg-[#EBF6F0] px-2.5 py-1 rounded-md border border-[#C2E5D2]">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              <span>Institutional Compliance & Verification</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-white">
-              Every Action is Cryptographically Sealed on Blockchain
+            <h3 className="text-lg sm:text-xl font-bold text-[#0A2540]">
+              Cryptographic Audit Trail & Data Integrity
             </h3>
-            <p className="text-xs sm:text-sm text-slate-200 max-w-2xl leading-relaxed">
-              When a challenge is posted, a startup applies, or an evaluator scores, SHA-256 block hashes are permanently recorded in the smart contract registry for zero tampering.
+            <p className="text-xs sm:text-sm text-[#5B6A78] leading-relaxed">
+              Procurement notices, startup proposals, and evaluation scorecards are timestamped with SHA-256 cryptographic hashes for full transparency and zero tampering.
             </p>
           </div>
 
           <button
             onClick={openBlockchainModal}
-            className="px-6 py-3 rounded-xl bg-white text-[#0F3854] hover:bg-slate-100 font-bold text-xs flex items-center gap-2 transition-colors shrink-0 shadow-sm"
+            className="px-4 py-2.5 rounded-xl border border-[#D5D0C7] bg-[#FAF8F5] hover:bg-[#F0EDE6] text-[#0A2540] font-semibold text-xs flex items-center gap-2 transition-colors shrink-0 shadow-xs"
           >
-            <Blocks className="h-4 w-4 text-emerald-600" />
-            <span>Open Blockchain Explorer</span>
+            <FileCheck className="h-4 w-4 text-[#147452]" />
+            <span>View Audit Ledger</span>
           </button>
         </div>
       </section>

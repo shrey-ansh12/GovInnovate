@@ -1,5 +1,7 @@
 "use client";
 
+import { TextToSpeechButton } from "@/components/TextToSpeechButton";
+
 import React, { useState } from "react";
 import { useApp } from "@/context/AppContext";
 
@@ -175,9 +177,16 @@ export const StartupDashboard: React.FC = () => {
 
             {/* Problem Statement Display */}
             <div className="p-4 rounded-lg bg-[#FAF8F5] border border-[#E2DED6] text-xs space-y-2">
-              <span className="font-bold text-[#0A2540] uppercase text-[10px] tracking-wider font-mono block">
-                Government Problem Statement:
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-[#0A2540] uppercase text-[10px] tracking-wider font-mono">
+                  Government Problem Statement:
+                </span>
+                <TextToSpeechButton 
+                  text={challenge.problemStatement || "Municipal body requires rapid-response edge sensing and automated alert telemetry across pilot distribution zones."}
+                  label="Listen"
+                  size="sm"
+                />
+              </div>
               <p className="text-[#5B6A78] leading-relaxed">
                 {challenge.problemStatement || "Municipal body requires rapid-response edge sensing and automated alert telemetry across pilot distribution zones before citywide expansion."}
               </p>

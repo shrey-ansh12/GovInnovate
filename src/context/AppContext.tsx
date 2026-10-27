@@ -422,6 +422,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (data.authenticated && data.user) {
         setRealUser(data.user);
         setRoleState(data.user.role);
+        if (data.user.role === "government") {
+          setActiveView("gov_dashboard");
+        } else if (data.user.role === "evaluator") {
+          setActiveView("evaluator_dashboard");
+        } else {
+          setActiveView("startup_dashboard");
+        }
       }
     } catch (err) {
       console.warn("Error fetching profile:", err);
@@ -675,23 +682,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Demo Login
   const loginUser = (user: AuthUser) => {
-    if (appMode === "demo") {
-      setDemoUser(user);
-      setRoleState(user.role);
-      setAuthModalOpen(false);
-      addAuditLog("USER_AUTHENTICATED", `Demo User ${user.name} logged into ${user.role} workspace.`, "Security", user.role);
-    } else {
-      setRealUser(user);
-      setRoleState(user.role);
-      setAuthModalOpen(false);
-    }
+    setDemoUser(user);
+    setRealUser(user);
+    setRoleState(user.role);
+    setAuthModalOpen(false);
+    addAuditLog("USER_AUTHENTICATED", `User ${user.name} logged into ${user.role} workspace.`, "Security", user.role);
 
     if (user.role === "government") {
       setActiveView("gov_dashboard");
-    } else if (user.role === "startup") {
-      setActiveView("startup_dashboard");
-    } else {
+    } else if (user.role === "evaluator") {
       setActiveView("evaluator_dashboard");
+    } else {
+      setActiveView("startup_dashboard");
     }
   };
 
@@ -739,6 +741,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (resData.user) {
         setRealUser(resData.user);
         setRoleState(resData.user.role);
+        if (resData.user.role === "government") {
+          setActiveView("gov_dashboard");
+        } else if (resData.user.role === "evaluator") {
+          setActiveView("evaluator_dashboard");
+        } else {
+          setActiveView("startup_dashboard");
+        }
       }
       return { success: true };
     } catch (err: unknown) {
@@ -1412,6 +1421,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     setDemoApplications(prev => prev.map(a => {
+      if (a.id === appId) {
+        return {
+          ...a,
+          status: "Evaluated",
+          evaluatorScore: scoredWithBlockchain
+        };
+      }
+      return a;
+    }));
+
+    setRealApplications(prev => prev.map(a => {
       if (a.id === appId) {
         return {
           ...a,

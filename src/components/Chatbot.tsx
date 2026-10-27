@@ -1,5 +1,7 @@
 "use client";
 
+import { TextToSpeechButton } from "@/components/TextToSpeechButton";
+
 import React, { useState, useRef, useEffect } from "react";
 import { 
   X, 
@@ -177,8 +179,13 @@ export const Chatbot: React.FC = () => {
                 >
                   {m.text}
                 </div>
-                <div className="flex items-center gap-2 mt-1 px-1 text-[10px] text-[#7E8B97] font-mono">
-                  <span>{m.timestamp}</span>
+                <div className="flex items-center justify-between mt-1 px-1 text-[10px] text-[#7E8B97] font-mono">
+                  <div className="flex items-center gap-2">
+                    <span>{m.timestamp}</span>
+                  </div>
+                  {m.sender === "bot" && (
+                    <TextToSpeechButton text={m.text} label="" size="sm" className="p-0.5 border-none bg-transparent hover:bg-black/5" />
+                  )}
                   {m.source && (
                     <>
                       <span>•</span>
