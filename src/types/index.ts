@@ -1,4 +1,4 @@
-export type UserRole = "government" | "startup" | "evaluator";
+﻿export type UserRole = "government" | "startup" | "evaluator";
 
 export interface AuthUser {
   id: string;
@@ -20,6 +20,27 @@ export type ChallengeStatus =
   | "Scale-Up Approved"
   | "Rejected"
   | "Further Review";
+
+export interface DocumentVerificationRecord {
+  id: string;
+  fileName: string;
+  fileSizeBytes: number;
+  fileHash: string; // SHA-256 of the document
+  uploadedAt: string;
+  extractedEntityName?: string;
+  extractedDpiitNumber?: string;
+  extractedDate?: string;
+  extractedCategory?: string;
+  nameSimilarityScore?: number; // 0-100%
+  entityMismatchFlag?: boolean;
+  preliminaryStatus: "Passed" | "Mismatch Detected" | "Format Error" | "Pending";
+  officialStatus: "Pending Review" | "Officially Verified" | "Rejected";
+  verifiedBy?: string;
+  verifiedAt?: string;
+  rejectionReason?: string;
+  source: "Direct Upload" | "DigiLocker Sandbox";
+  rawTextPreview?: string;
+}
 
 export interface Startup {
   id: string;
@@ -54,6 +75,20 @@ export interface Startup {
     level: "Low" | "Medium" | "High";
     factors: string[];
   };
+  // Cryptographic SHA-256 Integrity & Vigilance Verification Fields
+  canonicalHash?: string;
+  currentHash?: string;
+  tamperStatus?: "VERIFIED" | "FLAGGED_FOR_REVIEW";
+  tamperAuditNote?: string;
+  verificationStage?: 
+    | "Not Uploaded"
+    | "Document Uploaded"
+    | "Preliminary Checks Passed"
+    | "Preliminary Check Failed - Mismatch Flagged"
+    | "Official Verification Pending"
+    | "Officially Verified"
+    | "Verification Failed";
+  documentRecord?: DocumentVerificationRecord;
 }
 
 export interface Challenge {
@@ -81,7 +116,7 @@ export interface EvaluatorScore {
   feasibility: number;  // 0-20
   impact: number;       // 0-20
   scalability: number;  // 0-20
-  viability: number;    // 0-20 (Replaces old generic cost/security)
+  viability: number;    // 0-20
   total: number;        // 0-100
   justifications: {
     innovation: string;
@@ -114,6 +149,9 @@ export interface Application {
   patentsCount: number;
   evidenceLinks?: string[];
   evaluatorScore?: EvaluatorScore;
+  // Document and hash attachment
+  documentRecord?: DocumentVerificationRecord;
+  tamperStatus?: "VERIFIED" | "FLAGGED_FOR_REVIEW";
 }
 
 export interface PilotKPI {
@@ -180,6 +218,8 @@ export interface AuditLog {
   action: string;
   details: string;
   badge: "Security" | "Procurement" | "Matching" | "Evaluation" | "Payment" | "Milestone" | "Decision";
+  blockHash?: string;
+  prevHash?: string;
 }
 
 export interface NotificationItem {

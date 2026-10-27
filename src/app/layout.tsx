@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
 import { GoogleTranslateProvider } from "@/components/GoogleTranslateProvider";

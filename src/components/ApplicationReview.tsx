@@ -12,7 +12,13 @@ import {
   X, 
   AlertTriangle,
   ExternalLink,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Lock,
+  AlertOctagon,
+  FileCheck2,
+  UserCheck,
+  XCircle,
+  FileText
 } from "lucide-react";
 
 export const ApplicationReview: React.FC = () => {
@@ -24,10 +30,14 @@ export const ApplicationReview: React.FC = () => {
     createPilotAction, 
     setActiveView,
     setRole,
-    role
+    role,
+    officialReviewDpiitAction,
+    setSelectedAppIdForScore
   } = useApp();
 
   const [compareModalOpen, setCompareModalOpen] = useState(false);
+  const [reviewModalApp, setReviewModalApp] = useState<any | null>(null);
+  const [rejectReasonInput, setRejectReasonInput] = useState("");
 
   // Match application with startup for rich data comparison
   const enrichedApplications = applications.map(app => {
@@ -114,8 +124,24 @@ export const ApplicationReview: React.FC = () => {
                       ID: {app.id}
                     </span>
                     <h2 className="text-lg font-bold text-[#0A2540]">{app.startupName}</h2>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
-                      <ShieldCheck className="h-3 w-3" /> DPIIT Recognized
+                    {app.dpiitVerified ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
+                        <ShieldCheck className="h-3 w-3" /> DPIIT Recognized
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
+                        Verification Pending
+                      </span>
+                    )}
+
+                    {/* SHA-256 Vigilance Status */}
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded border ${
+                      app.startup?.tamperStatus === "FLAGGED_FOR_REVIEW"
+                        ? "bg-red-100 text-red-800 border-red-300 font-bold"
+                        : "bg-[#F2EFEB] text-[#0F3854] border-[#E2DED6]"
+                    }`}>
+                      <Lock className="h-3 w-3" />
+                      {app.startup?.tamperStatus === "FLAGGED_FOR_REVIEW" ? "SHA-256 Divergence Flagged" : "SHA-256 Verified"}
                     </span>
                   </div>
                   <p className="text-xs text-[#5B6A78] font-mono mt-1">
@@ -123,7 +149,7 @@ export const ApplicationReview: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3 font-mono">
+                <div className="flex flex-wrap items-center gap-2 font-mono">
                   <span className={`text-xs px-2.5 py-1 rounded border font-semibold ${
                     app.status === "Shortlisted" || app.status === "Pilot Active"
                       ? "bg-[#EBF6F0] text-[#147452] border-[#C2E5D2]"
@@ -135,6 +161,38 @@ export const ApplicationReview: React.FC = () => {
                   </span>
                 </div>
               </div>
+
+              {/* Document Verification & SHA-256 Inspection Strip */}
+              {app.startup?.documentRecord && (
+                <div className="my-3 p-3 rounded bg-[#FAF8F5] border border-[#E2DED6] text-[11px] font-mono flex flex-col md:flex-row md:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-[#0F3854]" />
+                    <span className="font-semibold text-[#0A2540]">{app.startup.documentRecord.fileName}</span>
+                    <span className="text-[#7E8B97]">| SHA-256: {app.startup.documentRecord.fileHash.slice(0, 12)}...</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      app.startup.documentRecord.preliminaryStatus === "Passed"
+                        ? "bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]"
+                        : "bg-red-50 text-red-700 border border-red-200"
+                    }`}>
+                      Preliminary: {app.startup.documentRecord.preliminaryStatus}
+                    </span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      app.startup.documentRecord.officialStatus === "Officially Verified"
+                        ? "bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]"
+                        : "bg-amber-50 text-amber-700 border border-amber-200"
+                    }`}>
+                      Official: {app.startup.documentRecord.officialStatus}
+                    </span>
+                    {app.startup.documentRecord.nameSimilarityScore !== undefined && (
+                      <span className="text-[10px] text-[#5B6A78]">
+                        Entity Match: {app.startup.documentRecord.nameSimilarityScore}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Proposal Overview & Score Comparison */}
               <div className="grid md:grid-cols-2 gap-6 pt-5">
@@ -228,7 +286,11 @@ export const ApplicationReview: React.FC = () => {
                     <div className="bg-[#FAF8F5] p-3.5 rounded border border-[#E2DED6] text-xs text-[#5B6A78] flex items-center justify-between">
                       <span>Evaluator scoring pending for this proposal</span>
                       <button
-                        onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
+                        onClick={() => { 
+                          setSelectedAppIdForScore(app.id);
+                          setRole("evaluator"); 
+                          setActiveView("evaluation_scorecard"); 
+                        }}
                         className="text-xs font-semibold text-[#0F3854] hover:underline"
                       >
                         Score Now →
@@ -236,15 +298,38 @@ export const ApplicationReview: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Procurement Decision Workflow Buttons */}
+                  {/* Procurement & Verification Decision Workflow Buttons */}
                   <div className="flex flex-wrap items-center gap-2 pt-2">
-                    {app.status === "Submitted" && (
-                      <button
-                        onClick={() => verifyEligibilityAction(app.id)}
-                        className="px-3.5 py-2 rounded bg-[#0A2540] hover:bg-[#141F2B] text-white font-medium text-xs transition-colors"
-                      >
-                        Verify DPIIT Status
-                      </button>
+                    {/* Official Government Verification Sign-Off */}
+                    {role === "government" && (
+                      <>
+                        {app.startup?.documentRecord?.officialStatus !== "Officially Verified" ? (
+                          <button
+                            onClick={() => officialReviewDpiitAction(app.startupId, true)}
+                            className="px-3.5 py-2 rounded bg-[#147452] hover:bg-[#0f583e] text-white font-medium text-xs flex items-center gap-1 transition-colors"
+                            title="Sign-off official verification under GFR guidelines"
+                          >
+                            <UserCheck className="h-3.5 w-3.5" />
+                            <span>Official Verify DPIIT</span>
+                          </button>
+                        ) : (
+                          <span className="text-[11px] font-mono text-[#147452] bg-[#EBF6F0] px-2.5 py-1 rounded border border-[#C2E5D2] font-semibold flex items-center gap-1">
+                            <CheckCircle2 className="h-3 w-3" /> Officially Verified by Gov Officer
+                          </span>
+                        )}
+
+                        {app.startup?.documentRecord?.officialStatus !== "Rejected" && app.status !== "Shortlisted" && (
+                          <button
+                            onClick={() => {
+                              const reason = prompt("Enter verification rejection reason:", "Entity mismatch / Invalid certificate credentials");
+                              if (reason) officialReviewDpiitAction(app.startupId, false, reason);
+                            }}
+                            className="px-3 py-2 rounded bg-white hover:bg-red-50 text-red-700 border border-red-200 text-xs font-medium transition-colors"
+                          >
+                            Reject Cert
+                          </button>
+                        )}
+                      </>
                     )}
 
                     {app.status !== "Shortlisted" && app.status !== "Pilot Active" && (

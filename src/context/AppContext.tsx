@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { 
@@ -13,7 +13,8 @@ import {
   EvaluatorScore,
   FinalDecision,
   PilotKPI,
-  PilotMilestone
+  PilotMilestone,
+  DocumentVerificationRecord
 } from "@/types";
 import { 
   SupportedLanguage, 
@@ -27,6 +28,12 @@ import {
   sampleAuditLogs, 
   sampleNotifications 
 } from "@/lib/mockData";
+import { 
+  computeStartupHash, 
+  verifyStartupRecordIntegrity, 
+  computeAuditBlockHash 
+} from "@/lib/cryptoUtils";
+import { calculateStartupMatch } from "@/lib/matchingEngine";
 
 export type ActiveView = 
   | "landing"
@@ -83,21 +90,34 @@ interface AppContextType {
   loginUser: (user: AuthUser) => void;
   logoutUser: () => void;
   
-  // Step 1: Challenge creation
+  // Step 1: Challenge creation & dynamic matching
   createChallengeAction: (data: Partial<Challenge>) => void;
+  recalculateMatchesAction: (customChallenge?: Challenge) => void;
   
   // Step 2: Startup onboarding, profile, and application
-  registerStartupAction: (data: { name: string; dpiitNumber: string; founderName: string; email: string; sector: string; city: string }) => void;
+  registerStartupAction: (data: { name: string; dpiitNumber: string; founderName: string; email: string; sector: string; city: string }) => Promise<void>;
   registerGovOfficerAction: (data: { name: string; designation: string; ministry: string; email: string; officerId: string }) => void;
-  updateStartupProfileAction: (startupId: string, data: Partial<Startup>) => void;
+  updateStartupProfileAction: (startupId: string, data: Partial<Startup>) => Promise<void>;
   applyToChallengeAction: (startupId: string, proposalData?: Partial<Application>) => void;
   
   // Step 3: Eligibility & Shortlisting
   verifyEligibilityAction: (appId: string) => void;
   shortlistApplicationAction: (appId: string) => void;
   
+  // Document Verification (Real PDF & DigiLocker Sandbox)
+  uploadAndParseDpiitAction: (startupId: string, file: File) => Promise<boolean>;
+  pullDigiLockerAction: (startupId: string, dpiitNumber: string) => Promise<boolean>;
+  officialReviewDpiitAction: (startupId: string, approved: boolean, notes?: string) => void;
+
+  // Cryptographic SHA-256 Record Integrity Actions
+  verifyStartupIntegrityAction: (startupId: string) => Promise<boolean>;
+  flagStartupForReviewAction: (startupId: string, reason: string) => void;
+  clearTamperFlagAction: (startupId: string) => Promise<void>;
+  
   // Step 4: 5-Pillar Structured Evaluation
   evaluateApplicationAction: (appId: string, score: EvaluatorScore) => void;
+  selectedAppIdForScore: string;
+  setSelectedAppIdForScore: (id: string) => void;
   
   // Step 5: Commission Pilot with Milestones & KPIs
   createPilotAction: (customPilot?: Partial<Pilot>) => void;
@@ -122,7 +142,7 @@ interface AppContextType {
   markNotificationRead: (id: string) => void;
 }
 
-const STORAGE_KEY = "govinnovate_state_v3";
+const STORAGE_KEY = "govinnovate_state_v4";
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -138,6 +158,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [pilot, setPilot] = useState<Pilot>(samplePilot);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(sampleAuditLogs);
   const [notifications, setNotifications] = useState<NotificationItem[]>(sampleNotifications);
+  const [selectedAppIdForScore, setSelectedAppIdForScore] = useState<string>(sampleApplications[0]?.id || "APP-WQ-091");
   
   const [currentUser, setCurrentUser] = useState<AuthUser | null>({
     id: "GOV-DEMO-01",
@@ -172,6 +193,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (parsed.auditLogs) setAuditLogs(parsed.auditLogs);
         if (parsed.currentUser) setCurrentUser(parsed.currentUser);
         if (parsed.role) setRoleState(parsed.role);
+        if (parsed.selectedAppIdForScore) setSelectedAppIdForScore(parsed.selectedAppIdForScore);
       }
     } catch (e) {
       console.warn("Could not load persisted GovInnovate state:", e);
@@ -191,17 +213,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         pilot,
         auditLogs,
         currentUser,
-        role
+        role,
+        selectedAppIdForScore
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToPersist));
     } catch (e) {
       console.warn("Could not persist GovInnovate state to localStorage:", e);
     }
-  }, [challenge, startups, applications, pilot, auditLogs, currentUser, role, isHydrated]);
+  }, [challenge, startups, applications, pilot, auditLogs, currentUser, role, selectedAppIdForScore, isHydrated]);
 
   const setRole = (newRole: UserRole) => {
     setRoleState(newRole);
-    // Align demo user identity when switching roles directly
     if (newRole === "government") {
       setCurrentUser({
         id: "GOV-DEMO-01",
@@ -239,7 +261,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setLanguageState(lang);
     try {
       localStorage.setItem("govinnovate_lang", lang);
-    } catch (e) {
+    } catch {
       // Ignore
     }
   };
@@ -272,23 +294,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setAuthModalOpen(false);
   };
 
-  const addAuditLog = useCallback((
+  // Cryptographically Chained Audit Log Generation
+  const addAuditLog = useCallback(async (
     action: string, 
     details: string, 
     badge: AuditLog["badge"], 
     logRole?: UserRole
   ) => {
-    const actorName = currentUser ? `${currentUser.name} (${currentUser.organization})` : "System";
-    const newLog: AuditLog = {
-      id: `LOG-${Date.now().toString().slice(-5)}`,
-      timestamp: new Date().toISOString().replace("T", " ").slice(0, 19),
-      user: actorName,
-      role: logRole || role,
-      action,
-      details,
-      badge
-    };
-    setAuditLogs(prev => [newLog, ...prev]);
+    const actorName = currentUser ? `${currentUser.name} (${currentUser.organization})` : "System Vigilance Desk";
+    const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
+    
+    setAuditLogs(prev => {
+      const prevHash = prev[0]?.blockHash || "0000000000000000000000000000000000000000000000000000000000000000";
+      // Compute temporary sync hash until async subtle finishes
+      const blockHash = "sh" + Math.random().toString(16).slice(2) + prevHash.slice(0, 32);
+
+      const newLog: AuditLog = {
+        id: `LOG-${Date.now().toString().slice(-5)}`,
+        timestamp,
+        user: actorName,
+        role: logRole || role,
+        action,
+        details,
+        badge,
+        prevHash,
+        blockHash
+      };
+
+      // Asynchronously calculate real SHA-256 block hash
+      computeAuditBlockHash(prevHash, timestamp, actorName, action, details).then(realHash => {
+        setAuditLogs(current => current.map(l => l.id === newLog.id ? { ...l, blockHash: realHash } : l));
+      });
+
+      return [newLog, ...prev];
+    });
   }, [currentUser, role]);
 
   const loginUser = (user: AuthUser) => {
@@ -318,6 +357,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActiveView("landing");
   };
 
+  // Recalculates match score for all startups against active challenge
+  const recalculateMatchesAction = useCallback((customChallenge?: Challenge) => {
+    const targetChallenge = customChallenge || challenge;
+    setStartups(prev => prev.map(s => {
+      const match = calculateStartupMatch(s, targetChallenge);
+      return {
+        ...s,
+        matchScore: match.matchScore,
+        matchReasons: match.matchReasons,
+        matchBreakdown: match.matchBreakdown,
+        riskAnalysis: match.riskAnalysis
+      };
+    }));
+  }, [challenge]);
+
   // Step 1: Create Challenge (Gov only)
   const createChallengeAction = (data: Partial<Challenge>) => {
     if (!checkRoleAccess(["government"], "publish a procurement challenge")) return;
@@ -330,6 +384,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       applicationsCount: 0
     };
     setChallenge(updated);
+    recalculateMatchesAction(updated);
+
     addAuditLog(
       "CHALLENGE_PUBLISHED", 
       `Published challenge "${updated.title}" under statutory sandbox guidelines (Subject to GFR rules and competent authority approval).`, 
@@ -340,7 +396,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Step 2: Register Startup & Update Profile
-  const registerStartupAction = (data: {
+  const registerStartupAction = async (data: {
     name: string;
     dpiitNumber: string;
     founderName: string;
@@ -348,8 +404,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     sector: string;
     city: string;
   }) => {
-    const newStartup: Startup = {
-      id: `ST-${Date.now().toString().slice(-4)}`,
+    const newStartupId = `ST-${Date.now().toString().slice(-4)}`;
+    const baseStartup: Startup = {
+      id: newStartupId,
       name: data.name,
       tagline: `${data.sector} Innovation & Deployment Hub`,
       dpiitNumber: data.dpiitNumber,
@@ -369,34 +426,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       patents: 1,
       trlLevel: 7,
       localContentPercentage: 65,
-      matchScore: 88,
-      matchReasons: [
-        `DPIIT Recognized (${data.dpiitNumber})`,
-        `Direct match for public sector requirements in ${data.sector}`,
-        `TRL-7 meets technical threshold`
-      ],
-      matchBreakdown: {
-        sectorMatch: true,
-        techMatch: true,
-        eligibilityMatch: true,
-        trlMatch: true,
-        score: 88,
-        details: [
-          `Sector alignment: ${data.sector}`,
-          "TRL-7 operational demonstration verified",
-          "65% domestic value addition (Class 1 Local Supplier)"
-        ]
-      },
+      matchScore: 85,
+      matchReasons: [],
       riskAnalysis: {
         level: "Low",
-        factors: ["Validated DPIIT certificate", "Zero adverse regulatory flags"]
-      }
+        factors: []
+      },
+      tamperStatus: "VERIFIED",
+      verificationStage: "Document Uploaded"
     };
 
-    setStartups(prev => [newStartup, ...prev]);
+    // Calculate dynamic match
+    const match = calculateStartupMatch(baseStartup, challenge);
+    baseStartup.matchScore = match.matchScore;
+    baseStartup.matchReasons = match.matchReasons;
+    baseStartup.matchBreakdown = match.matchBreakdown;
+    baseStartup.riskAnalysis = match.riskAnalysis;
+
+    // Calculate canonical SHA-256 hash
+    const hash = await computeStartupHash(baseStartup);
+    baseStartup.canonicalHash = hash;
+    baseStartup.currentHash = hash;
+
+    setStartups(prev => [baseStartup, ...prev]);
 
     const newUser: AuthUser = {
-      id: newStartup.id,
+      id: baseStartup.id,
       name: data.founderName,
       email: data.email,
       role: "startup",
@@ -410,7 +465,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     addAuditLog(
       "STARTUP_REGISTERED",
-      `New Startup Registered: "${data.name}" (DPIIT: ${data.dpiitNumber}, Founder: ${data.founderName}).`,
+      `New Startup Registered: "${data.name}" (DPIIT: ${data.dpiitNumber}, SHA-256 Genesis: ${hash.slice(0, 16)}...).`,
       "Security",
       "startup"
     );
@@ -418,8 +473,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setNotifications(prev => [
       {
         id: `NOTIF-${Date.now()}`,
-        title: "Startup Registered",
-        message: `Welcome ${data.name}! Your profile is ready to apply to open public challenges.`,
+        title: "Startup Registered & Hashed",
+        message: `Welcome ${data.name}! Your profile SHA-256 integrity hash is recorded in vigilance ledger.`,
         time: "Just now",
         read: false,
         type: "success"
@@ -430,10 +485,323 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActiveView("startup_dashboard");
   };
 
-  const updateStartupProfileAction = (startupId: string, data: Partial<Startup>) => {
-    if (!checkRoleAccess(["startup"], "update startup profile")) return;
-    setStartups(prev => prev.map(s => s.id === startupId ? { ...s, ...data } : s));
-    addAuditLog("STARTUP_PROFILE_UPDATED", `Startup profile updated: ${data.name || startupId}.`, "Security", "startup");
+  // SHA-256 Integrity Verification: Detects if startup records were altered
+  const verifyStartupIntegrityAction = async (startupId: string): Promise<boolean> => {
+    const startup = startups.find(s => s.id === startupId);
+    if (!startup) return false;
+
+    const result = await verifyStartupRecordIntegrity(startup, startup.canonicalHash);
+    
+    setStartups(prev => prev.map(s => {
+      if (s.id === startupId) {
+        return {
+          ...s,
+          currentHash: result.computedHash,
+          tamperStatus: result.isValid ? "VERIFIED" : "FLAGGED_FOR_REVIEW",
+          tamperAuditNote: result.isValid 
+            ? `Cryptographically Verified: Current hash matches genesis signature (${result.computedHash.slice(0, 16)}...).`
+            : `SECURITY ALERT: Divergence detected! Current SHA-256 (${result.computedHash.slice(0, 12)}...) differs from recorded genesis hash (${result.expectedHash.slice(0, 12)}...). Core metrics modified outside official audit.`
+        };
+      }
+      return s;
+    }));
+
+    // Update associated application tamper status
+    setApplications(prev => prev.map(a => {
+      if (a.startupId === startupId) {
+        return {
+          ...a,
+          tamperStatus: result.isValid ? "VERIFIED" : "FLAGGED_FOR_REVIEW"
+        };
+      }
+      return a;
+    }));
+
+    if (result.isValid) {
+      addAuditLog(
+        "SHA256_INTEGRITY_VERIFIED",
+        `Startup ${startup.name} passed SHA-256 integrity verification. Hash: ${result.computedHash.slice(0, 20)}...`,
+        "Security",
+        role
+      );
+    } else {
+      addAuditLog(
+        "TAMPER_ALERT_FLAGGED",
+        `VIGILANCE ALERT: Startup ${startup.name} flagged for review! SHA-256 hash divergence detected between registered and current state.`,
+        "Security",
+        role
+      );
+    }
+
+    return result.isValid;
+  };
+
+  const flagStartupForReviewAction = (startupId: string, reason: string) => {
+    setStartups(prev => prev.map(s => {
+      if (s.id === startupId) {
+        return {
+          ...s,
+          tamperStatus: "FLAGGED_FOR_REVIEW",
+          tamperAuditNote: reason
+        };
+      }
+      return s;
+    }));
+    setApplications(prev => prev.map(a => a.startupId === startupId ? { ...a, tamperStatus: "FLAGGED_FOR_REVIEW" } : a));
+    addAuditLog(
+      "MANUALLY_FLAGGED_FOR_REVIEW",
+      `Startup ${startupId} flagged for review by vigilance authority. Reason: "${reason}".`,
+      "Security",
+      role
+    );
+  };
+
+  const clearTamperFlagAction = async (startupId: string) => {
+    const startup = startups.find(s => s.id === startupId);
+    if (!startup) return;
+
+    const newCanonicalHash = await computeStartupHash(startup);
+    setStartups(prev => prev.map(s => {
+      if (s.id === startupId) {
+        return {
+          ...s,
+          canonicalHash: newCanonicalHash,
+          currentHash: newCanonicalHash,
+          tamperStatus: "VERIFIED",
+          tamperAuditNote: `Vigilance review completed and signed off. Re-anchored to new canonical SHA-256 hash (${newCanonicalHash.slice(0, 16)}...).`
+        };
+      }
+      return s;
+    }));
+    setApplications(prev => prev.map(a => a.startupId === startupId ? { ...a, tamperStatus: "VERIFIED" } : a));
+
+    addAuditLog(
+      "TAMPER_FLAG_CLEARED",
+      `Vigilance inspection completed for ${startup.name}. Alterations validated and re-anchored with fresh SHA-256 signature.`,
+      "Security",
+      role
+    );
+  };
+
+  const updateStartupProfileAction = async (startupId: string, data: Partial<Startup>) => {
+    if (!checkRoleAccess(["startup", "government"], "update startup profile")) return;
+
+    let updatedStartup: Startup | undefined;
+    setStartups(prev => prev.map(s => {
+      if (s.id === startupId) {
+        updatedStartup = { ...s, ...data };
+        return updatedStartup;
+      }
+      return s;
+    }));
+
+    if (updatedStartup) {
+      // Re-evaluate matching dynamically
+      const match = calculateStartupMatch(updatedStartup, challenge);
+      const newHash = await computeStartupHash(updatedStartup);
+
+      setStartups(prev => prev.map(s => {
+        if (s.id === startupId) {
+          const isDiverged = s.canonicalHash && s.canonicalHash !== newHash;
+          return {
+            ...s,
+            currentHash: newHash,
+            matchScore: match.matchScore,
+            matchReasons: match.matchReasons,
+            matchBreakdown: match.matchBreakdown,
+            riskAnalysis: match.riskAnalysis,
+            tamperStatus: isDiverged ? "FLAGGED_FOR_REVIEW" : (s.tamperStatus || "VERIFIED"),
+            tamperAuditNote: isDiverged 
+              ? `Metrics updated outside formal verification. SHA-256 hash changed from ${s.canonicalHash?.slice(0, 8)}... to ${newHash.slice(0, 8)}... Flagged for vigilance re-audit.`
+              : s.tamperAuditNote
+          };
+        }
+        return s;
+      }));
+
+      addAuditLog("STARTUP_PROFILE_UPDATED", `Startup profile updated: ${data.name || startupId}. New hash: ${newHash.slice(0, 16)}...`, "Security", role);
+    }
+  };
+
+  // Real PDF Upload and Parsing Pipeline
+  const uploadAndParseDpiitAction = async (startupId: string, file: File): Promise<boolean> => {
+    try {
+      const startup = startups.find(s => s.id === startupId);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("targetEntityName", startup?.name || "");
+
+      const res = await fetch("/api/documents/parse", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!res.ok) {
+        throw new Error("Document parsing API failed");
+      }
+
+      const json = await res.json();
+      const docRecord: DocumentVerificationRecord = json.documentRecord;
+
+      setStartups(prev => prev.map(s => {
+        if (s.id === startupId) {
+          const isMismatch = docRecord.entityMismatchFlag;
+          return {
+            ...s,
+            dpiitNumber: docRecord.extractedDpiitNumber || s.dpiitNumber,
+            isDpiitVerified: docRecord.preliminaryStatus === "Passed",
+            documentRecord: docRecord,
+            verificationStage: isMismatch 
+              ? "Preliminary Check Failed - Mismatch Flagged" 
+              : "Preliminary Checks Passed",
+            tamperStatus: isMismatch ? "FLAGGED_FOR_REVIEW" : s.tamperStatus,
+            tamperAuditNote: isMismatch 
+              ? `DPIIT Mismatch: Document entity '${docRecord.extractedEntityName}' differs from profile '${s.name}'.` 
+              : s.tamperAuditNote
+          };
+        }
+        return s;
+      }));
+
+      // Update application if exists
+      setApplications(prev => prev.map(a => {
+        if (a.startupId === startupId) {
+          return {
+            ...a,
+            documentRecord: docRecord,
+            dpiitVerified: docRecord.preliminaryStatus === "Passed"
+          };
+        }
+        return a;
+      }));
+
+      addAuditLog(
+        "DPIIT_DOCUMENT_PARSED",
+        `Parsed DPIIT Certificate PDF for ${startup?.name || startupId}. Extracted: ${docRecord.extractedDpiitNumber}, Entity: ${docRecord.extractedEntityName}. Checksum: ${docRecord.fileHash.slice(0, 16)}...`,
+        "Security",
+        role
+      );
+
+      return true;
+    } catch (err: any) {
+      console.error("uploadAndParseDpiitAction failed:", err);
+      alert("Error parsing document: " + (err.message || "Failed to process PDF"));
+      return false;
+    }
+  };
+
+  // DigiLocker Sandbox Pull Action
+  const pullDigiLockerAction = async (startupId: string, dpiitNumber: string): Promise<boolean> => {
+    try {
+      const startup = startups.find(s => s.id === startupId);
+      const res = await fetch("/api/digilocker/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          dpiitNumber,
+          startupName: startup?.name || "",
+          consent: true
+        })
+      });
+
+      if (!res.ok) throw new Error("DigiLocker Gateway pull error");
+
+      const json = await res.json();
+      const docRecord: DocumentVerificationRecord = json.documentRecord;
+
+      setStartups(prev => prev.map(s => {
+        if (s.id === startupId) {
+          return {
+            ...s,
+            dpiitNumber: docRecord.extractedDpiitNumber || s.dpiitNumber,
+            isDpiitVerified: true,
+            documentRecord: docRecord,
+            verificationStage: "Officially Verified",
+            tamperStatus: "VERIFIED"
+          };
+        }
+        return s;
+      }));
+
+      setApplications(prev => prev.map(a => {
+        if (a.startupId === startupId) {
+          return {
+            ...a,
+            documentRecord: docRecord,
+            dpiitVerified: true,
+            status: "Eligibility Verified"
+          };
+        }
+        return a;
+      }));
+
+      addAuditLog(
+        "DIGILOCKER_CERTIFICATE_PULLED",
+        `Pulled cryptographically signed DPIIT Certificate from DigiLocker Gateway for ${docRecord.extractedDpiitNumber}. Issuer: in.gov.dpiit. Checksum: ${docRecord.fileHash.slice(0, 16)}...`,
+        "Security",
+        role
+      );
+
+      return true;
+    } catch (err: any) {
+      alert("DigiLocker pull failed: " + err.message);
+      return false;
+    }
+  };
+
+  // Official Human Government Officer Review Action
+  const officialReviewDpiitAction = (startupId: string, approved: boolean, notes?: string) => {
+    if (!checkRoleAccess(["government"], "perform official document verification")) return;
+
+    const reviewerName = currentUser ? `${currentUser.name} (${currentUser.role})` : "Government Verification Officer";
+    const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
+
+    setStartups(prev => prev.map(s => {
+      if (s.id === startupId) {
+        const updatedDoc: DocumentVerificationRecord | undefined = s.documentRecord ? {
+          ...s.documentRecord,
+          officialStatus: approved ? "Officially Verified" : "Rejected",
+          verifiedBy: reviewerName,
+          verifiedAt: timestamp,
+          rejectionReason: approved ? undefined : (notes || "Verification criteria not satisfied")
+        } : undefined;
+
+        return {
+          ...s,
+          isDpiitVerified: approved,
+          documentRecord: updatedDoc,
+          verificationStage: approved ? "Officially Verified" : "Verification Failed"
+        };
+      }
+      return s;
+    }));
+
+    setApplications(prev => prev.map(a => {
+      if (a.startupId === startupId) {
+        return {
+          ...a,
+          dpiitVerified: approved,
+          status: approved ? "Eligibility Verified" : "Rejected"
+        };
+      }
+      return a;
+    }));
+
+    if (approved) {
+      addAuditLog(
+        "OFFICIAL_DPIIT_VERIFIED",
+        `Official verification sign-off granted by ${reviewerName} for startup ${startupId}. GFR startup relaxations sanctioned.`,
+        "Security",
+        "government"
+      );
+    } else {
+      addAuditLog(
+        "OFFICIAL_DPIIT_REJECTED",
+        `DPIIT verification rejected by ${reviewerName} for startup ${startupId}. Reason: "${notes || "Incomplete documentation"}".`,
+        "Security",
+        "government"
+      );
+    }
   };
 
   const registerGovOfficerAction = (data: {
@@ -490,7 +858,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       trlLevel: startup.trlLevel || 7,
       localContentPercentage: startup.localContentPercentage || 65,
       patentsCount: startup.patents || 1,
-      evidenceLinks: proposalData?.evidenceLinks || ["https://example.com/docs/technical-spec.pdf"]
+      evidenceLinks: proposalData?.evidenceLinks || ["https://example.com/docs/technical-spec.pdf"],
+      documentRecord: startup.documentRecord,
+      tamperStatus: startup.tamperStatus || "VERIFIED"
     };
 
     setApplications(prev => {
@@ -839,7 +1209,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const resetDemoAction = () => {
     try {
       localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {
+    } catch {
       // Ignore
     }
     setChallenge(initialChallenge);
@@ -848,6 +1218,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setPilot(samplePilot);
     setAuditLogs(sampleAuditLogs);
     setNotifications(sampleNotifications);
+    setSelectedAppIdForScore(sampleApplications[0]?.id || "APP-WQ-091");
     setRoleState("government");
     setCurrentUser({
       id: "GOV-DEMO-01",
@@ -895,13 +1266,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       loginUser,
       logoutUser,
       createChallengeAction,
+      recalculateMatchesAction,
       registerStartupAction,
       registerGovOfficerAction,
       updateStartupProfileAction,
       applyToChallengeAction,
       verifyEligibilityAction,
       shortlistApplicationAction,
+      uploadAndParseDpiitAction,
+      pullDigiLockerAction,
+      officialReviewDpiitAction,
+      verifyStartupIntegrityAction,
+      flagStartupForReviewAction,
+      clearTamperFlagAction,
       evaluateApplicationAction,
+      selectedAppIdForScore,
+      setSelectedAppIdForScore,
       createPilotAction,
       submitMilestoneEvidenceAction,
       reviewMilestoneAction,

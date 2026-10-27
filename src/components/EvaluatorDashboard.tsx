@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 export const EvaluatorDashboard: React.FC = () => {
-  const { applications, setActiveView } = useApp();
+  const { applications, setActiveView, setSelectedAppIdForScore } = useApp();
 
   const evaluatedCount = applications.filter(a => !!a.evaluatorScore).length;
   const pendingCount = applications.length - evaluatedCount;
@@ -85,7 +85,10 @@ export const EvaluatorDashboard: React.FC = () => {
                     {app.evaluatorScore.total} <span className="text-xs text-[#5B6A78]">/ 100</span>
                   </div>
                   <button
-                    onClick={() => setActiveView("evaluation_scorecard")}
+                    onClick={() => {
+                      setSelectedAppIdForScore(app.id);
+                      setActiveView("evaluation_scorecard");
+                    }}
                     className="text-xs font-semibold text-[#0F3854] hover:underline mt-1 block"
                   >
                     Edit 5-Pillar Scorecard →
@@ -93,7 +96,10 @@ export const EvaluatorDashboard: React.FC = () => {
                 </div>
               ) : (
                 <button
-                  onClick={() => setActiveView("evaluation_scorecard")}
+                  onClick={() => {
+                    setSelectedAppIdForScore(app.id);
+                    setActiveView("evaluation_scorecard");
+                  }}
                   className="px-5 py-2.5 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-bold text-xs flex items-center gap-2 transition-colors shadow-2xs"
                 >
                   <Award className="h-4 w-4 text-emerald-400" />

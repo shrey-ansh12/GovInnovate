@@ -1,4 +1,4 @@
-export type SupportedLanguage = "en" | "hi" | "ta" | "te" | "bn" | "mr" | "gu";
+﻿export type SupportedLanguage = "en" | "hi" | "ta" | "te" | "bn" | "mr" | "gu";
 
 export interface LanguageOption {
   code: SupportedLanguage;

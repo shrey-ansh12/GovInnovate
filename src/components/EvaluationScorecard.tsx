@@ -18,34 +18,53 @@ export const EvaluationScorecard: React.FC = () => {
     evaluateApplicationAction, 
     setActiveView,
     role,
-    setRole
+    setRole,
+    currentUser,
+    selectedAppIdForScore,
+    setSelectedAppIdForScore
   } = useApp();
 
-  const app = applications.find(a => a.status === "Shortlisted") || applications[0];
+  const app = applications.find(a => a.id === selectedAppIdForScore) || applications[0];
 
   const [scores, setScores] = useState({
-    innovation: 19,
-    feasibility: 19,
-    impact: 20,
-    scalability: 19,
-    viability: 18,
+    innovation: app.evaluatorScore?.innovation ?? 18,
+    feasibility: app.evaluatorScore?.feasibility ?? 18,
+    impact: app.evaluatorScore?.impact ?? 19,
+    scalability: app.evaluatorScore?.scalability ?? 18,
+    viability: app.evaluatorScore?.viability ?? 18,
   });
 
   const [justifications, setJustifications] = useState({
-    innovation: "Reagent-free optical spectrophotometer with 3 granted patents removes costly consumables.",
-    feasibility: "Demonstrated TRL-8 field maturity in Karnataka urban water boards with standard flange mounts.",
-    impact: "Sub-3 minute edge telemetry directly prevents widespread civic distribution of contaminated water.",
-    scalability: "Standardized hardware architecture readily deploys across 50+ district intake hubs.",
-    viability: "78% domestic local content and reasonable ₹28.5L budget provide clear public value-for-money."
+    innovation: app.evaluatorScore?.justifications.innovation || "Innovative technological design aligns with departmental operational requirements.",
+    feasibility: app.evaluatorScore?.justifications.feasibility || "Demonstrated TRL maturity and robust implementation plan across designated field sites.",
+    impact: app.evaluatorScore?.justifications.impact || "High direct civic benefit and rapid anomaly prevention for target public beneficiaries.",
+    scalability: app.evaluatorScore?.justifications.scalability || "Modular architecture readily scales to district and municipal wide infrastructure.",
+    viability: app.evaluatorScore?.justifications.viability || "High local content percentage and value-for-money cost allocation conform to GFR standards."
   });
 
   const [evidenceReferences, setEvidenceReferences] = useState(
-    "CPCB Lab Test Report #CPCB-2025-0819 & IIT Madras Optical Calibration Certificate #IITM-2024-C92"
+    app.evaluatorScore?.evidenceReferences || "Technical Dossier, Lab Benchmarking Certificate, and DPIIT Registration Enclosure"
   );
 
   const [feedback, setFeedback] = useState(
-    "AquaSense AI demonstrates verified TRL-8 readiness, robust zero-reagent optics, and outstanding edge response latency. Strongly recommended for the 5-location sandbox pilot."
+    app.evaluatorScore?.feedback || `Proposal submitted by ${app.startupName} demonstrates sound technical readiness and viable pilot methodology.`
   );
+
+  // Sync state when selected application changes
+  React.useEffect(() => {
+    if (app.evaluatorScore) {
+      setScores({
+        innovation: app.evaluatorScore.innovation,
+        feasibility: app.evaluatorScore.feasibility,
+        impact: app.evaluatorScore.impact,
+        scalability: app.evaluatorScore.scalability,
+        viability: app.evaluatorScore.viability
+      });
+      setJustifications(app.evaluatorScore.justifications);
+      setEvidenceReferences(app.evaluatorScore.evidenceReferences || "");
+      setFeedback(app.evaluatorScore.feedback);
+    }
+  }, [app.id]);
 
   const totalScore = scores.innovation + scores.feasibility + scores.impact + scores.scalability + scores.viability;
 
@@ -64,7 +83,7 @@ export const EvaluationScorecard: React.FC = () => {
       justifications,
       evidenceReferences,
       feedback,
-      evaluatorName: "Prof. Vinod Nair (Chairman, Technical Evaluation Board)",
+      evaluatorName: currentUser?.name || "Prof. Vinod Nair (Chairman, Technical Evaluation Board)",
       evaluatedAt: new Date().toISOString().replace("T", " ").slice(0, 19)
     };
 
@@ -74,17 +93,35 @@ export const EvaluationScorecard: React.FC = () => {
   return (
     <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-10 font-sans">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#0F3854] uppercase tracking-wider mb-2">
-          <Award className="h-4 w-4" />
-          Technical Evaluation Board • 5-Pillar Structured Scoring Matrix
+      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#0F3854] uppercase tracking-wider mb-2">
+            <Award className="h-4 w-4" />
+            Technical Evaluation Board • 5-Pillar Structured Scoring Matrix
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">
+            Application Scorecard: {app.startupName}
+          </h1>
+          <p className="text-sm text-[#5B6A78] mt-1 max-w-3xl leading-relaxed">
+            Score bidder across the five statutory pillars (0-20 points each, 100 points total). Each score requires an evidence-backed written justification.
+          </p>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">
-          Application Scorecard: {app.startupName}
-        </h1>
-        <p className="text-sm text-[#5B6A78] mt-1 max-w-3xl leading-relaxed">
-          Score bidder across the five statutory pillars (0-20 points each, 100 points total). Each score requires an evidence-backed written justification.
-        </p>
+
+        {/* Application Selector */}
+        <div className="bg-white p-3 rounded border border-[#E2DED6] font-mono text-xs shrink-0 shadow-2xs">
+          <label className="block text-[#5B6A78] uppercase text-[10px] font-bold mb-1">Select Candidate Proposal:</label>
+          <select
+            value={app.id}
+            onChange={(e) => setSelectedAppIdForScore(e.target.value)}
+            className="p-2 rounded border border-[#E2DED6] bg-[#FAF8F5] text-[#0A2540] font-bold text-xs"
+          >
+            {applications.map(a => (
+              <option key={a.id} value={a.id}>
+                {a.id} - {a.startupName} ({a.evaluatorScore ? `${a.evaluatorScore.total}/100` : "Pending"})
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Role Notice */}

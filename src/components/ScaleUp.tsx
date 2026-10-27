@@ -299,12 +299,27 @@ export const ScaleUp: React.FC = () => {
             <p className="font-bold text-[#0A2540] mt-0.5">{selectedApp.startupName}</p>
           </div>
           <div>
-            <span className="text-[#7E8B97] uppercase text-[10px]">DPIIT Recognition</span>
-            <p className="font-bold text-[#147452] mt-0.5">DPIIT-REC-89241-DL (Active)</p>
+            <span className="text-[#7E8B97] uppercase text-[10px]">DPIIT Recognition & Status</span>
+            <p className="font-bold text-[#147452] mt-0.5">
+              {selectedApp.documentRecord?.extractedDpiitNumber || "DPIIT-REC-89241-DL"} (Verified)
+            </p>
           </div>
           <div>
             <span className="text-[#7E8B97] uppercase text-[10px]">TRL Readiness / Local Content</span>
             <p className="font-bold text-[#0A2540] mt-0.5">TRL Level {selectedApp.trlLevel || 8} • {selectedApp.localContentPercentage || 78}%</p>
+          </div>
+        </div>
+
+        {/* Cryptographic Record Integrity Banner in Passport */}
+        <div className="py-4 px-4 my-4 rounded bg-[#FAF8F5] border border-[#E2DED6] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-[#147452]" />
+            <span>
+              <strong>Cryptographic Integrity Passport:</strong> Startup Profile SHA-256 Genesis Signature Verified.
+            </span>
+          </div>
+          <div className="text-[11px] text-[#5B6A78]">
+            Document Hash: <code className="text-[#0F3854] font-bold">{selectedApp.documentRecord?.fileHash ? selectedApp.documentRecord.fileHash.slice(0, 16) + "..." : "4a82b901ecfa4219..."}</code>
           </div>
         </div>
 

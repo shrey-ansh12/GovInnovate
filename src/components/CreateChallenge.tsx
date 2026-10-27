@@ -52,27 +52,34 @@ export const CreateChallenge: React.FC = () => {
     ]
   });
 
-  const handleDecompose = () => {
+  const handleDecompose = async () => {
     setIsSynthesizing(true);
-    setTimeout(() => {
-      setIsSynthesizing(false);
-      setStructuredDecomposition({
-        structuredTitle: "Automated Water Quality Sensing & Predictive Contamination Alert System",
-        summary: "Automated real-time sensing of biochemical contamination, pH, turbidity, heavy metals, and bacterial outbreak alerts with edge telemetry.",
-        problemStatement: rawProblem,
-        expectedOutcomes: [
-          "Sub-5 minute latency for chemical surge detection",
-          "98.0%+ sensor uptime in submerged conditions without manual reagents",
-          "Under 2.0% false-positive rate on organic particulate fluctuations",
-          "Direct dispatch of telemetry data to Municipal SCADA System"
-        ],
-        technicalThresholds: [
-          "CPCB & BIS IS 10500:2012 Drinking Water standards compliant",
-          "Edge-computing capability to withstand cellular drops",
-          "Local Content ≥ 50% (Class 1 Local Supplier)"
-        ]
+    try {
+      const res = await fetch("/api/ai/decompose", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rawProblem,
+          department,
+          ministry
+        })
       });
-    }, 600);
+
+      if (res.ok) {
+        const data = await res.json();
+        setStructuredDecomposition({
+          structuredTitle: data.structuredTitle || "Automated Public Challenge Solution",
+          summary: data.summary || "",
+          problemStatement: data.problemStatement || rawProblem,
+          expectedOutcomes: data.expectedOutcomes || [],
+          technicalThresholds: data.technicalThresholds || []
+        });
+      }
+    } catch (err) {
+      console.warn("AI decomposition fetch failed:", err);
+    } finally {
+      setIsSynthesizing(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {

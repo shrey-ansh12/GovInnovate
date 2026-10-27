@@ -1,25 +1,40 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useApp } from "@/context/AppContext";
 import { 
   ShieldCheck, 
-  Cpu, 
-  FileText, 
   MapPin, 
   Calendar, 
   Award, 
   ArrowRight,
   Edit3,
   Check,
-  X,
-  Layers
+  Layers,
+  Upload,
+  Lock,
+  RefreshCw,
+  FileText,
+  AlertTriangle,
+  Building2,
+  CheckCircle2,
+  AlertOctagon,
+  Download
 } from "lucide-react";
 
 export const StartupProfile: React.FC = () => {
-  const { startups, setActiveView, setRole, applyToChallengeAction, updateStartupProfileAction, role } = useApp();
-  const [selectedStartupId, setSelectedStartupId] = useState<string>(startups[0]?.id || "ST-AQUASENSE");
+  const { 
+    startups, 
+    setActiveView, 
+    setRole, 
+    applyToChallengeAction, 
+    updateStartupProfileAction, 
+    uploadAndParseDpiitAction,
+    pullDigiLockerAction,
+    verifyStartupIntegrityAction
+  } = useApp();
 
+  const [selectedStartupId, setSelectedStartupId] = useState<string>(startups[0]?.id || "ST-AQUASENSE");
   const startup = startups.find(s => s.id === selectedStartupId) || startups[0];
 
   const [editMode, setEditMode] = useState(false);
@@ -29,8 +44,16 @@ export const StartupProfile: React.FC = () => {
   const [editPatents, setEditPatents] = useState(startup.patents || 3);
   const [editLocation, setEditLocation] = useState(startup.location);
 
-  const handleSaveProfile = () => {
-    updateStartupProfileAction(startup.id, {
+  const [isUploading, setIsUploading] = useState(false);
+  const [isPullingDigiLocker, setIsPullingDigiLocker] = useState(false);
+  const [digiLockerModalOpen, setDigiLockerModalOpen] = useState(false);
+  const [digiLockerDpiitInput, setDigiLockerDpiitInput] = useState(startup.dpiitNumber);
+  const [digiLockerConsent, setDigiLockerConsent] = useState(true);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSaveProfile = async () => {
+    await updateStartupProfileAction(startup.id, {
       tagline: editTagline,
       trlLevel: editTrl,
       localContentPercentage: editLocalContent,
@@ -40,8 +63,112 @@ export const StartupProfile: React.FC = () => {
     setEditMode(false);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+      alert("Please upload a valid PDF document.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size exceeds 5MB limit.");
+      return;
+    }
+
+    setIsUploading(true);
+    await uploadAndParseDpiitAction(startup.id, file);
+    setIsUploading(false);
+  };
+
+  const handleDigiLockerSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!digiLockerConsent) {
+      alert("Consent is required under DPDP Act to query DigiLocker repository.");
+      return;
+    }
+    setIsPullingDigiLocker(true);
+    await pullDigiLockerAction(startup.id, digiLockerDpiitInput);
+    setIsPullingDigiLocker(false);
+    setDigiLockerModalOpen(false);
+  };
+
+  const handleVerifyNow = async () => {
+    await verifyStartupIntegrityAction(startup.id);
+  };
+
+  const isFlagged = startup.tamperStatus === "FLAGGED_FOR_REVIEW";
+
   return (
     <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-10 font-sans">
+      {/* Startup Selector Strip */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded border border-[#E2DED6] shadow-2xs font-mono text-xs">
+        <div className="flex items-center gap-2">
+          <Building2 className="h-4 w-4 text-[#0F3854]" />
+          <span className="text-[#5B6A78]">Select Startup Profile to Inspect:</span>
+          <select
+            value={startup.id}
+            onChange={(e) => {
+              setSelectedStartupId(e.target.value);
+              const found = startups.find(s => s.id === e.target.value);
+              if (found) {
+                setEditTagline(found.tagline);
+                setEditTrl(found.trlLevel);
+                setEditLocalContent(found.localContentPercentage);
+                setEditPatents(found.patents);
+                setEditLocation(found.location);
+                setDigiLockerDpiitInput(found.dpiitNumber);
+              }
+            }}
+            className="p-1.5 rounded border border-[#E2DED6] bg-[#FAF8F5] font-semibold text-[#0A2540]"
+          >
+            {startups.map(s => (
+              <option key={s.id} value={s.id}>
+                {s.name} {s.tamperStatus === "FLAGGED_FOR_REVIEW" ? "⚠️ [FLAGGED]" : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Cryptographic SHA-256 Quick Status */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <Lock className={`h-3.5 w-3.5 ${isFlagged ? "text-red-600" : "text-[#147452]"}`} />
+            <span className={isFlagged ? "text-red-700 font-bold" : "text-[#5B6A78]"}>
+              SHA-256: {startup.canonicalHash ? startup.canonicalHash.slice(0, 12) + "..." : "Calculating..."}
+            </span>
+          </div>
+          <button
+            onClick={handleVerifyNow}
+            className="px-2.5 py-1 rounded bg-[#F2EFEB] hover:bg-[#EDE9E1] text-[#0F3854] font-semibold flex items-center gap-1"
+          >
+            <RefreshCw className="h-3 w-3" />
+            <span>Verify Integrity</span>
+          </button>
+        </div>
+      </div>
+
+      {/* VIGILANCE ALERT BANNER (If Flagged for Review) */}
+      {isFlagged && (
+        <div className="mb-6 p-4 rounded bg-red-100 border border-red-300 text-xs text-red-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono">
+          <div className="flex items-start gap-2.5">
+            <AlertOctagon className="h-5 w-5 shrink-0 text-red-700 mt-0.5" />
+            <div>
+              <strong className="text-red-950 font-bold text-sm">
+                SECURITY ALERT: RECORD FLAGGED FOR VIGILANCE REVIEW
+              </strong>
+              <p className="mt-0.5 text-red-800">
+                {startup.tamperAuditNote || "Unauthorized modification of key procurement metrics detected! Current state diverges from recorded genesis cryptographic hash."}
+              </p>
+            </div>
+          </div>
+          <span className="px-3 py-1 bg-red-800 text-white rounded font-bold uppercase shrink-0">
+            Audit Required
+          </span>
+        </div>
+      )}
+
       {/* Profile Header */}
       <div className="bg-white rounded border border-[#E2DED6] p-6 mb-8 shadow-2xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-[#EDE9E1]">
@@ -52,12 +179,19 @@ export const StartupProfile: React.FC = () => {
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-bold text-[#0A2540]">{startup.name}</h1>
-                {startup.isDpiitVerified && (
+                {startup.isDpiitVerified ? (
                   <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
                     <ShieldCheck className="h-3.5 w-3.5" />
-                    DPIIT Verified
+                    DPIIT Verified: {startup.dpiitNumber}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
+                    DPIIT Verification Pending
                   </span>
                 )}
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#E2DED6] text-[#5B6A78]">
+                  Status: {startup.verificationStage || "Document Uploaded"}
+                </span>
               </div>
               <p className="text-xs text-[#5B6A78] mt-1">{startup.tagline}</p>
               <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-[#5B6A78] mt-3">
@@ -156,7 +290,6 @@ export const StartupProfile: React.FC = () => {
               <input
                 type="number"
                 min="0"
-                max="50"
                 value={editPatents}
                 onChange={(e) => setEditPatents(Number(e.target.value))}
                 className="w-full p-2 bg-white border border-[#E2DED6] rounded text-xs"
@@ -165,33 +298,117 @@ export const StartupProfile: React.FC = () => {
           </div>
         )}
 
-        {/* Founders & Statutory Relaxations */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 pt-6 text-xs font-mono">
-          <div className="bg-[#FAF8F5] p-3.5 rounded border border-[#E2DED6]">
-            <p className="text-[#5B6A78] uppercase text-[10px]">DPIIT Registration</p>
-            <p className="font-bold text-[#0A2540] mt-0.5">{startup.dpiitNumber}</p>
-            <p className="text-[11px] text-[#147452] mt-1 font-semibold">✓ Active National Recognition</p>
+        {/* DPIIT CERTIFICATE UPLOAD & VERIFICATION ZONE */}
+        <div className="pt-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 gap-3 border-b border-[#EDE9E1]">
+            <div>
+              <h3 className="text-sm font-bold text-[#0A2540] flex items-center gap-2">
+                <FileText className="h-4 w-4 text-[#0F3854]" />
+                DPIIT Recognition Certificate & Statutory Document Verification
+              </h3>
+              <p className="text-xs text-[#5B6A78] mt-0.5">
+                Upload your official DPIIT Recognition Certificate (PDF) for automated OCR field parsing, SHA-256 fingerprinting, and GFR startup exemption verification.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setDigiLockerModalOpen(true)}
+                className="px-3.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#F2EFEB] text-[#0F3854] font-semibold text-xs border border-[#E2DED6] flex items-center gap-1.5 transition-colors font-mono"
+              >
+                <Building2 className="h-3.5 w-3.5 text-[#0F3854]" />
+                <span>Pull via DigiLocker Sandbox</span>
+              </button>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="px-3.5 py-1.5 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs font-mono"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                <span>{isUploading ? "Parsing PDF..." : "Upload Certificate (PDF)"}</span>
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </div>
           </div>
-          <div className="bg-[#FAF8F5] p-3.5 rounded border border-[#E2DED6]">
-            <p className="text-[#5B6A78] uppercase text-[10px]">Founding Team</p>
-            <p className="font-bold text-[#0A2540] mt-0.5">{startup.founders.join(", ")}</p>
-            <p className="text-[11px] text-[#5B6A78] mt-1">Deep-Tech Hardware Research</p>
-          </div>
-          <div className="bg-[#FAF8F5] p-3.5 rounded border border-[#E2DED6]">
-            <p className="text-[#5B6A78] uppercase text-[10px]">Statutory Status</p>
-            <p className="font-bold text-[#0F3854] mt-0.5">DPIIT Sandbox Rails</p>
-            <p className="text-[11px] text-[#5B6A78] mt-1">Subject to tender criteria</p>
-          </div>
+
+          {/* Uploaded Certificate Details Card */}
+          {startup.documentRecord ? (
+            <div className="mt-4 p-4 rounded bg-[#FAF8F5] border border-[#E2DED6] text-xs font-mono space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#EDE9E1]">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#147452]" />
+                  <span className="font-bold text-[#0A2540]">{startup.documentRecord.fileName}</span>
+                  <span className="text-[10px] text-[#7E8B97]">({Math.round(startup.documentRecord.fileSizeBytes / 1024)} KB)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                    startup.documentRecord.preliminaryStatus === "Passed"
+                      ? "bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]"
+                      : "bg-red-50 text-red-700 border border-red-200"
+                  }`}>
+                    Preliminary: {startup.documentRecord.preliminaryStatus}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                    startup.documentRecord.officialStatus === "Officially Verified"
+                      ? "bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]"
+                      : "bg-amber-50 text-amber-700 border border-amber-200"
+                  }`}>
+                    Official: {startup.documentRecord.officialStatus}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
+                <div>
+                  <span className="text-[#7E8B97] block">Extracted DPIIT No:</span>
+                  <strong className="text-[#0A2540]">{startup.documentRecord.extractedDpiitNumber || "N/A"}</strong>
+                </div>
+                <div>
+                  <span className="text-[#7E8B97] block">Extracted Entity:</span>
+                  <strong className="text-[#0A2540]">{startup.documentRecord.extractedEntityName || "N/A"}</strong>
+                </div>
+                <div>
+                  <span className="text-[#7E8B97] block">Name Match Score:</span>
+                  <strong className={startup.documentRecord.entityMismatchFlag ? "text-red-700 font-bold" : "text-[#147452]"}>
+                    {startup.documentRecord.nameSimilarityScore}% {startup.documentRecord.entityMismatchFlag ? "(MISMATCH)" : ""}
+                  </strong>
+                </div>
+                <div>
+                  <span className="text-[#7E8B97] block">SHA-256 Checksum:</span>
+                  <span className="text-[#5B6A78] truncate block" title={startup.documentRecord.fileHash}>
+                    {startup.documentRecord.fileHash.slice(0, 16)}...
+                  </span>
+                </div>
+              </div>
+
+              {startup.documentRecord.rawTextPreview && (
+                <div className="p-2 bg-white rounded border border-[#E2DED6] text-[10px] text-[#5B6A78]">
+                  <span className="font-bold text-[#0A2540] block mb-0.5">Raw Text Extract Preview:</span>
+                  <p className="line-clamp-2">{startup.documentRecord.rawTextPreview}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="mt-4 p-6 rounded border-2 border-dashed border-[#E2DED6] bg-[#FAF8F5] text-center text-xs font-mono text-[#5B6A78]">
+              <Upload className="h-6 w-6 text-[#7E8B97] mx-auto mb-2" />
+              <p>No document attached yet. Upload a DPIIT Certificate PDF or pull from DigiLocker Gateway to establish statutory GFR eligibility.</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Products & Technology Dossier */}
+      {/* Main Grid: Products & Tech Rationale */}
       <div className="grid lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 space-y-6">
           <div className="bg-white rounded border border-[#E2DED6] p-6 shadow-2xs">
-            <h2 className="text-lg font-bold text-[#0A2540] mb-4 flex items-center gap-2">
-              <Cpu className="h-5 w-5 text-[#0F3854]" />
-              Verified Deep-Tech Hardware & Software Portfolio
+            <h2 className="text-base font-bold text-[#0A2540] mb-4">
+              Registered Products & Hardware Prototypes
             </h2>
 
             <div className="space-y-4">
@@ -231,7 +448,7 @@ export const StartupProfile: React.FC = () => {
               </h3>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed mb-4">
-              AquaSense’s optical spectrophotometer probe directly meets the Water Mission requirement for sub-5 minute contamination telemetry with zero reagent consumables.
+              {startup.matchReasons[0] || "Meets core departmental problem specifications."}
             </p>
             <div className="space-y-2 text-xs font-mono">
               <div className="flex justify-between py-1 border-b border-[#1D4E72]">
@@ -266,6 +483,76 @@ export const StartupProfile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* DIGILOCKER GATEWAY SANDBOX MODAL */}
+      {digiLockerModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#E2DED6] max-w-lg w-full p-6 text-xs font-mono">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDE9E1]">
+              <div className="flex items-center gap-2 text-[#0F3854] font-bold text-sm">
+                <Building2 className="h-5 w-5" />
+                <span>DigiLocker Pull Gateway • Sandbox Mode</span>
+              </div>
+              <button 
+                onClick={() => setDigiLockerModalOpen(false)}
+                className="text-[#7E8B97] hover:text-[#141F2B]"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleDigiLockerSubmit} className="py-4 space-y-4">
+              <div className="p-3 bg-[#FAF8F5] rounded border border-[#E2DED6] text-[11px] text-[#5B6A78]">
+                <strong>Architecture Notice:</strong> Simulating official Pull URI connection to DigiLocker Issuer repository (<code className="text-[#0F3854]">in.gov.dpiit.startuprecognition</code>).
+              </div>
+
+              <div>
+                <label className="block text-[#0A2540] font-bold mb-1">
+                  DPIIT Recognition Certificate Number:
+                </label>
+                <input
+                  type="text"
+                  value={digiLockerDpiitInput}
+                  onChange={(e) => setDigiLockerDpiitInput(e.target.value)}
+                  placeholder="e.g. DPIIT-REC-89241-DL"
+                  required
+                  className="w-full p-2.5 rounded border border-[#E2DED6] bg-white text-xs"
+                />
+              </div>
+
+              <div className="flex items-start gap-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="consentCheckbox"
+                  checked={digiLockerConsent}
+                  onChange={(e) => setDigiLockerConsent(e.target.checked)}
+                  className="mt-0.5 rounded accent-[#0F3854]"
+                />
+                <label htmlFor="consentCheckbox" className="text-[11px] text-[#5B6A78] leading-tight">
+                  I grant consent under the Digital Personal Data Protection (DPDP) Act for GovInnovate to retrieve and verify my organization&apos;s DPIIT certificate from DigiLocker.
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#EDE9E1]">
+                <button
+                  type="button"
+                  onClick={() => setDigiLockerModalOpen(false)}
+                  className="px-4 py-2 rounded bg-white border border-[#E2DED6] text-[#5B6A78]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPullingDigiLocker}
+                  className="px-4 py-2 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-bold flex items-center gap-1.5"
+                >
+                  {isPullingDigiLocker ? "Querying Gateway..." : "Pull & Cryptographically Verify"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

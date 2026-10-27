@@ -1,4 +1,4 @@
-import { Challenge, Startup, Application, Pilot, AuditLog, NotificationItem } from "@/types";
+﻿import { Challenge, Startup, Application, Pilot, AuditLog, NotificationItem } from "@/types";
 
 export const initialChallenge: Challenge = {
   id: "CH-2026-WQ01",
@@ -83,6 +83,29 @@ export const sampleStartups: Startup[] = [
         "Sensors require periodic bi-monthly ultrasonic self-cleaning validation",
         "Hardware supply chain secured across 2 domestic manufacturing partners"
       ]
+    },
+    canonicalHash: "8f48a1c97a2139048a1209cb8d9e27140a831278456102394781290374619a02",
+    currentHash: "8f48a1c97a2139048a1209cb8d9e27140a831278456102394781290374619a02",
+    tamperStatus: "VERIFIED",
+    verificationStage: "Officially Verified",
+    documentRecord: {
+      id: "DOC-DPIIT-89241",
+      fileName: "DPIIT_Recognition_AquaSense_89241.pdf",
+      fileSizeBytes: 1248010,
+      fileHash: "4a82b901ecfa4219904728abcdf01289456729aebdf109283748291038472910",
+      uploadedAt: "2026-10-02 11:30",
+      extractedEntityName: "AquaSense AI Innovations Pvt Ltd",
+      extractedDpiitNumber: "DPIIT-REC-89241-DL",
+      extractedDate: "12/04/2021",
+      extractedCategory: "Water Tech & IoT Sensing",
+      nameSimilarityScore: 100,
+      entityMismatchFlag: false,
+      preliminaryStatus: "Passed",
+      officialStatus: "Officially Verified",
+      verifiedBy: "Dr. Rajeshwar Sharma, IAS (Director, Water Mission)",
+      verifiedAt: "2026-10-02 14:15",
+      source: "Direct Upload",
+      rawTextPreview: "Ministry of Commerce and Industry - DPIIT Certificate of Recognition: AquaSense AI Innovations Pvt Ltd (DPIIT-REC-89241-DL)."
     }
   },
   {
@@ -128,6 +151,27 @@ export const sampleStartups: Startup[] = [
     riskAnalysis: {
       level: "Medium",
       factors: ["Lacks automated heavy metal detection; requires supplemental spectrometer modules"]
+    },
+    canonicalHash: "5b7a1249cd0145892310beef9481230489123048120394812309481230948123",
+    currentHash: "5b7a1249cd0145892310beef9481230489123048120394812309481230948123",
+    tamperStatus: "VERIFIED",
+    verificationStage: "Official Verification Pending",
+    documentRecord: {
+      id: "DOC-DPIIT-54129",
+      fileName: "PureFlow_DPIIT_Certificate.pdf",
+      fileSizeBytes: 981240,
+      fileHash: "9912038471203948120394812039481203948120394812039481203948120394",
+      uploadedAt: "2026-10-03 14:00",
+      extractedEntityName: "PureFlow IoT Dynamics",
+      extractedDpiitNumber: "DPIIT-REC-54129-MH",
+      extractedDate: "20/08/2022",
+      extractedCategory: "Surface Telemetry & IoT",
+      nameSimilarityScore: 100,
+      entityMismatchFlag: false,
+      preliminaryStatus: "Passed",
+      officialStatus: "Pending Review",
+      source: "Direct Upload",
+      rawTextPreview: "Startup India Certificate: PureFlow IoT Dynamics recognized under Startup India initiative."
     }
   },
   {
@@ -171,6 +215,27 @@ export const sampleStartups: Startup[] = [
     riskAnalysis: {
       level: "Medium",
       factors: ["Cannot monitor enclosed underground municipal pipelines in real time"]
+    },
+    canonicalHash: "33918a0b12c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0",
+    currentHash: "33918a0b12c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0",
+    tamperStatus: "VERIFIED",
+    verificationStage: "Preliminary Checks Passed",
+    documentRecord: {
+      id: "DOC-DPIIT-33918",
+      fileName: "Neuronet_DPIIT_Cert.pdf",
+      fileSizeBytes: 1102450,
+      fileHash: "3391847120394812039481203948120394812039481203948120394812039481",
+      uploadedAt: "2026-10-04 10:15",
+      extractedEntityName: "Neuronet Water Systems",
+      extractedDpiitNumber: "DPIIT-REC-33918-TS",
+      extractedDate: "15/01/2020",
+      extractedCategory: "Earth Observation & GIS",
+      nameSimilarityScore: 100,
+      entityMismatchFlag: false,
+      preliminaryStatus: "Passed",
+      officialStatus: "Pending Review",
+      source: "DigiLocker Sandbox",
+      rawTextPreview: "DigiLocker Verified: in.gov.dpiit-DPREC-33918-TS."
     }
   },
   {
@@ -215,6 +280,31 @@ export const sampleStartups: Startup[] = [
     riskAnalysis: {
       level: "High",
       factors: ["Consumables cost is high and DPIIT verification is pending re-submission"]
+    },
+    canonicalHash: "11204a0b12c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0",
+    currentHash: "99887766554433221100aabbccddeeff99887766554433221100aabbccddeeff", // Tampered divergence
+    tamperStatus: "FLAGGED_FOR_REVIEW",
+    tamperAuditNote: "Discrepancy: Entity name on uploaded certificate ('BioSolv Chemical Solvents Pvt Ltd') does not match registered profile name ('BioHydro NanoTech'). Flagged for vigilance inspection.",
+    verificationStage: "Preliminary Check Failed - Mismatch Flagged",
+    documentRecord: {
+      id: "DOC-BIO-11204",
+      fileName: "BioHydro_Renewal_Mismatch.pdf",
+      fileSizeBytes: 845120,
+      fileHash: "1120447120394812039481203948120394812039481203948120394812039481",
+      uploadedAt: "2026-10-05 09:20",
+      extractedEntityName: "BioSolv Chemical Solvents Pvt Ltd",
+      extractedDpiitNumber: "DPIIT-REC-11204-GJ",
+      extractedDate: "18/09/2023",
+      extractedCategory: "Industrial Solvents",
+      nameSimilarityScore: 32,
+      entityMismatchFlag: true,
+      preliminaryStatus: "Mismatch Detected",
+      officialStatus: "Rejected",
+      verifiedBy: "Vigilance Audit Desk",
+      verifiedAt: "2026-10-05 10:45",
+      rejectionReason: "Entity name on DPIIT certificate ('BioSolv Chemical Solvents Pvt Ltd') does not match applicant company ('BioHydro NanoTech').",
+      source: "Direct Upload",
+      rawTextPreview: "Certificate issued to: BioSolv Chemical Solvents Pvt Ltd, GIDC Vatva, Ahmedabad."
     }
   }
 ];
@@ -241,6 +331,25 @@ export const sampleApplications: Application[] = [
       "https://example.com/docs/IIT-Madras-Calibration-Certificate.pdf",
       "https://example.com/docs/DPIIT-Startup-Recognition-89241.pdf"
     ],
+    tamperStatus: "VERIFIED",
+    documentRecord: {
+      id: "DOC-DPIIT-89241",
+      fileName: "DPIIT_Recognition_AquaSense_89241.pdf",
+      fileSizeBytes: 1248010,
+      fileHash: "4a82b901ecfa4219904728abcdf01289456729aebdf109283748291038472910",
+      uploadedAt: "2026-10-02 11:30",
+      extractedEntityName: "AquaSense AI Innovations Pvt Ltd",
+      extractedDpiitNumber: "DPIIT-REC-89241-DL",
+      extractedDate: "12/04/2021",
+      extractedCategory: "Water Tech & IoT Sensing",
+      nameSimilarityScore: 100,
+      entityMismatchFlag: false,
+      preliminaryStatus: "Passed",
+      officialStatus: "Officially Verified",
+      verifiedBy: "Dr. Rajeshwar Sharma, IAS (Director, Water Mission)",
+      verifiedAt: "2026-10-02 14:15",
+      source: "Direct Upload"
+    },
     evaluatorScore: {
       innovation: 19,
       feasibility: 19,
@@ -280,6 +389,7 @@ export const sampleApplications: Application[] = [
     evidenceLinks: [
       "https://example.com/docs/PureFlow-Buoy-Field-Test.pdf"
     ],
+    tamperStatus: "VERIFIED",
     evaluatorScore: {
       innovation: 15,
       feasibility: 16,
@@ -424,7 +534,9 @@ export const sampleAuditLogs: AuditLog[] = [
     role: "government",
     action: "CHALLENGE_CREATED",
     details: "Created procurement challenge CH-2026-WQ01 'AI-Based Water Quality Monitoring' under pilot sandbox framework.",
-    badge: "Procurement"
+    badge: "Procurement",
+    prevHash: "0000000000000000000000000000000000000000000000000000000000000000",
+    blockHash: "9f82d10374e29b87a64c120e3f89410385721a9c40217498cdae71928f48a1c9"
   },
   {
     id: "LOG-102",
@@ -433,7 +545,9 @@ export const sampleAuditLogs: AuditLog[] = [
     role: "government",
     action: "STARTUP_MATCHING_COMPLETE",
     details: "Evaluated 4 startups against sector, TRL (≥7), and Local Content (≥50%) criteria. AquaSense AI identified with 94% rule score.",
-    badge: "Matching"
+    badge: "Matching",
+    prevHash: "9f82d10374e29b87a64c120e3f89410385721a9c40217498cdae71928f48a1c9",
+    blockHash: "4c120e3f89410385721a9c40217498cdae71928f48a1c99f82d10374e29b87a6"
   },
   {
     id: "LOG-103",
@@ -442,7 +556,9 @@ export const sampleAuditLogs: AuditLog[] = [
     role: "startup",
     action: "PROPOSAL_SUBMITTED",
     details: "Submitted proposal APP-WQ-091 with 15 HydroGuard 4X probes & zero-reagent edge architecture.",
-    badge: "Procurement"
+    badge: "Procurement",
+    prevHash: "4c120e3f89410385721a9c40217498cdae71928f48a1c99f82d10374e29b87a6",
+    blockHash: "721a9c40217498cdae71928f48a1c99f82d10374e29b87a64c120e3f89410385"
   },
   {
     id: "LOG-104",
@@ -451,7 +567,9 @@ export const sampleAuditLogs: AuditLog[] = [
     role: "government",
     action: "ELIGIBILITY_VERIFIED",
     details: "Certificate DPIIT-REC-89241-DL confirmed active. Startup turnover/experience relaxation applicable per tender terms.",
-    badge: "Security"
+    badge: "Security",
+    prevHash: "721a9c40217498cdae71928f48a1c99f82d10374e29b87a64c120e3f89410385",
+    blockHash: "ae71928f48a1c99f82d10374e29b87a64c120e3f89410385721a9c40217498cd"
   },
   {
     id: "LOG-105",
@@ -460,7 +578,9 @@ export const sampleAuditLogs: AuditLog[] = [
     role: "evaluator",
     action: "EVALUATION_SCORED",
     details: "Awarded score 95/100 (Innovation: 19/20, Feasibility: 19/20, Impact: 20/20, Scalability: 19/20, Viability: 18/20) with written justifications.",
-    badge: "Evaluation"
+    badge: "Evaluation",
+    prevHash: "ae71928f48a1c99f82d10374e29b87a64c120e3f89410385721a9c40217498cd",
+    blockHash: "10385721a9c40217498cdae71928f48a1c99f82d10374e29b87a64c120e3f894"
   },
   {
     id: "LOG-106",
@@ -469,7 +589,9 @@ export const sampleAuditLogs: AuditLog[] = [
     role: "government",
     action: "PILOT_AUTHORIZED",
     details: "Issued 90-day sandbox pilot sanction PILOT-WQ-2026-01 across 5 intake locations with ₹28.5L budget.",
-    badge: "Procurement"
+    badge: "Procurement",
+    prevHash: "10385721a9c40217498cdae71928f48a1c99f82d10374e29b87a64c120e3f894",
+    blockHash: "e29b87a64c120e3f89410385721a9c40217498cdae71928f48a1c99f82d10374"
   },
   {
     id: "LOG-107",
@@ -478,7 +600,9 @@ export const sampleAuditLogs: AuditLog[] = [
     role: "government",
     action: "DEMO_PAYMENT_LOGGED",
     details: "Milestone payment references generated for approved milestones (Simulated Demo Reference #PR-2026-0911, #PR-2026-0924).",
-    badge: "Payment"
+    badge: "Payment",
+    prevHash: "e29b87a64c120e3f89410385721a9c40217498cdae71928f48a1c99f82d10374",
+    blockHash: "8f48a1c99f82d10374e29b87a64c120e3f89410385721a9c40217498cdae7192"
   }
 ];
 
