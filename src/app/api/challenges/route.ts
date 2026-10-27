@@ -21,13 +21,20 @@ export async function GET(req: NextRequest) {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching challenges:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.warn("Warning fetching challenges from Supabase:", error.message);
+      return NextResponse.json({
+        success: true,
+        configured: true,
+        tablesInitialized: false,
+        warning: error.message,
+        challenges: [],
+      });
     }
 
     return NextResponse.json({
       success: true,
       configured: true,
+      tablesInitialized: true,
       challenges: data || [],
     });
   } catch (err: unknown) {
@@ -138,20 +145,34 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Database insert error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      let userFriendlyError = error.message;
+      if (error.message.includes("relation") && error.message.includes("does not exist")) {
+        userFriendlyError = "Database tables are not created in Supabase yet. Please execute the SQL migration script in your Supabase SQL Editor to initialize all tables.";
+      } else if (error.message.includes("row-level security")) {
+        userFriendlyError = "Permission denied by database Row-Level Security policy. Sign in with a verified Government account, or add SUPABASE_SERVICE_ROLE_KEY to your Vercel environment variables.";
+      }
+      return NextResponse.json({ 
+        error: userFriendlyError, 
+        rawError: error.message,
+        code: error.code 
+      }, { status: 500 });
     }
 
-    // Insert Audit Trail
-    await supabase.from("audit_logs").insert({
-      actor_user_id: creatorId,
-      actor_name: department,
-      actor_role: "government",
-      action: "CHALLENGE_CREATED",
-      details: `Procurement Challenge "${title}" published under GFR 2017 sandbox rules.`,
-      badge: "Procurement",
-      entity_type: "challenge",
-      entity_id: challengeId,
-    });
+    // Insert Audit Trail (best-effort, do not break challenge creation if audit log table not ready)
+    try {
+      await supabase.from("audit_logs").insert({
+        actor_user_id: creatorId,
+        actor_name: department,
+        actor_role: "government",
+        action: "CHALLENGE_CREATED",
+        details: `Procurement Challenge "${title}" published under GFR 2017 sandbox rules.`,
+        badge: "Procurement",
+        entity_type: "challenge",
+        entity_id: challengeId,
+      });
+    } catch (auditErr) {
+      console.warn("Audit log insert skipped:", auditErr);
+    }
 
     return NextResponse.json({
       success: true,

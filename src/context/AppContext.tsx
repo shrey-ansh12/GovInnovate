@@ -730,13 +730,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         });
         const result = await res.json();
         if (!res.ok) {
-          alert(`Error: ${result.error || "Failed to create challenge"}`);
+          alert(`GovInnovate Database Notice:\n\n${result.error || "Failed to create challenge"}\n\nFalling back to local session so you can continue testing your workflow.`);
+          const fallbackChallenge: Challenge = {
+            ...demoChallenge,
+            ...data,
+            id: data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`,
+            status: "Open",
+            applicationsCount: 0
+          };
+          setDemoChallenge(fallbackChallenge);
+          setActiveView("ai_startup_matches");
           return;
         }
         await refreshLiveData();
         setActiveView("ai_startup_matches");
       } catch (err) {
         console.error("Error creating challenge:", err);
+        const fallbackChallenge: Challenge = {
+          ...demoChallenge,
+          ...data,
+          id: data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`,
+          status: "Open",
+          applicationsCount: 0
+        };
+        setDemoChallenge(fallbackChallenge);
+        setActiveView("ai_startup_matches");
       }
     } else {
       // Demo Mode
