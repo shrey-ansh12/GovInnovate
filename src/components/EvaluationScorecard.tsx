@@ -6,7 +6,7 @@ import {
   Award, 
   ShieldCheck, 
   CheckCircle2, 
-  ArrowRight,
+  ArrowRight, 
   AlertCircle,
   FileText
 } from "lucide-react";
@@ -52,7 +52,7 @@ export const EvaluationScorecard: React.FC = () => {
 
   // Sync state when selected application changes
   React.useEffect(() => {
-    if (app.evaluatorScore) {
+    if (app && app.evaluatorScore) {
       setScores({
         innovation: app.evaluatorScore.innovation,
         feasibility: app.evaluatorScore.feasibility,
@@ -64,7 +64,29 @@ export const EvaluationScorecard: React.FC = () => {
       setEvidenceReferences(app.evaluatorScore.evidenceReferences || "");
       setFeedback(app.evaluatorScore.feedback);
     }
-  }, [app.id]);
+  }, [app?.id]);
+
+  if (!app) {
+    return (
+      <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-16 font-sans text-center">
+        <div className="max-w-md mx-auto bg-white rounded border border-[#E2DED6] p-8 shadow-xs">
+          <Award className="h-10 w-10 text-[#7E8B97] mx-auto mb-3" />
+          <h2 className="text-lg font-bold text-[#0A2540]">No Applications Ready for Evaluation</h2>
+          <p className="text-xs text-[#5B6A78] mt-2 leading-relaxed">
+            There are currently no startup applications submitted for evaluation in the live database. You can explore the full evaluation flow in Demo Mode or submit a bid from the Startup Dashboard.
+          </p>
+          <div className="mt-5 flex items-center justify-center gap-3">
+            <button
+              onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }}
+              className="px-4 py-2 rounded bg-[#0F3854] text-white text-xs font-semibold hover:bg-[#1D4E72]"
+            >
+              Go to Startup Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const totalScore = scores.innovation + scores.feasibility + scores.impact + scores.scalability + scores.viability;
 
@@ -155,11 +177,14 @@ export const EvaluationScorecard: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            {/* 1. Innovation */}
-            <div className="bg-[#FAF8F5] p-4 rounded border border-[#E2DED6] space-y-2">
-              <div className="flex justify-between items-center text-xs font-mono">
-                <span className="font-bold text-[#0A2540]">1. Innovation & Novelty (Max 20)</span>
-                <span className="font-bold text-[#0F3854] text-sm bg-white px-2 py-0.5 rounded border border-[#E2DED6]">{scores.innovation} / 20</span>
+            {/* Pillar 1: Innovation */}
+            <div className="space-y-2 p-4 bg-[#FAF8F5] rounded border border-[#E2DED6]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold uppercase text-[#0F3854]">Pillar 1: Innovation & IP Defense</span>
+                  <p className="text-[11px] text-[#5B6A78]">Novelty, patent defensibility, and technological differentiation.</p>
+                </div>
+                <span className="text-base font-bold font-mono text-[#0F3854]">{scores.innovation} / 20</span>
               </div>
               <input
                 type="range"
@@ -167,25 +192,25 @@ export const EvaluationScorecard: React.FC = () => {
                 max="20"
                 value={scores.innovation}
                 onChange={(e) => handleScoreChange("innovation", Number(e.target.value))}
-                className="w-full h-1.5 bg-[#EDE9E1] rounded accent-[#0F3854] cursor-pointer"
+                className="w-full accent-[#0F3854]"
               />
-              <div>
-                <label className="text-[11px] font-mono text-[#5B6A78] uppercase block mb-1">Written Justification:</label>
-                <input
-                  type="text"
-                  value={justifications.innovation}
-                  onChange={(e) => handleJustificationChange("innovation", e.target.value)}
-                  className="w-full text-xs p-2 rounded border border-[#E2DED6] bg-white text-[#141F2B]"
-                  placeholder="Justification for innovation score..."
-                />
-              </div>
+              <textarea
+                rows={2}
+                value={justifications.innovation}
+                onChange={(e) => handleJustificationChange("innovation", e.target.value)}
+                placeholder="Evaluator's technical justification for Innovation score..."
+                className="w-full text-xs rounded border border-[#E2DED6] p-2 bg-white focus:outline-none"
+              />
             </div>
 
-            {/* 2. Feasibility */}
-            <div className="bg-[#FAF8F5] p-4 rounded border border-[#E2DED6] space-y-2">
-              <div className="flex justify-between items-center text-xs font-mono">
-                <span className="font-bold text-[#0A2540]">2. Feasibility & TRL Maturity (Max 20)</span>
-                <span className="font-bold text-[#0F3854] text-sm bg-white px-2 py-0.5 rounded border border-[#E2DED6]">{scores.feasibility} / 20</span>
+            {/* Pillar 2: Technical Feasibility */}
+            <div className="space-y-2 p-4 bg-[#FAF8F5] rounded border border-[#E2DED6]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold uppercase text-[#0F3854]">Pillar 2: Technical Feasibility & TRL</span>
+                  <p className="text-[11px] text-[#5B6A78]">TRL validation, environmental resilience, and field demonstration history.</p>
+                </div>
+                <span className="text-base font-bold font-mono text-[#0F3854]">{scores.feasibility} / 20</span>
               </div>
               <input
                 type="range"
@@ -193,25 +218,25 @@ export const EvaluationScorecard: React.FC = () => {
                 max="20"
                 value={scores.feasibility}
                 onChange={(e) => handleScoreChange("feasibility", Number(e.target.value))}
-                className="w-full h-1.5 bg-[#EDE9E1] rounded accent-[#0F3854] cursor-pointer"
+                className="w-full accent-[#0F3854]"
               />
-              <div>
-                <label className="text-[11px] font-mono text-[#5B6A78] uppercase block mb-1">Written Justification:</label>
-                <input
-                  type="text"
-                  value={justifications.feasibility}
-                  onChange={(e) => handleJustificationChange("feasibility", e.target.value)}
-                  className="w-full text-xs p-2 rounded border border-[#E2DED6] bg-white text-[#141F2B]"
-                  placeholder="Justification for feasibility score..."
-                />
-              </div>
+              <textarea
+                rows={2}
+                value={justifications.feasibility}
+                onChange={(e) => handleJustificationChange("feasibility", e.target.value)}
+                placeholder="Evaluator's technical justification for Feasibility score..."
+                className="w-full text-xs rounded border border-[#E2DED6] p-2 bg-white focus:outline-none"
+              />
             </div>
 
-            {/* 3. Impact */}
-            <div className="bg-[#FAF8F5] p-4 rounded border border-[#E2DED6] space-y-2">
-              <div className="flex justify-between items-center text-xs font-mono">
-                <span className="font-bold text-[#0A2540]">3. Public Health / Civic Impact (Max 20)</span>
-                <span className="font-bold text-[#0F3854] text-sm bg-white px-2 py-0.5 rounded border border-[#E2DED6]">{scores.impact} / 20</span>
+            {/* Pillar 3: Civic & Public Impact */}
+            <div className="space-y-2 p-4 bg-[#FAF8F5] rounded border border-[#E2DED6]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold uppercase text-[#0F3854]">Pillar 3: Public Health & SLA Impact</span>
+                  <p className="text-[11px] text-[#5B6A78]">Contamination detection speed, citizen protection, and operational cost savings.</p>
+                </div>
+                <span className="text-base font-bold font-mono text-[#0F3854]">{scores.impact} / 20</span>
               </div>
               <input
                 type="range"
@@ -219,25 +244,25 @@ export const EvaluationScorecard: React.FC = () => {
                 max="20"
                 value={scores.impact}
                 onChange={(e) => handleScoreChange("impact", Number(e.target.value))}
-                className="w-full h-1.5 bg-[#EDE9E1] rounded accent-[#0F3854] cursor-pointer"
+                className="w-full accent-[#0F3854]"
               />
-              <div>
-                <label className="text-[11px] font-mono text-[#5B6A78] uppercase block mb-1">Written Justification:</label>
-                <input
-                  type="text"
-                  value={justifications.impact}
-                  onChange={(e) => handleJustificationChange("impact", e.target.value)}
-                  className="w-full text-xs p-2 rounded border border-[#E2DED6] bg-white text-[#141F2B]"
-                  placeholder="Justification for impact score..."
-                />
-              </div>
+              <textarea
+                rows={2}
+                value={justifications.impact}
+                onChange={(e) => handleJustificationChange("impact", e.target.value)}
+                placeholder="Evaluator's technical justification for Public Impact score..."
+                className="w-full text-xs rounded border border-[#E2DED6] p-2 bg-white focus:outline-none"
+              />
             </div>
 
-            {/* 4. Scalability */}
-            <div className="bg-[#FAF8F5] p-4 rounded border border-[#E2DED6] space-y-2">
-              <div className="flex justify-between items-center text-xs font-mono">
-                <span className="font-bold text-[#0A2540]">4. Scalability & Replication (Max 20)</span>
-                <span className="font-bold text-[#0F3854] text-sm bg-white px-2 py-0.5 rounded border border-[#E2DED6]">{scores.scalability} / 20</span>
+            {/* Pillar 4: Scalability */}
+            <div className="space-y-2 p-4 bg-[#FAF8F5] rounded border border-[#E2DED6]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold uppercase text-[#0F3854]">Pillar 4: Scalability & Interoperability</span>
+                  <p className="text-[11px] text-[#5B6A78]">Ease of expanding from 5 pilot sites to 50+ municipal wards; REST/MQTT compliance.</p>
+                </div>
+                <span className="text-base font-bold font-mono text-[#0F3854]">{scores.scalability} / 20</span>
               </div>
               <input
                 type="range"
@@ -245,25 +270,25 @@ export const EvaluationScorecard: React.FC = () => {
                 max="20"
                 value={scores.scalability}
                 onChange={(e) => handleScoreChange("scalability", Number(e.target.value))}
-                className="w-full h-1.5 bg-[#EDE9E1] rounded accent-[#0F3854] cursor-pointer"
+                className="w-full accent-[#0F3854]"
               />
-              <div>
-                <label className="text-[11px] font-mono text-[#5B6A78] uppercase block mb-1">Written Justification:</label>
-                <input
-                  type="text"
-                  value={justifications.scalability}
-                  onChange={(e) => handleJustificationChange("scalability", e.target.value)}
-                  className="w-full text-xs p-2 rounded border border-[#E2DED6] bg-white text-[#141F2B]"
-                  placeholder="Justification for scalability score..."
-                />
-              </div>
+              <textarea
+                rows={2}
+                value={justifications.scalability}
+                onChange={(e) => handleJustificationChange("scalability", e.target.value)}
+                placeholder="Evaluator's technical justification for Scalability score..."
+                className="w-full text-xs rounded border border-[#E2DED6] p-2 bg-white focus:outline-none"
+              />
             </div>
 
-            {/* 5. Viability */}
-            <div className="bg-[#FAF8F5] p-4 rounded border border-[#E2DED6] space-y-2">
-              <div className="flex justify-between items-center text-xs font-mono">
-                <span className="font-bold text-[#0A2540]">5. Viability, Cost & Local Content (Max 20)</span>
-                <span className="font-bold text-[#0F3854] text-sm bg-white px-2 py-0.5 rounded border border-[#E2DED6]">{scores.viability} / 20</span>
+            {/* Pillar 5: Commercial Viability & Make in India */}
+            <div className="space-y-2 p-4 bg-[#FAF8F5] rounded border border-[#E2DED6]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold uppercase text-[#0F3854]">Pillar 5: Commercial Viability & Domestic Content</span>
+                  <p className="text-[11px] text-[#5B6A78]">Public budget fit, Class-1 domestic local supplier adherence (&gt;50%), lifecycle cost.</p>
+                </div>
+                <span className="text-base font-bold font-mono text-[#0F3854]">{scores.viability} / 20</span>
               </div>
               <input
                 type="range"
@@ -271,112 +296,57 @@ export const EvaluationScorecard: React.FC = () => {
                 max="20"
                 value={scores.viability}
                 onChange={(e) => handleScoreChange("viability", Number(e.target.value))}
-                className="w-full h-1.5 bg-[#EDE9E1] rounded accent-[#0F3854] cursor-pointer"
+                className="w-full accent-[#0F3854]"
               />
-              <div>
-                <label className="text-[11px] font-mono text-[#5B6A78] uppercase block mb-1">Written Justification:</label>
-                <input
-                  type="text"
-                  value={justifications.viability}
-                  onChange={(e) => handleJustificationChange("viability", e.target.value)}
-                  className="w-full text-xs p-2 rounded border border-[#E2DED6] bg-white text-[#141F2B]"
-                  placeholder="Justification for viability score..."
-                />
-              </div>
+              <textarea
+                rows={2}
+                value={justifications.viability}
+                onChange={(e) => handleJustificationChange("viability", e.target.value)}
+                placeholder="Evaluator's technical justification for Viability score..."
+                className="w-full text-xs rounded border border-[#E2DED6] p-2 bg-white focus:outline-none"
+              />
             </div>
           </div>
-
-          {/* Evidence References */}
-          <div className="pt-4 border-t border-[#EDE9E1]">
-            <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-1">
-              Evidence Document Citations & Test Report IDs
-            </label>
-            <input
-              type="text"
-              value={evidenceReferences}
-              onChange={(e) => setEvidenceReferences(e.target.value)}
-              className="w-full text-xs rounded border border-[#E2DED6] p-2.5 text-[#141F2B] bg-[#FAF8F5]"
-              placeholder="e.g. CPCB Lab Report ID, NABL Cert Number, etc."
-            />
-          </div>
-
-          {/* Overall Comments */}
-          <div className="pt-2">
-            <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-1">
-              Overall Technical Recommendation & Committee Feedback
-            </label>
-            <textarea
-              rows={3}
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-              className="w-full text-xs rounded border border-[#E2DED6] p-3 text-[#141F2B] bg-[#FAF8F5] focus:bg-white"
-            />
-          </div>
-
-          <button
-            onClick={handleSubmitScore}
-            className="w-full py-3 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-semibold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs"
-          >
-            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            Submit 5-Pillar Scorecard ({totalScore}/100) & Record in Audit Log
-          </button>
         </div>
 
-        {/* Right Column: Applicant Summary & Details */}
+        {/* Right Column: Evidence, Qualitative Remarks & Submit */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-white rounded border border-[#E2DED6] p-6 space-y-4">
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#0A2540] flex items-center gap-2">
               <FileText className="h-4 w-4 text-[#0F3854]" />
-              Applicant Proposal Summary
+              Evidence References
             </h3>
-            <div className="text-xs text-[#5B6A78] leading-relaxed bg-[#FAF8F5] p-3 rounded border border-[#E2DED6]">
-              {app.proposalSummary}
+            <div>
+              <label className="block text-[11px] font-mono text-[#5B6A78] uppercase mb-1">
+                Verified Lab Test / Field Trial Citations
+              </label>
+              <textarea
+                rows={3}
+                value={evidenceReferences}
+                onChange={(e) => setEvidenceReferences(e.target.value)}
+                className="w-full text-xs rounded border border-[#E2DED6] p-2.5 bg-[#FAF8F5] focus:bg-white focus:outline-none"
+              />
             </div>
-            
-            <div className="space-y-2 text-xs font-mono pt-2">
-              <div className="flex justify-between py-1 border-b border-[#EDE9E1]">
-                <span className="text-[#7E8B97]">TRL Readiness:</span>
-                <span className="font-bold text-[#0A2540]">Level {app.trlLevel || 8}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-[#EDE9E1]">
-                <span className="text-[#7E8B97]">Local Content:</span>
-                <span className="font-bold text-[#0F3854]">{app.localContentPercentage || 78}% (Class 1)</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-[#EDE9E1]">
-                <span className="text-[#7E8B97]">Patents Granted:</span>
-                <span className="font-bold text-[#0A2540]">{app.patentsCount || 3}</span>
-              </div>
-              <div className="flex justify-between py-1">
-                <span className="text-[#7E8B97]">Proposed Pilot Cost:</span>
-                <span className="font-bold text-[#0A2540]">{app.proposedCost}</span>
-              </div>
-            </div>
-          </div>
 
-          <div className="bg-[#EBF6F0] rounded border border-[#C2E5D2] p-5 text-xs text-[#147452] space-y-2">
-            <div className="flex items-center gap-2 font-bold">
-              <ShieldCheck className="h-4 w-4 text-[#147452]" />
-              DPIIT Relaxation Status
+            <div>
+              <label className="block text-[11px] font-mono text-[#5B6A78] uppercase mb-1">
+                Committee Qualitative Remarks
+              </label>
+              <textarea
+                rows={4}
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                className="w-full text-xs rounded border border-[#E2DED6] p-2.5 bg-[#FAF8F5] focus:bg-white focus:outline-none"
+              />
             </div>
-            <p className="leading-relaxed">
-              Certificate <strong className="text-[#0A2540]">DPIIT-REC-89241-DL</strong> verified. Turnover and experience relaxations apply subject to applicable procurement rules and performance criteria.
-            </p>
-          </div>
 
-          <div className="bg-[#0F3854] text-white rounded p-5 border border-[#1D4E72] space-y-3 font-mono">
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-slate-300">Awarded Total:</span>
-              <span className="text-2xl font-bold text-emerald-300">{totalScore} / 100</span>
-            </div>
-            <div className="text-[11px] text-slate-300 font-sans">
-              Evaluator: Prof. Vinod Nair (Chairman, Technical Evaluation Board)
-            </div>
             <button
-              onClick={() => setActiveView("application_review")}
-              className="w-full py-2.5 bg-white text-[#0F3854] hover:bg-slate-100 rounded text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+              onClick={handleSubmitScore}
+              className="w-full py-3 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs"
             >
-              <span>Return to Review Queue</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <ShieldCheck className="h-4 w-4 text-emerald-400" />
+              <span>Sign & Submit Scorecard ({totalScore}/100)</span>
+              <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </div>

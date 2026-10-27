@@ -13,11 +13,13 @@ import {
   Building2, 
   Rocket, 
   Award, 
-  AlertCircle 
+  AlertCircle,
+  Database,
+  PlayCircle
 } from "lucide-react";
 
 export const LandingPage: React.FC = () => {
-  const { setActiveView, setRole, challenge } = useApp();
+  const { setActiveView, setRole, challenge, appMode, setAppMode, openAuthModal } = useApp();
 
   const scrollToWorkflow = () => {
     const el = document.getElementById("visual-workflow");
@@ -65,21 +67,34 @@ export const LandingPage: React.FC = () => {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 onClick={() => {
+                  setAppMode("demo");
                   setRole("government");
                   setActiveView("gov_dashboard");
                 }}
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded bg-[#0F3854] text-white text-[15px] font-semibold hover:bg-[#1D4E72] shadow-sm transition-all"
               >
-                <span>Explore Demo</span>
+                <PlayCircle className="h-5 w-5 text-amber-300" />
+                <span>Enter Demo Mode</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
 
               <button
-                onClick={scrollToWorkflow}
+                onClick={() => {
+                  setAppMode("real");
+                  openAuthModal("signin");
+                }}
                 className="inline-flex items-center gap-2 px-5 py-3.5 rounded bg-white text-[#0A2540] text-[15px] font-semibold border border-[#E2DED6] hover:bg-[#F2EFEB] transition-all"
               >
+                <Database className="h-4 w-4 text-emerald-600" />
+                <span>Live Database Workspace</span>
+              </button>
+
+              <button
+                onClick={scrollToWorkflow}
+                className="inline-flex items-center gap-2 px-4 py-3.5 rounded bg-transparent text-[#5B6A78] hover:text-[#0A2540] text-[14px] font-medium transition-all"
+              >
                 <span>View Workflow</span>
-                <Layers className="h-4 w-4 text-[#5B6A78]" />
+                <Layers className="h-4 w-4" />
               </button>
             </div>
 

@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React from "react";
-import { useApp } from "@/context/AppContext";
+import { useApp, ActiveView } from "@/context/AppContext";
 import { 
   Building2, 
   PlusCircle, 
@@ -9,8 +9,6 @@ import {
   CheckCircle2, 
   ArrowRight, 
   FileText,
-  AlertCircle,
-  SlidersHorizontal,
   Scale
 } from "lucide-react";
 
@@ -18,6 +16,15 @@ export const GovernmentDashboard: React.FC = () => {
   const { challenge, applications, startups, pilot, setActiveView } = useApp();
 
   const approvedMilestonesCount = pilot.milestones.filter(m => m.status === "Approved").length;
+
+  const lifecycleSteps: { num: number; label: string; view: ActiveView; done: boolean }[] = [
+    { num: 1, label: "Challenge Created", view: "create_challenge", done: true },
+    { num: 2, label: "Rule-Based Matching", view: "ai_startup_matches", done: true },
+    { num: 3, label: "Bids & Shortlisting", view: "application_review", done: true },
+    { num: 4, label: "5-Pillar Evaluation", view: "evaluation_scorecard", done: true },
+    { num: 5, label: "Pilot Monitoring", view: "pilot_management", done: true },
+    { num: 6, label: "Scale Decision", view: "scale_up", done: challenge.status === "Scale-Up Approved" || challenge.status === "Further Review" || challenge.status === "Rejected" },
+  ];
 
   return (
     <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-10 font-sans">
@@ -132,17 +139,10 @@ export const GovernmentDashboard: React.FC = () => {
           </h3>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {[
-              { num: 1, label: "Challenge Created", view: "create_challenge", done: true },
-              { num: 2, label: "Rule-Based Matching", view: "ai_startup_matches", done: true },
-              { num: 3, label: "Bids & Shortlisting", view: "application_review", done: true },
-              { num: 4, label: "5-Pillar Evaluation", view: "evaluation_scorecard", done: true },
-              { num: 5, label: "Pilot Monitoring", view: "pilot_management", done: true },
-              { num: 6, label: "Scale Decision", view: "scale_up", done: challenge.status === "Scale-Up Approved" || challenge.status === "Further Review" || challenge.status === "Rejected" },
-            ].map((step) => (
+            {lifecycleSteps.map((step) => (
               <div
                 key={step.num}
-                onClick={() => setActiveView(step.view as any)}
+                onClick={() => setActiveView(step.view)}
                 className={`p-3 rounded border text-center cursor-pointer transition-all hover:border-[#0F3854] ${
                   step.done 
                     ? "bg-[#FAF8F5] border-[#0F3854] text-[#0A2540]" 
