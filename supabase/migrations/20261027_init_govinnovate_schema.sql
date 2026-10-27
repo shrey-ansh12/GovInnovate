@@ -298,45 +298,29 @@ CREATE POLICY "Public can insert audit logs" ON public.audit_logs
     WITH CHECK (true);
 
 -- ============================================================================
--- AUTO-SYNC AUTH USERS TO PROFILES TRIGGER
+-- REMOVE AUTH TRIGGER (Server API handles profile creation directly)
 -- ============================================================================
 
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO public.profiles (
-    id, 
-    full_name, 
-    email, 
-    organization_name, 
-    role, 
-    designation, 
-    identifier, 
-    verification_status
-  )
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
-    NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'organization_name', 'GovInnovate Participant'),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'startup'),
-    COALESCE(NEW.raw_user_meta_data->>'designation', 'Representative'),
-    COALESCE(NEW.raw_user_meta_data->>'identifier', ''),
-    CASE WHEN (NEW.raw_user_meta_data->>'role') = 'startup' THEN 'verified' ELSE 'pending_verification' END
-  )
-  ON CONFLICT (id) DO UPDATE SET
-    full_name = EXCLUDED.full_name,
-    organization_name = EXCLUDED.organization_name,
-    role = EXCLUDED.role,
-    updated_at = timezone('utc'::text, now());
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+DROP FUNCTION IF EXISTS public.handle_new_user();
+
+-- Ensure profiles table has all necessary columns in case it pre-existed
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS full_name TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS organization_name TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'startup';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS designation TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS identifier TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS verification_status TEXT DEFAULT 'pending_verification';
+
+-- Ensure full table permissions for all roles
+GRANT ALL ON TABLE public.profiles TO postgres, anon, authenticated, service_role;
+GRANT ALL ON TABLE public.startup_profiles TO postgres, anon, authenticated, service_role;
+GRANT ALL ON TABLE public.government_challenges TO postgres, anon, authenticated, service_role;
+GRANT ALL ON TABLE public.applications TO postgres, anon, authenticated, service_role;
+GRANT ALL ON TABLE public.evaluations TO postgres, anon, authenticated, service_role;
+GRANT ALL ON TABLE public.pilot_milestones TO postgres, anon, authenticated, service_role;
+GRANT ALL ON TABLE public.notifications TO postgres, anon, authenticated, service_role;
+GRANT ALL ON TABLE public.audit_logs TO postgres, anon, authenticated, service_role;
 
 -- ============================================================================
 -- PRE-SEED INITIAL PILOT CHALLENGE (Water Quality IoT Monitoring)
