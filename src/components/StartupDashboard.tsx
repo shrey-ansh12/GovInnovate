@@ -40,13 +40,25 @@ export const StartupDashboard: React.FC = () => {
   // Find application specifically linked to this challenge
   const currentChallengeApp = applications.find(a => 
     a.challengeId === challenge.id && 
-    (a.startupId === currentUser?.id || a.startupId === "ST-AQUASENSE" || a.startupName === currentUser?.organization)
+    (
+      a.startupId === currentUser?.id || 
+      a.startupId === "ST-AQUASENSE" || 
+      a.startupName === currentUser?.organization ||
+      currentUser?.role === "startup" ||
+      !currentUser
+    )
   );
 
   const [proposalInput, setProposalInput] = useState(
     "We propose deploying an AI & IoT edge sensing telemetry unit with real-time anomaly detection, calibrated under NABL-traceable lab benchmarks, with zero civil modifications to existing infrastructure."
   );
   const [proposedCostInput, setProposedCostInput] = useState(challenge.budget || "₹24,50,000");
+
+  React.useEffect(() => {
+    if (challenge.budget) {
+      setProposedCostInput(challenge.budget);
+    }
+  }, [challenge.id, challenge.budget]);
   const [deploymentTimeInput, setDeploymentTimeInput] = useState("14 Calendar Days");
   const [isSubmittingProposal, setIsSubmittingProposal] = useState(false);
 

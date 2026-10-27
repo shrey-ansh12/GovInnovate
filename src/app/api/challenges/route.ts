@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
         technical_thresholds: technicalThresholds || [],
         target_locations: targetLocations || 5,
         scale_locations: scaleLocations || 50,
-        status: status || "published",
+        status: (["draft", "published", "in_pilot", "completed", "cancelled"].includes((status || "").toLowerCase()) ? (status || "").toLowerCase() : "published"),
         created_by: creatorId,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),

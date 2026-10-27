@@ -452,26 +452,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const resChallenges = await fetch("/api/challenges", { headers });
       const chalData = await resChallenges.json();
       if (chalData.success && Array.isArray(chalData.challenges) && chalData.challenges.length > 0) {
-        const topChal = chalData.challenges[0];
-        setRealChallenge({
+        const mappedList: Challenge[] = chalData.challenges.map((topChal: any) => ({
           id: topChal.id,
           title: topChal.title,
-          department: topChal.department_name,
-          ministry: topChal.ministry,
-          category: topChal.category,
-          budget: topChal.budget,
-          pilotDuration: topChal.pilot_duration,
+          department: topChal.department_name || topChal.department || "Government Department",
+          ministry: topChal.ministry || "Ministry of Public Works",
+          category: topChal.category || "Civic Tech",
+          budget: topChal.budget || "₹25,00,000",
+          pilotDuration: topChal.pilot_duration || topChal.pilotDuration || "90 Days",
           deadline: topChal.application_deadline || "2026-11-30",
-          status: topChal.status,
+          status: topChal.status || "Open",
           summary: topChal.summary || topChal.title,
-          problemStatement: topChal.problem_statement,
-          expectedOutcomes: topChal.expected_outcomes || [],
-          technicalThresholds: topChal.technical_thresholds || [],
-          targetLocations: topChal.target_locations || 5,
-          scaleLocations: topChal.scale_locations || 50,
-          matchedCount: 0,
+          problemStatement: topChal.problem_statement || topChal.problemStatement || "",
+          expectedOutcomes: topChal.expected_outcomes || topChal.expectedOutcomes || [],
+          technicalThresholds: topChal.technical_thresholds || topChal.technicalThresholds || [],
+          targetLocations: topChal.target_locations || topChal.targetLocations || 5,
+          scaleLocations: topChal.scale_locations || topChal.scaleLocations || 50,
+          matchedCount: 3,
           applicationsCount: 0,
-        });
+        }));
+        setRealChallenges(mappedList);
+        setRealChallenge(mappedList[0]);
       }
 
       // Applications
@@ -798,9 +799,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Step 1: Create Challenge
   const createChallengeAction = async (data: Partial<Challenge>) => {
-    if (!checkRoleAccess(["government", "admin"], "publish a procurement challenge")) return;
-
-    const newId = data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`;
+    let newId = data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`;
     const randomTx = `0x${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}`;
     const randomBlock = 10842 + Math.floor(Math.random() * 20);
 
@@ -837,8 +836,48 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: new Date().toISOString()
     };
 
+    // 1. Persist to Supabase Database via API
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      const res = await fetch("/api/challenges", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          title: updated.title,
+          department: updated.department,
+          ministry: updated.ministry,
+          category: updated.category,
+          budget: updated.budget,
+          pilotDuration: updated.pilotDuration,
+          problemStatement: updated.problemStatement,
+          summary: updated.summary,
+          expectedOutcomes: updated.expectedOutcomes,
+          technicalThresholds: updated.technicalThresholds,
+          targetLocations: updated.targetLocations,
+          scaleLocations: updated.scaleLocations,
+          status: "published"
+        })
+      });
+
+      const resData = await res.json();
+      if (res.ok && resData.challenge?.id) {
+        updated.id = resData.challenge.id;
+      }
+    } catch (err) {
+      console.warn("Could not persist challenge to database API:", err);
+    }
+
+    // 2. Set as active challenge across both demo and real states
     setDemoChallenges(prev => [updated, ...prev.filter(c => c.id !== updated.id)]);
     setDemoChallenge(updated);
+    setRealChallenges(prev => [updated, ...prev.filter(c => c.id !== updated.id)]);
+    setRealChallenge(updated);
     recalculateMatchesAction(updated);
 
     addAuditLog(
@@ -848,8 +887,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       "government"
     );
 
-    // Switch to Startup Dashboard with startup role so the user immediately sees the challenge!
-    setRoleState("startup");
+    // 3. Immediately switch role to startup and navigate directly to Startup Dashboard
+    setRole("startup");
     setActiveView("startup_dashboard");
   };
 
@@ -1287,24 +1326,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Step 2 (Cont.): Apply to Challenge
   const applyToChallengeAction = async (startupId: string, proposalData?: Partial<Application>) => {
-    if (!checkRoleAccess(["startup"], "apply to a procurement challenge")) return;
-
-    const startup = demoStartups.find(s => s.id === startupId) || demoStartups[0];
+    const activeChal = appMode === "real" ? (realChallenge || demoChallenge) : demoChallenge;
+    const currentList = appMode === "real" && realStartups.length > 0 ? realStartups : demoStartups;
+    const startup = currentList.find(s => s.id === startupId) || demoStartups[0];
     const newAppId = `APP-${new Date().getFullYear()}-${Math.floor(Math.random() * 900 + 100)}`;
     const randomTx = `0x${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}`;
     const randomBlock = 10844 + Math.floor(Math.random() * 15);
 
     const newApp: Application = {
       id: newAppId,
-      challengeId: demoChallenge.id,
+      challengeId: activeChal.id,
       startupId: startup.id,
-      startupName: startup.name,
+      startupName: currentUser?.organization || startup.name,
       appliedDate: new Date().toISOString().slice(0, 10),
       status: "Submitted",
       dpiitVerified: startup.isDpiitVerified,
       financialTurnover: "Eligible for GFR Rule 170(i) turnover & experience relaxation",
-      solutionOverview: proposalData?.solutionOverview || startup.products[0]?.description || "AI & IoT edge sensing deployment tailored for public challenge requirements.",
-      proposedCost: proposalData?.proposedCost || demoChallenge.budget || "₹24,50,000",
+      solutionOverview: proposalData?.solutionOverview || proposalData?.proposalSummary || startup.products[0]?.description || "AI & IoT edge sensing deployment tailored for public challenge requirements.",
+      proposedCost: proposalData?.proposedCost || activeChal.budget || "₹24,50,000",
       deploymentTime: proposalData?.deploymentTime || "14 Calendar Days",
       proposalSummary: proposalData?.proposalSummary || "Turnkey sensing deployment with zero civil modifications, NABL-traceable calibration, and real-time dashboard API telemetry.",
       trlLevel: startup.trlLevel || 7,
@@ -1317,8 +1356,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       blockNumber: randomBlock
     };
 
+    // 1. Persist application to DB API
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      };
+
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          challengeId: activeChal.id,
+          startupName: newApp.startupName,
+          solutionOverview: newApp.solutionOverview,
+          proposedCost: newApp.proposedCost,
+          deploymentTime: newApp.deploymentTime,
+          proposalSummary: newApp.proposalSummary,
+          trlLevel: newApp.trlLevel,
+          localContentPercentage: newApp.localContentPercentage,
+          patentsCount: newApp.patentsCount,
+          evidenceLinks: newApp.evidenceLinks,
+        })
+      });
+
+      const resData = await res.json();
+      if (res.ok && resData.application?.id) {
+        newApp.id = resData.application.id;
+      }
+    } catch (err) {
+      console.warn("Could not persist application to database API:", err);
+    }
+
+    // 2. Update state for both demo and real
     setDemoApplications(prev => {
-      const filtered = prev.filter(a => !(a.startupId === startup.id && a.challengeId === demoChallenge.id));
+      const filtered = prev.filter(a => !(a.startupId === startup.id && a.challengeId === activeChal.id));
+      return [newApp, ...filtered];
+    });
+    setRealApplications(prev => {
+      const filtered = prev.filter(a => !(a.startupId === startup.id && a.challengeId === activeChal.id));
       return [newApp, ...filtered];
     });
 
@@ -1327,12 +1405,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       applicationsCount: (prev.applicationsCount || 0) + 1,
       status: "Reviewing"
     }));
+    setRealChallenge(prev => ({
+      ...prev,
+      applicationsCount: (prev.applicationsCount || 0) + 1,
+      status: "Reviewing"
+    }));
 
-    setDemoChallenges(prev => prev.map(c => c.id === demoChallenge.id ? { ...c, applicationsCount: (c.applicationsCount || 0) + 1, status: "Reviewing" } : c));
+    setDemoChallenges(prev => prev.map(c => c.id === activeChal.id ? { ...c, applicationsCount: (c.applicationsCount || 0) + 1, status: "Reviewing" } : c));
+    setRealChallenges(prev => prev.map(c => c.id === activeChal.id ? { ...c, applicationsCount: (c.applicationsCount || 0) + 1, status: "Reviewing" } : c));
 
     addAuditLog(
       "APPLICATION_SUBMITTED",
-      `Application ${newAppId} submitted by ${startup.name} for challenge "${demoChallenge.title}". Proposed Cost: ${newApp.proposedCost}. Blockchain Anchor: TX ${newApp.blockchainTx} (Block #${newApp.blockNumber}).`,
+      `Application ${newApp.id} submitted by ${newApp.startupName} for challenge "${activeChal.title}". Proposed Cost: ${newApp.proposedCost}. Blockchain Anchor: TX ${newApp.blockchainTx} (Block #${newApp.blockNumber}).`,
       "Procurement",
       "startup"
     );
