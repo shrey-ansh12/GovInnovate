@@ -100,13 +100,14 @@ export const StartupDashboard: React.FC = () => {
     a.challengeId === challenge.id && 
     (
       a.startupId === currentUser?.id || 
-      a.startupId === "ST-AQUASENSE" || 
       a.startupName === currentUser?.organization ||
+      a.startupId === "ST-AQUASENSE" ||
       currentUser?.role === "startup" ||
       !currentUser
     )
   );
 
+  const [showProposalForm, setShowProposalForm] = useState<boolean>(true);
   const [proposalMode, setProposalMode] = useState<"option" | "manual">("option");
   const [selectedOptionId, setSelectedOptionId] = useState<string>("edge-iot-telemetry");
 
@@ -123,6 +124,7 @@ export const StartupDashboard: React.FC = () => {
 
   const [deploymentTimeInput, setDeploymentTimeInput] = useState("14 Calendar Days");
   const [isSubmittingProposal, setIsSubmittingProposal] = useState(false);
+  const [proposalSuccess, setProposalSuccess] = useState(false);
 
   // Milestone evidence state for direct upload
   const [selectedMilestoneId, setSelectedMilestoneId] = useState<string>(pilot.milestones[0]?.id || "M-01");
@@ -156,6 +158,8 @@ export const StartupDashboard: React.FC = () => {
         proposedCost: proposedCostInput,
         deploymentTime: deploymentTimeInput
       });
+      setProposalSuccess(true);
+      setTimeout(() => setProposalSuccess(false), 5000);
     } finally {
       setIsSubmittingProposal(false);
     }
@@ -295,19 +299,27 @@ export const StartupDashboard: React.FC = () => {
               )}
             </div>
 
-            {/* APPLICATION / BID STATUS OR SUBMISSION FORM */}
-            {currentChallengeApp ? (
+            {/* 1. Submitted Bid Summary Card & Evaluator Scorecard (When already submitted) */}
+            {currentChallengeApp && (
               <div className="space-y-4">
-                {/* Submitted Bid Summary Card */}
                 <div className="p-4 rounded-xl bg-[#EBF6F0] border border-[#C2E5D2] space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <span className="text-xs font-bold text-[#147452] flex items-center gap-1.5 font-mono">
                       <CheckCircle2 className="h-4 w-4" />
-                      Proposal Submitted ({currentChallengeApp.status})
+                      Active Proposal Registered ({currentChallengeApp.status})
                     </span>
-                    <span className="text-xs font-mono text-[#5B6A78]">
-                      App ID: {currentChallengeApp.id}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono text-[#5B6A78]">
+                        App ID: {currentChallengeApp.id}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setShowProposalForm(prev => !prev)}
+                        className="px-2.5 py-1 text-[11px] font-mono font-bold rounded bg-white border border-[#C2E5D2] text-[#147452] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                      >
+                        {showProposalForm ? "▲ Hide Proposal Editor" : "✏️ Edit / Submit New Proposal"}
+                      </button>
+                    </div>
                   </div>
 
                   <p className="text-xs text-[#5B6A78] font-mono bg-white p-3 rounded-lg border border-[#C2E5D2]">
@@ -426,14 +438,23 @@ export const StartupDashboard: React.FC = () => {
                   </div>
                 )}
               </div>
-            ) : (
-              /* BID SUBMISSION FORM WITH OPTION SELECTION & MANUAL DRAFTING */
-              <form onSubmit={handleApply} className="space-y-4 pt-2">
-                <div className="p-3 bg-[#EBF6F0] border border-[#C2E5D2] rounded-lg text-xs text-[#147452] flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 shrink-0" />
-                  <span>
-                    <strong>Open for Bids:</strong> Choose a pre-configured solution option below or write your custom engineering proposal.
-                  </span>
+            )}
+
+            {/* 2. BID SUBMISSION FORM WITH OPTION SELECTION & MANUAL DRAFTING */}
+            {(!currentChallengeApp || showProposalForm) && (
+              <form onSubmit={handleApply} className={`space-y-4 pt-3 ${currentChallengeApp ? "border-t border-[#EDE9E1] mt-3" : ""}`}>
+                <div className="p-3 bg-[#EBF6F0] border border-[#C2E5D2] rounded-lg text-xs text-[#147452] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 shrink-0" />
+                    <span>
+                      <strong>{currentChallengeApp ? "Revise / Resubmit Bid Proposal:" : "Open for Bids:"}</strong> Choose a pre-configured solution option below or write your custom engineering proposal.
+                    </span>
+                  </div>
+                  {currentChallengeApp && (
+                    <span className="text-[10px] font-mono font-bold bg-[#147452] text-white px-2 py-0.5 rounded shrink-0">
+                      Editor Active
+                    </span>
+                  )}
                 </div>
 
                 {/* Mode Switcher Tabs */}
@@ -585,6 +606,13 @@ export const StartupDashboard: React.FC = () => {
                   </div>
                 </div>
 
+                {proposalSuccess && (
+                  <div className="p-3 bg-[#EBF6F0] border border-[#C2E5D2] rounded-lg text-xs text-[#147452] flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    <span>Bid proposal successfully registered on the blockchain ledger and submitted to technical panel!</span>
+                  </div>
+                )}
+
                 <button
                   type="submit"
                   disabled={isSubmittingProposal}
@@ -595,7 +623,7 @@ export const StartupDashboard: React.FC = () => {
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                  <span>{isSubmittingProposal ? "Submitting to Blockchain Ledger..." : "Submit Formal Bid Proposal to Government"}</span>
+                  <span>{isSubmittingProposal ? "Submitting to Blockchain Ledger..." : (currentChallengeApp ? "Update & Re-Submit Bid Proposal" : "Submit Formal Bid Proposal to Government")}</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </form>
