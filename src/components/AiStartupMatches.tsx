@@ -21,7 +21,7 @@ import { Startup } from "@/types";
 export const AiStartupMatches: React.FC = () => {
   const { 
     startups, 
-    challenge, 
+    challenge, challenges, selectChallenge, 
     setActiveView, 
     applyToChallengeAction, 
     setRole,

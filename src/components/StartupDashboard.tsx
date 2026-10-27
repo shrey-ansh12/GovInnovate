@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useApp } from "@/context/AppContext";
+import { Challenge } from "@/types";
 import { 
   Rocket, 
   CheckCircle2, 
@@ -16,7 +17,7 @@ import {
 
 export const StartupDashboard: React.FC = () => {
   const { 
-    challenge, 
+    challenge, challenges, selectChallenge, 
     applications, 
     pilot, 
     setActiveView, 
@@ -30,12 +31,15 @@ export const StartupDashboard: React.FC = () => {
     "We propose deploying 15 HydroGuard 4X submersible spectrophotometric probes across 5 high-priority municipal water distribution zones. Telemetry is sent every 60 seconds with edge-AI anomaly inference within 2.8 minutes."
   );
 
-  const myApp = applications.find(a => 
-    a.startupId === currentUser?.id || 
-    a.startupName === currentUser?.organization || 
-    (appMode === "demo" && a.startupId === "ST-AQUASENSE")
+    const myApp = applications.find(a => 
+    a.challengeId === challenge.id && (
+      a.startupId === currentUser?.id || 
+      a.startupName === currentUser?.organization || 
+      (appMode === "demo" && a.startupId === "ST-AQUASENSE")
+    )
   );
-  const [hasSubmitted, setHasSubmitted] = useState(!!myApp);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const isApplied = hasSubmitted || !!myApp;
 
   // Milestone evidence state for direct upload
   const [selectedMilestoneId, setSelectedMilestoneId] = useState<string>(pilot.milestones[0]?.id || "M-01");
@@ -96,6 +100,38 @@ export const StartupDashboard: React.FC = () => {
         {/* Left Column: Matched Public Challenge & Bid Action */}
         <div className="lg:col-span-7 space-y-6">
           <div className="bg-white rounded border border-[#E2DED6] p-6 shadow-2xs">
+            {/* Challenge Selector for Startups */}
+            {challenges.length > 1 && (
+              <div className="mb-4 pb-4 border-b border-[#EDE9E1]">
+                <span className="text-[10px] font-mono uppercase font-bold text-[#5B6A78] block mb-2">
+                  Browse Open Public Challenges ({challenges.length}):
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {challenges.map((c: Challenge) => {
+                    const isSel = c.id === challenge.id;
+                    const applied = applications.some(a => a.challengeId === c.id && (a.startupId === currentUser?.id || a.startupName === currentUser?.organization));
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => {
+                          selectChallenge(c.id);
+                          setHasSubmitted(false);
+                        }}
+                        className={`px-3 py-1.5 rounded text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                          isSel 
+                            ? "bg-[#0F3854] text-white shadow-xs" 
+                            : "bg-[#F2EFEB] text-[#5B6A78] hover:text-[#0A2540] border border-[#E2DED6]"
+                        }`}
+                      >
+                        <span className="font-mono text-[10px]">{c.id}</span>
+                        <span className="truncate max-w-[140px]">{c.title}</span>
+                        {applied && <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-mono">Applied</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             <div className="flex items-start justify-between border-b border-[#EDE9E1] pb-4">
               <div>
                 <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded bg-[#FAF0D9] text-[#784A05] border border-[#F0D598] uppercase">
@@ -127,19 +163,19 @@ export const StartupDashboard: React.FC = () => {
                 </p>
               </div>
 
-              {hasSubmitted && myApp ? (
+              {isApplied ? (
                 <div className="p-4 rounded bg-[#EBF6F0] border border-[#C2E5D2]">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-[#147452] flex items-center gap-1.5 font-mono">
                       <CheckCircle2 className="h-4 w-4" />
-                      Proposal Submitted & {myApp.status}
+                      Proposal Submitted & {myApp?.status || "Submitted"}
                     </span>
                     <span className="text-xs font-mono font-bold text-[#147452]">
-                      Evaluator Score: {myApp.evaluatorScore?.total || 95} / 100
+                      Evaluator Score: {myApp?.evaluatorScore?.total || 95} / 100
                     </span>
                   </div>
                   <p className="text-xs text-[#5B6A78] mt-2 font-mono bg-white p-3 rounded border border-[#C2E5D2]">
-                    &quot;{myApp.proposalSummary}&quot;
+                    &quot;{myApp?.proposalSummary || proposalInput}&quot;
                   </p>
                 </div>
               ) : (

@@ -139,6 +139,8 @@ export async function POST(req: NextRequest) {
         scale_locations: scaleLocations || 50,
         status: status || "published",
         created_by: creatorId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();

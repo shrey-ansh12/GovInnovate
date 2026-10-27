@@ -155,7 +155,12 @@ export const NavigationBar: React.FC = () => {
           {/* Brand Title */}
           <div 
             className="flex items-center gap-3 cursor-pointer group shrink-0" 
-            onClick={() => setActiveView("landing")}
+            onClick={() => {
+              if (currentUser?.role === "government") setActiveView("gov_dashboard");
+              else if (currentUser?.role === "startup") setActiveView("startup_dashboard");
+              else if (currentUser?.role === "evaluator") setActiveView("evaluator_dashboard");
+              else setActiveView("landing");
+            }}
           >
             <div className="w-9 h-9 rounded-sm bg-[#0F3854] flex items-center justify-center text-white shadow-xs">
               <span className="material-symbols-outlined text-[20px]">account_balance</span>

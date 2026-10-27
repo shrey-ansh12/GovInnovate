@@ -80,6 +80,8 @@ interface AppContextType {
   
   // Data
   challenge: Challenge;
+  challenges: Challenge[];
+  selectChallenge: (id: string) => void;
   setChallenge: React.Dispatch<React.SetStateAction<Challenge>>;
   startups: Startup[];
   applications: Application[];
@@ -311,6 +313,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   // Real State (synced with Supabase / live API)
+  const [demoChallenges, setDemoChallenges] = useState<Challenge[]>([initialChallenge]);
+  const [realChallenges, setRealChallenges] = useState<Challenge[]>([]);
+  const [selectedChallengeId, setSelectedChallengeId] = useState<string>(initialChallenge.id);
   const [realChallenge, setRealChallenge] = useState<Challenge>(initialChallenge);
   const [realStartups, setRealStartups] = useState<Startup[]>([]);
   const [realApplications, setRealApplications] = useState<Application[]>([]);
@@ -342,8 +347,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [authModalRole, setAuthModalRole] = useState<UserRole>("startup");
 
   // Active getters depending on mode
-  const challenge = appMode === "real" ? realChallenge : demoChallenge;
+  const challenges = appMode === "real"
+    ? (realChallenges.length > 0 ? realChallenges : [realChallenge])
+    : (demoChallenges.length > 0 ? demoChallenges : [demoChallenge]);
+  const challenge = challenges.find(c => c.id === selectedChallengeId) || challenges[0] || (appMode === "real" ? realChallenge : demoChallenge);
   const setChallenge = appMode === "real" ? setRealChallenge : setDemoChallenge;
+
+  const selectChallenge = useCallback((id: string) => {
+    setSelectedChallengeId(id);
+    if (appMode === "real") {
+      const found = realChallenges.find(c => c.id === id);
+      if (found) setRealChallenge(found);
+    } else {
+      const found = demoChallenges.find(c => c.id === id);
+      if (found) setDemoChallenge(found);
+    }
+  }, [appMode, realChallenges, demoChallenges]);
   const startups = appMode === "real" ? realStartups : demoStartups;
   const setStartups = appMode === "real" ? setRealStartups : setDemoStartups;
   const applications = appMode === "real" ? realApplications : demoApplications;
@@ -1888,6 +1907,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setLanguage,
       t,
       challenge,
+      challenges,
+      selectChallenge,
       setChallenge,
       startups,
       applications,

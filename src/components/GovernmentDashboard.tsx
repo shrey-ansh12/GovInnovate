@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 
+import { Challenge } from "@/types";
 import React from "react";
 import { useApp, ActiveView } from "@/context/AppContext";
 import { 
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 
 export const GovernmentDashboard: React.FC = () => {
-  const { challenge, applications, startups, pilot, setActiveView } = useApp();
+  const { challenge, challenges, selectChallenge, applications, startups, pilot, setActiveView } = useApp();
 
   const approvedMilestonesCount = pilot.milestones.filter(m => m.status === "Approved").length;
 
@@ -93,6 +94,80 @@ export const GovernmentDashboard: React.FC = () => {
           <div className="text-[11px] text-[#5B6A78] font-mono mt-1">
             Expansion Target: {pilot.scaleLocationsCount || 50} Zones
           </div>
+        </div>
+      </div>
+
+      {/* 2B. ALL PUBLISHED CHALLENGES LIST */}
+      <div className="bg-white rounded border border-[#E2DED6] p-6 mb-8 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EDE9E1] pb-4 mb-4">
+          <div>
+            <h2 className="text-base font-bold text-[#0A2540]">
+              Active Procurement Challenges ({challenges.length})
+            </h2>
+            <p className="text-xs text-[#5B6A78] mt-0.5">
+              Live tenders published in the National Innovation Sandbox. Select any challenge to review submitted bids and monitor its milestone pipeline.
+            </p>
+          </div>
+          <button
+            onClick={() => setActiveView("create_challenge")}
+            className="px-3.5 py-2 rounded bg-[#0F3854] text-white hover:bg-[#1D4E72] text-xs font-semibold flex items-center gap-1.5 transition-colors shrink-0"
+          >
+            <PlusCircle className="h-4 w-4 text-emerald-400" />
+            <span>+ Create New Challenge</span>
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {challenges.map((c: Challenge) => {
+            const isSelected = c.id === challenge.id;
+            const bidsCount = applications.filter(a => a.challengeId === c.id).length;
+            return (
+              <div
+                key={c.id}
+                onClick={() => selectChallenge(c.id)}
+                className={`p-4 rounded border transition-all cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                  isSelected 
+                    ? "bg-[#FAF8F5] border-[#0F3854] ring-1 ring-[#0F3854]/20 shadow-xs" 
+                    : "bg-white border-[#E2DED6] hover:border-[#0F3854]"
+                }`}
+              >
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2] uppercase">
+                      {c.status || "published"}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-[#0F3854]">{c.id}</span>
+                    <span className="text-xs text-[#5B6A78]">• {c.category}</span>
+                  </div>
+                  <h3 className="text-sm font-bold text-[#0A2540]">{c.title}</h3>
+                  <p className="text-xs text-[#5B6A78]">
+                    {c.department} ({c.ministry}) • Allocation: <strong className="text-[#0A2540]">{c.budget}</strong> • Pilot Duration: {c.pilotDuration}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="text-xs font-mono font-semibold bg-[#F2EFEB] text-[#0F3854] px-2.5 py-1 rounded border border-[#E2DED6]">
+                    {bidsCount} Bids Submitted
+                  </span>
+                  {isSelected ? (
+                    <span className="px-3 py-1.5 rounded bg-[#0F3854] text-white text-xs font-semibold flex items-center gap-1 shadow-2xs">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Active Selection
+                    </span>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        selectChallenge(c.id);
+                      }}
+                      className="px-3 py-1.5 rounded bg-white hover:bg-[#F2EFEB] text-[#0F3854] text-xs font-semibold border border-[#E2DED6]"
+                    >
+                      Select Challenge
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
