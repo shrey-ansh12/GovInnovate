@@ -13,7 +13,12 @@ import {
   ChevronDown,
   Check,
   AlertTriangle,
-  X
+  X,
+  Database,
+  PlayCircle,
+  LogOut,
+  User,
+  ShieldCheck
 } from "lucide-react";
 
 export const NavigationBar: React.FC = () => {
@@ -29,7 +34,12 @@ export const NavigationBar: React.FC = () => {
     setLanguage,
     t,
     roleErrorMessage,
-    clearRoleError
+    clearRoleError,
+    appMode,
+    setAppMode,
+    isLiveDbConnected,
+    currentUser,
+    logoutUser
   } = useApp();
 
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -61,23 +71,68 @@ export const NavigationBar: React.FC = () => {
             <span className="hidden md:inline text-white/30">•</span>
             <span className="hidden md:inline text-slate-300 font-normal">GFR 2017 Innovation Guidelines (Safe Harbor)</span>
           </div>
+
           <div className="flex items-center gap-3 text-slate-300 font-mono text-[11px]">
-            <span className="hidden sm:inline">Proposed Architecture Sandbox</span>
-            <span className="px-2 py-0.5 rounded bg-white/10 text-emerald-300 text-[10px] tracking-wider uppercase font-semibold">
-              Interactive Prototype Demo
-            </span>
+            {/* Mode Indicator & Switcher */}
+            {appMode === "demo" ? (
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] tracking-wider uppercase font-semibold flex items-center gap-1">
+                  <PlayCircle className="h-3 w-3" />
+                  Demo Mode Active
+                </span>
+                <button
+                  onClick={() => setAppMode("real")}
+                  className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-slate-200 text-[10px] tracking-wider font-semibold transition-colors"
+                >
+                  Exit Demo Mode
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] tracking-wider uppercase font-semibold flex items-center gap-1">
+                  <Database className="h-3 w-3" />
+                  Real Mode ({isLiveDbConnected ? "Supabase Live" : "DB Offline"})
+                </span>
+                <button
+                  onClick={() => setAppMode("demo")}
+                  className="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[10px] tracking-wider font-semibold transition-colors"
+                >
+                  Enter Demo Mode
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* 1B. STATUTORY DISCLAIMER STRIP */}
+      {/* 1B. DEMO MODE WARNING STRIP */}
+      {appMode === "demo" && (
+        <div className="w-full bg-[#FEF7EA] text-[#8A5B0B] border-b border-[#F6E1B9] text-[11px] py-1 px-4 flex items-center justify-between">
+          <div className="max-w-[1360px] mx-auto w-full flex items-center justify-between">
+            <span className="flex items-center gap-1.5 font-medium">
+              <PlayCircle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+              <span>
+                <strong>Demo Sandbox Active:</strong> You are exploring simulated scenario data. Real database records and live tenders are strictly unaffected.
+              </span>
+            </span>
+            <button
+              onClick={() => setAppMode("real")}
+              className="font-bold underline text-[11px] ml-4 hover:text-[#583a05]"
+            >
+              Switch to Real Mode →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 1C. STATUTORY DISCLAIMER STRIP */}
       <div className="w-full bg-[#FAF0D9] text-[#784A05] border-b border-[#F0D598] text-[11px] py-1 px-4 text-center font-medium">
         <span>
           <strong>Legal Disclaimer:</strong> Procurement decisions are subject to applicable GFR, GeM rules, departmental policies, and competent-authority approval. All simulated milestones and figures are illustrative demo references.
         </span>
       </div>
 
-      {/* 1C. ROLE ERROR TOAST / BANNER */}
+      {/* 1D. ROLE ERROR TOAST / BANNER */}
       {roleErrorMessage && (
         <div className="w-full bg-red-600 text-white px-4 py-2 text-xs flex items-center justify-between shadow-md">
           <div className="max-w-[1360px] mx-auto flex items-center gap-2">
@@ -178,26 +233,46 @@ export const NavigationBar: React.FC = () => {
               )}
             </div>
 
-            {/* Direct Sign In & Enter Sandbox Buttons */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => openAuthModal("signin")}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium text-[#141F2B] bg-transparent hover:bg-[#F2EFEB] rounded border border-[#E2DED6] transition-colors"
-                title="Sign in to your account"
-              >
-                <span className="material-symbols-outlined text-[17px] text-[#5B6A78]">login</span>
-                <span>{t("nav.signIn")}</span>
-              </button>
+            {/* User Session / Sign In Buttons */}
+            {currentUser ? (
+              <div className="flex items-center gap-2">
+                <div className="hidden sm:flex flex-col text-right">
+                  <span className="text-xs font-bold text-[#0A2540] truncate max-w-[130px]">
+                    {currentUser.name}
+                  </span>
+                  <span className="text-[10px] text-[#5B6A78] font-mono uppercase">
+                    {currentUser.role}
+                  </span>
+                </div>
+                <button
+                  onClick={logoutUser}
+                  className="p-2 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded transition-colors border border-transparent hover:border-red-200"
+                  title="Sign Out"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openAuthModal("signin")}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium text-[#141F2B] bg-transparent hover:bg-[#F2EFEB] rounded border border-[#E2DED6] transition-colors"
+                  title="Sign in to your account"
+                >
+                  <span className="material-symbols-outlined text-[17px] text-[#5B6A78]">login</span>
+                  <span>{t("nav.signIn")}</span>
+                </button>
 
-              <button
-                onClick={() => openAuthModal("signup", "startup")}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-[#0F3854] hover:bg-[#1D4E72] rounded shadow-none transition-colors"
-                title="Register Startup"
-              >
-                <span>Enter Sandbox</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-              </button>
-            </div>
+                <button
+                  onClick={() => openAuthModal("signup", "startup")}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-[#0F3854] hover:bg-[#1D4E72] rounded shadow-none transition-colors"
+                  title="Register Startup"
+                >
+                  <span>Enter Sandbox</span>
+                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
+            )}
 
             {/* Role Switcher Pill */}
             <div className="hidden md:flex items-center bg-[#F2EFEB] p-1 rounded border border-[#E2DED6]">
@@ -242,13 +317,15 @@ export const NavigationBar: React.FC = () => {
             </div>
 
             {/* Quick Reset Demo */}
-            <button
-              onClick={resetDemoAction}
-              className="p-2 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded transition-colors border border-transparent hover:border-red-200"
-              title={t("nav.resetDemo")}
-            >
-              <RotateCcw className="h-4 w-4" />
-            </button>
+            {appMode === "demo" && (
+              <button
+                onClick={resetDemoAction}
+                className="p-2 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded transition-colors border border-transparent hover:border-red-200"
+                title={t("nav.resetDemo")}
+              >
+                <RotateCcw className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
       </header>

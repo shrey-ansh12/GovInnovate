@@ -12,7 +12,8 @@ import {
   X, 
   AlertTriangle,
   ExternalLink,
-  SlidersHorizontal
+  SlidersHorizontal,
+  FileText
 } from "lucide-react";
 
 export const ApplicationReview: React.FC = () => {
@@ -48,22 +49,24 @@ export const ApplicationReview: React.FC = () => {
             Tender Applications & Shortlisting Queue
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">
-            Review Submitted Startup Proposals ({applications.length})
+            Review Bids & Select Pilot Partner
           </h1>
-          <p className="text-xs text-[#5B6A78] mt-1">
+          <p className="text-sm text-[#5B6A78] mt-1 max-w-2xl leading-relaxed">
             Review DPIIT eligibility, inspect 5-pillar technical scores, compare candidates side-by-side, and sanction sandbox pilots.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* Side-by-Side Comparison Button */}
-          <button
-            onClick={() => setCompareModalOpen(true)}
-            className="px-4 py-2 rounded bg-white hover:bg-[#F2EFEB] text-[#0A2540] border border-[#E2DED6] font-semibold text-xs flex items-center gap-2 transition-all shadow-2xs"
-          >
-            <Scale className="h-4 w-4 text-[#0F3854]" />
-            <span>Side-by-Side Comparison</span>
-          </button>
+          {enrichedApplications.length > 0 && (
+            <button
+              onClick={() => setCompareModalOpen(true)}
+              className="px-4 py-2 rounded bg-white hover:bg-[#F2EFEB] text-[#0A2540] border border-[#E2DED6] font-semibold text-xs flex items-center gap-2 transition-all shadow-2xs"
+            >
+              <Scale className="h-4 w-4 text-[#0F3854]" />
+              <span>Side-by-Side Comparison ({enrichedApplications.length})</span>
+            </button>
+          )}
 
           <button
             onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
@@ -95,9 +98,17 @@ export const ApplicationReview: React.FC = () => {
 
       {/* Applications Cards */}
       <div className="space-y-6">
-        {enrichedApplications.map((app) => {
-          const isAquaSense = app.startupId === "ST-AQUASENSE";
+        {enrichedApplications.length === 0 && (
+          <div className="bg-white rounded border border-[#E2DED6] p-12 text-center">
+            <Building2 className="h-10 w-10 text-[#7E8B97] mx-auto mb-3" />
+            <h3 className="text-base font-bold text-[#0A2540]">No Startup Applications Yet</h3>
+            <p className="text-xs text-[#5B6A78] max-w-md mx-auto mt-1">
+              When eligible DPIIT-recognized startups submit bid proposals for this challenge, they will appear here for 5-pillar technical scoring and side-by-side comparison.
+            </p>
+          </div>
+        )}
 
+        {enrichedApplications.map((app) => {
           return (
             <div
               key={app.id}
@@ -109,164 +120,160 @@ export const ApplicationReview: React.FC = () => {
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-[#EDE9E1] gap-4">
                 <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-mono font-medium text-[#0F3854] bg-[#FAF8F5] border border-[#E2DED6] px-2 py-0.5 rounded">
-                      ID: {app.id}
-                    </span>
-                    <h2 className="text-lg font-bold text-[#0A2540]">{app.startupName}</h2>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
-                      <ShieldCheck className="h-3 w-3" /> DPIIT Recognized
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs text-[#7E8B97] font-semibold">{app.id}</span>
+                    <span className="text-[#E2DED6]">•</span>
+                    <span className="text-xs text-[#5B6A78] font-mono">Submitted: {app.appliedDate}</span>
+                    <span className="text-[#E2DED6]">•</span>
+                    <span className="inline-flex items-center gap-1 font-mono text-[11px] text-[#147452] bg-[#EBF6F0] px-2 py-0.5 rounded border border-[#C2E5D2]">
+                      <CheckCircle2 className="h-3 w-3" /> DPIIT Recognized
                     </span>
                   </div>
-                  <p className="text-xs text-[#5B6A78] font-mono mt-1">
-                    Applied: {app.appliedDate} • TRL: Level {app.trlLevel || 7} • Local Content: {app.localContentPercentage || 65}% • Patents: {app.patentsCount || 1}
-                  </p>
+                  <h3 className="text-xl font-bold text-[#0A2540] mt-1">{app.startupName}</h3>
+                  <p className="text-xs text-[#5B6A78] mt-0.5">{app.solutionOverview}</p>
                 </div>
 
-                <div className="flex items-center gap-3 font-mono">
-                  <span className={`text-xs px-2.5 py-1 rounded border font-semibold ${
-                    app.status === "Shortlisted" || app.status === "Pilot Active"
-                      ? "bg-[#EBF6F0] text-[#147452] border-[#C2E5D2]"
-                      : app.status === "Evaluated"
-                      ? "bg-[#FEF7EA] text-[#8A5B0B] border-[#F6E1B9]"
-                      : "bg-[#F2EFEB] text-[#0F3854] border-[#E2DED6]"
-                  }`}>
-                    Status: {app.status}
-                  </span>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#7E8B97] block">Tender Status</span>
+                    <span className={`inline-block px-2.5 py-1 rounded text-xs font-mono font-semibold ${
+                      app.status === "Shortlisted" || app.status === "Pilot Active"
+                        ? "bg-[#0F3854] text-white"
+                        : app.status === "Evaluated"
+                        ? "bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]"
+                        : "bg-[#F2EFEB] text-[#5B6A78]"
+                    }`}>
+                      {app.status}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {/* Proposal Overview & Score Comparison */}
-              <div className="grid md:grid-cols-2 gap-6 pt-5">
-                <div className="space-y-3">
-                  <div>
-                    <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-[#5B6A78] mb-1">
-                      Proposed Solution Architecture
-                    </h4>
-                    <p className="text-xs text-[#141F2B] leading-relaxed bg-[#FAF8F5] p-3 rounded border border-[#E2DED6]">
-                      {app.solutionOverview}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 text-xs font-mono text-[#5B6A78]">
-                    <div className="bg-[#FAF8F5] p-2.5 rounded border border-[#E2DED6]">
-                      <span className="block text-[10px] uppercase text-[#7E8B97]">Proposed Budget</span>
-                      <strong className="text-[#0A2540] text-sm">{app.proposedCost}</strong>
-                    </div>
-                    <div className="bg-[#FAF8F5] p-2.5 rounded border border-[#E2DED6]">
-                      <span className="block text-[10px] uppercase text-[#7E8B97]">Deployment Lead Time</span>
-                      <strong className="text-[#0A2540] text-sm">{app.deploymentTime}</strong>
-                    </div>
-                  </div>
-
-                  {app.evidenceLinks && app.evidenceLinks.length > 0 && (
-                    <div className="pt-2">
-                      <div className="text-[11px] font-mono text-[#5B6A78] uppercase mb-1">Submitted Evidence Documents:</div>
-                      <div className="flex flex-wrap gap-2">
-                        {app.evidenceLinks.map((link, idx) => (
-                          <a
-                            key={idx}
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[11px] font-mono text-[#0F3854] hover:underline inline-flex items-center gap-1 bg-[#F2EFEB] px-2 py-0.5 rounded border border-[#E2DED6]"
-                          >
-                            <span>Doc Reference #{idx + 1}</span>
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              <div className="grid md:grid-cols-3 gap-6 my-5">
+                <div>
+                  <h4 className="text-[11px] font-mono uppercase tracking-wider text-[#7E8B97] mb-2 font-semibold">
+                    Technical Readiness & IP
+                  </h4>
+                  <ul className="space-y-1.5 text-xs text-[#141F2B]">
+                    <li className="flex items-center justify-between">
+                      <span className="text-[#5B6A78]">TRL Level:</span>
+                      <span className="font-bold font-mono">TRL {app.trlLevel || 7}</span>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span className="text-[#5B6A78]">Domestic Local Content:</span>
+                      <span className="font-bold font-mono text-[#0F3854]">{app.localContentPercentage || 65}% (Class-I)</span>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span className="text-[#5B6A78]">Patents / IP:</span>
+                      <span className="font-mono">{app.patentsCount || 1} Granted Patents</span>
+                    </li>
+                  </ul>
                 </div>
 
-                {/* Score & Committee Actions */}
-                <div className="flex flex-col justify-between space-y-4">
+                <div>
+                  <h4 className="text-[11px] font-mono uppercase tracking-wider text-[#7E8B97] mb-2 font-semibold">
+                    Commercial Proposal
+                  </h4>
+                  <ul className="space-y-1.5 text-xs text-[#141F2B]">
+                    <li className="flex items-center justify-between">
+                      <span className="text-[#5B6A78]">Proposed Cost:</span>
+                      <span className="font-bold font-mono text-[#0A2540]">{app.proposedCost}</span>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span className="text-[#5B6A78]">Deployment Timeline:</span>
+                      <span className="font-mono">{app.deploymentTime}</span>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span className="text-[#5B6A78]">Prior Turnover Status:</span>
+                      <span className="text-[11px] text-[#147452] font-semibold">Exempt under GFR 170</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="text-[11px] font-mono uppercase tracking-wider text-[#7E8B97] mb-2 font-semibold">
+                    5-Pillar Scorecard
+                  </h4>
                   {app.evaluatorScore ? (
-                    <div className="bg-[#FAF8F5] p-4 rounded border border-[#E2DED6] text-xs text-[#0A2540] space-y-2">
-                      <div className="flex items-center justify-between font-semibold font-mono pb-2 border-b border-[#EDE9E1]">
-                        <span className="flex items-center gap-1.5 text-[#0F3854]">
-                          <Award className="h-4 w-4" />
-                          5-Pillar Committee Score
-                        </span>
-                        <span className="text-base text-[#147452] font-bold">
-                          {app.evaluatorScore.total} / 100
-                        </span>
+                    <div className="p-3 rounded bg-[#FAF8F5] border border-[#E2DED6] space-y-1 text-xs">
+                      <div className="flex items-center justify-between font-bold">
+                        <span className="text-[#0A2540]">Total Score:</span>
+                        <span className="text-base text-[#147452]">{app.evaluatorScore.total} / 100</span>
                       </div>
-
-                      <div className="grid grid-cols-5 gap-1 text-[10px] font-mono text-center pt-1">
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
+                      <div className="grid grid-cols-5 gap-1 text-[10px] font-mono pt-1 text-center">
+                        <div>
                           <div className="text-[#7E8B97]">Inn</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.innovation}/20</div>
+                          <div className="font-bold">{app.evaluatorScore.innovation}</div>
                         </div>
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
+                        <div>
                           <div className="text-[#7E8B97]">Feas</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.feasibility}/20</div>
+                          <div className="font-bold">{app.evaluatorScore.feasibility}</div>
                         </div>
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
+                        <div>
                           <div className="text-[#7E8B97]">Imp</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.impact}/20</div>
+                          <div className="font-bold">{app.evaluatorScore.impact}</div>
                         </div>
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
+                        <div>
                           <div className="text-[#7E8B97]">Scal</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.scalability}/20</div>
+                          <div className="font-bold">{app.evaluatorScore.scalability}</div>
                         </div>
-                        <div className="bg-white p-1 rounded border border-[#E2DED6]">
+                        <div>
                           <div className="text-[#7E8B97]">Viab</div>
-                          <div className="font-bold text-[#0F3854]">{app.evaluatorScore.viability}/20</div>
+                          <div className="font-bold">{app.evaluatorScore.viability}</div>
                         </div>
-                      </div>
-
-                      <p className="text-[11px] text-[#5B6A78] italic pt-1">
-                        &quot;{app.evaluatorScore.feedback}&quot;
-                      </p>
-                      <div className="text-[10px] font-mono text-[#7E8B97]">
-                        Evaluated by: {app.evaluatorScore.evaluatorName}
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-[#FAF8F5] p-3.5 rounded border border-[#E2DED6] text-xs text-[#5B6A78] flex items-center justify-between">
-                      <span>Evaluator scoring pending for this proposal</span>
+                    <div className="p-3 rounded bg-[#FAF8F5] border border-[#E2DED6] text-xs text-[#5B6A78] flex items-center justify-between">
+                      <span>Awaiting Evaluation Score</span>
                       <button
                         onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
-                        className="text-xs font-semibold text-[#0F3854] hover:underline"
+                        className="text-[11px] text-[#0F3854] font-semibold underline"
                       >
-                        Score Now →
+                        Score Now
                       </button>
                     </div>
                   )}
+                </div>
+              </div>
 
-                  {/* Procurement Decision Workflow Buttons */}
-                  <div className="flex flex-wrap items-center gap-2 pt-2">
-                    {app.status === "Submitted" && (
-                      <button
-                        onClick={() => verifyEligibilityAction(app.id)}
-                        className="px-3.5 py-2 rounded bg-[#0A2540] hover:bg-[#141F2B] text-white font-medium text-xs transition-colors"
-                      >
-                        Verify DPIIT Status
-                      </button>
-                    )}
+              {/* Action Buttons */}
+              <div className="pt-4 border-t border-[#EDE9E1] flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  {app.status === "Submitted" && (
+                    <button
+                      onClick={() => verifyEligibilityAction(app.id)}
+                      className="px-3.5 py-1.5 rounded bg-white hover:bg-[#F2EFEB] text-[#0A2540] border border-[#E2DED6] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    >
+                      <ShieldCheck className="h-4 w-4 text-[#147452]" />
+                      <span>Verify DPIIT Eligibility</span>
+                    </button>
+                  )}
 
-                    {app.status !== "Shortlisted" && app.status !== "Pilot Active" && (
-                      <button
-                        onClick={() => shortlistApplicationAction(app.id)}
-                        className="px-3.5 py-2 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-medium text-xs transition-colors"
-                      >
-                        Shortlist for Pilot
-                      </button>
-                    )}
+                  {app.status !== "Shortlisted" && app.status !== "Pilot Active" && (
+                    <button
+                      onClick={() => shortlistApplicationAction(app.id)}
+                      className="px-3.5 py-1.5 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    >
+                      <Award className="h-4 w-4 text-emerald-400" />
+                      <span>Shortlist for Pilot</span>
+                    </button>
+                  )}
 
-                    {(app.status === "Shortlisted" || app.status === "Pilot Active" || isAquaSense) && (
-                      <button
-                        onClick={() => createPilotAction()}
-                        className="px-4 py-2 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs"
-                      >
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                        <span>Commission 90-Day Pilot Sandbox</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </div>
+                  {(app.status === "Shortlisted" || app.status === "Pilot Active") && (
+                    <button
+                      onClick={() => createPilotAction()}
+                      className="px-4 py-2 rounded bg-[#147452] hover:bg-[#0E593D] text-white text-xs font-bold flex items-center gap-2 transition-colors shadow-xs"
+                    >
+                      <span>Sanction 90-Day Sandbox Pilot</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="text-[11px] font-mono text-[#5B6A78]">
+                  <span>Subject to GFR 2017 Procurement Guidelines</span>
                 </div>
               </div>
             </div>
@@ -378,13 +385,12 @@ export const ApplicationReview: React.FC = () => {
                       ))}
                     </tr>
                     <tr>
-                      <td className="p-3 font-mono text-[#5B6A78]">Reagent / Consumable Requirement</td>
-                      <td className="p-3 text-xs text-[#147452] font-semibold">
-                        Zero Reagents (Optical Spectrophotometry)
-                      </td>
-                      <td className="p-3 text-xs text-[#5B6A78]">
-                        Standard Buoy Telemetry (Surface physical params)
-                      </td>
+                      <td className="p-3 font-mono text-[#5B6A78]">Technical Approach Overview</td>
+                      {enrichedApplications.map(app => (
+                        <td key={app.id} className="p-3 text-xs text-[#141F2B]">
+                          {app.solutionOverview || "Continuous IoT edge sensing telemetry"}
+                        </td>
+                      ))}
                     </tr>
                     <tr>
                       <td className="p-3 font-mono text-[#5B6A78]">Procurement Committee Action</td>
@@ -409,17 +415,16 @@ export const ApplicationReview: React.FC = () => {
                   </tbody>
                 </table>
               </div>
-
-              <div className="mt-6 p-4 rounded bg-[#FAF8F5] border border-[#E2DED6] text-xs text-[#5B6A78]">
-                <strong>Procurement Assessment Summary:</strong> AquaSense AI Innovations demonstrates higher technical readiness (TRL-8 vs TRL-7), 78% local content, 3 granted patents, and an objective score of 95/100, fulfilling all statutory requirements for the 5-location sandbox pilot.
-              </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-[#EDE9E1] flex justify-end bg-[#FAF8F5]">
+            <div className="p-4 bg-[#FAF8F5] border-t border-[#EDE9E1] flex items-center justify-between">
+              <span className="text-[11px] text-[#5B6A78]">
+                Decisions must adhere to competent-authority approval and GFR 2017 rules.
+              </span>
               <button
                 onClick={() => setCompareModalOpen(false)}
-                className="px-4 py-2 rounded bg-white border border-[#E2DED6] text-[#0A2540] text-xs font-semibold hover:bg-[#F2EFEB]"
+                className="px-4 py-2 rounded bg-white hover:bg-[#F2EFEB] text-[#0A2540] border border-[#E2DED6] font-semibold text-xs"
               >
                 Close Comparison
               </button>

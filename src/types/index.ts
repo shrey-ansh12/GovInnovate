@@ -1,4 +1,4 @@
-export type UserRole = "government" | "startup" | "evaluator";
+export type UserRole = "government" | "startup" | "evaluator" | "admin";
 
 export interface AuthUser {
   id: string;
@@ -8,6 +8,7 @@ export interface AuthUser {
   organization: string;
   designation?: string;
   identifier?: string;
+  verificationStatus?: "verified" | "pending_verification" | "rejected";
 }
 
 export type ChallengeStatus = 

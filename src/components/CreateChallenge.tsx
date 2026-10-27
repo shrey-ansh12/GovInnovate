@@ -9,11 +9,12 @@ import {
   ShieldAlert,
   Building2,
   SlidersHorizontal,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 
 export const CreateChallenge: React.FC = () => {
-  const { createChallengeAction, role, setRole } = useApp();
+  const { createChallengeAction, role, setRole, appMode } = useApp();
 
   const [rawProblem, setRawProblem] = useState(
     "Our municipal water distribution lines experience sudden industrial pollutant dumps and heavy metal contamination. Lab testing takes 24-48 hours which is too slow. We need an automated IoT sensing solution to detect contamination spikes within 5 minutes across 5 pilot sites, with zero false positives, before expanding city-wide."
@@ -28,6 +29,7 @@ export const CreateChallenge: React.FC = () => {
   const [scaleLocations, setScaleLocations] = useState(50);
 
   const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [structuredDecomposition, setStructuredDecomposition] = useState<{
     structuredTitle: string;
     summary: string;
@@ -75,24 +77,29 @@ export const CreateChallenge: React.FC = () => {
     }, 600);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    createChallengeAction({
-      title: structuredDecomposition?.structuredTitle || "AI-Based Water Quality Monitoring System",
-      department,
-      ministry,
-      category,
-      budget,
-      pilotDuration,
-      summary: structuredDecomposition?.summary || "",
-      problemStatement: structuredDecomposition?.problemStatement || rawProblem,
-      expectedOutcomes: structuredDecomposition?.expectedOutcomes || [],
-      technicalThresholds: structuredDecomposition?.technicalThresholds || [],
-      targetLocations,
-      scaleLocations,
-      matchedCount: 4,
-      applicationsCount: 0
-    });
+    setIsSubmitting(true);
+    try {
+      await createChallengeAction({
+        title: structuredDecomposition?.structuredTitle || "AI-Based Water Quality Monitoring System",
+        department,
+        ministry,
+        category,
+        budget,
+        pilotDuration,
+        summary: structuredDecomposition?.summary || "",
+        problemStatement: structuredDecomposition?.problemStatement || rawProblem,
+        expectedOutcomes: structuredDecomposition?.expectedOutcomes || [],
+        technicalThresholds: structuredDecomposition?.technicalThresholds || [],
+        targetLocations,
+        scaleLocations,
+        matchedCount: 4,
+        applicationsCount: 0
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -102,6 +109,9 @@ export const CreateChallenge: React.FC = () => {
         <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#0F3854] uppercase tracking-wider mb-2">
           <Building2 className="h-4 w-4" />
           Government Procurement Desk • GFR 2017 Sandbox Framework
+          <span className="ml-2 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-100 text-emerald-800 border border-emerald-300">
+            {appMode === "real" ? "Real Database Persistence" : "Sandbox Demo Mode"}
+          </span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">
           Create & Publish Procurement Challenge
@@ -141,47 +151,43 @@ export const CreateChallenge: React.FC = () => {
                 type="text"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="w-full text-xs rounded border border-[#E2DED6] px-3 py-2.5 bg-[#FAF8F5] focus:bg-white text-[#141F2B]"
-                placeholder="Department name"
+                placeholder="Procuring Department"
+                className="text-xs rounded border border-[#E2DED6] px-3 py-2 bg-[#FAF8F5] focus:bg-white"
               />
               <input
                 type="text"
                 value={ministry}
                 onChange={(e) => setMinistry(e.target.value)}
-                className="w-full text-xs rounded border border-[#E2DED6] px-3 py-2.5 bg-[#FAF8F5] focus:bg-white text-[#141F2B]"
-                placeholder="Ministry name"
+                placeholder="Parent Ministry"
+                className="text-xs rounded border border-[#E2DED6] px-3 py-2 bg-[#FAF8F5] focus:bg-white"
               />
             </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78]">
-                Problem Statement & Operational Context
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78]">
+                Operational Problem Statement
               </label>
               <button
                 type="button"
                 onClick={handleDecompose}
                 disabled={isSynthesizing}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0F3854] hover:underline"
+                className="text-[11px] font-mono text-[#0F3854] hover:underline flex items-center gap-1 font-semibold"
               >
-                <SlidersHorizontal className="h-3.5 w-3.5 text-[#147452]" />
-                {isSynthesizing ? "Synthesizing..." : "Format Specifications"}
+                <SlidersHorizontal className="h-3 w-3" />
+                <span>{isSynthesizing ? "Synthesizing..." : "Re-Run Structured Decomposition"}</span>
               </button>
             </div>
             <textarea
-              rows={5}
+              rows={4}
               value={rawProblem}
               onChange={(e) => setRawProblem(e.target.value)}
-              className="w-full text-xs rounded border border-[#E2DED6] p-3.5 bg-[#FAF8F5] focus:bg-white text-[#141F2B] leading-relaxed"
-              placeholder="Describe what challenge your department is facing..."
+              className="w-full text-xs rounded border border-[#E2DED6] p-3 leading-relaxed bg-[#FAF8F5] focus:bg-white focus:outline-none"
             />
-            <p className="text-[11px] text-[#5B6A78] mt-1.5 font-mono">
-              Specify constraints such as target location count, required alert latency, or sensor specifications.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-[11px] uppercase tracking-wider text-[#5B6A78] mb-1">
                 Category
@@ -251,9 +257,14 @@ export const CreateChallenge: React.FC = () => {
 
           <button
             onClick={handleSubmit}
-            className="w-full py-3 px-6 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs"
+            disabled={isSubmitting}
+            className="w-full py-3 px-6 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs disabled:opacity-50"
           >
-            <Send className="h-4 w-4" />
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
             <span>Publish Challenge & Run Rule-Based Matching Engine</span>
             <ArrowRight className="h-4 w-4" />
           </button>
