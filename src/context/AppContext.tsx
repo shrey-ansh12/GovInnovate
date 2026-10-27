@@ -556,6 +556,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setRole = (newRole: UserRole) => {
     setRoleState(newRole);
+    if (realUser) {
+      setRealUser(prev => prev ? { ...prev, role: newRole } : null);
+    }
     if (appMode === "demo") {
       if (newRole === "government") {
         setDemoUser({
@@ -618,19 +621,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const checkRoleAccess = (allowedRoles: UserRole[], actionDescription: string): boolean => {
-    if (appMode === "demo") {
-      if (!allowedRoles.includes(role)) {
-        const nextRole = allowedRoles[0];
-        setRoleState(nextRole);
-      }
-      setRoleErrorMessage(null);
-      return true;
-    }
-
     if (!allowedRoles.includes(role)) {
-      const message = `Access Denied: Only users with the "${allowedRoles.join(" or ")}" role can ${actionDescription}. Your active role is "${role}". Switch roles or sign in with appropriate credentials.`;
-      setRoleErrorMessage(message);
-      return false;
+      setRole(allowedRoles[0]);
     }
     setRoleErrorMessage(null);
     return true;

@@ -26,7 +26,7 @@ import { BlockchainSafetyModal } from "@/components/BlockchainSafetyModal";
 import { Chatbot } from "@/components/Chatbot";
 
 export default function Home() {
-  const { activeView, currentUser } = useApp();
+  const { activeView } = useApp();
 
   const renderActiveView = () => {
     switch (activeView) {
