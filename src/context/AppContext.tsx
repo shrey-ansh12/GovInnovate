@@ -340,6 +340,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   // Real State (synced with Supabase / live API)
+  const [realChallenges, setRealChallenges] = useState<Challenge[]>([initialChallenge]);
   const [realChallenge, setRealChallenge] = useState<Challenge>(initialChallenge);
   const [realStartups, setRealStartups] = useState<Startup[]>([]);
   const [realApplications, setRealApplications] = useState<Application[]>([]);
@@ -370,30 +371,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [authModalMode, setAuthModalMode] = useState<"signin" | "signup">("signin");
   const [authModalRole, setAuthModalRole] = useState<UserRole>("startup");
 
-  // Active getters depending on mode
-  const challenges = appMode === "real" ? [realChallenge] : demoChallenges;
-  const challenge = appMode === "real" ? realChallenge : demoChallenge;
+  // Active getters depending on mode with rich demo data fallback
+  const challenges = appMode === "real" 
+    ? (realChallenges && realChallenges.length > 0 ? realChallenges : demoChallenges) 
+    : demoChallenges;
+  const challenge = appMode === "real" ? (realChallenge || demoChallenge) : demoChallenge;
 
   const selectChallengeAction = (challengeId: string) => {
-    const found = demoChallenges.find(c => c.id === challengeId);
+    const list: Challenge[] = appMode === "real" ? (realChallenges.length > 0 ? realChallenges : demoChallenges) : demoChallenges;
+    const found = list.find((c: Challenge) => c.id === challengeId);
     if (found) {
-      setDemoChallenge(found);
+      if (appMode === "real") setRealChallenge(found);
+      else setDemoChallenge(found);
       recalculateMatchesAction(found);
     }
   };
   const selectChallenge = selectChallengeAction;
   const setChallenge = appMode === "real" ? setRealChallenge : setDemoChallenge;
-  const startups = appMode === "real" ? realStartups : demoStartups;
+  const startups = (appMode === "real" && realStartups.length > 0) ? realStartups : demoStartups;
   const setStartups = appMode === "real" ? setRealStartups : setDemoStartups;
-  const applications = appMode === "real" ? realApplications : demoApplications;
+  const applications = (appMode === "real" && realApplications.length > 0) ? realApplications : demoApplications;
   const setApplications = appMode === "real" ? setRealApplications : setDemoApplications;
-  const pilot = appMode === "real" ? realPilot : demoPilot;
+  const pilot = (appMode === "real" && realPilot) ? realPilot : demoPilot;
   const setPilot = appMode === "real" ? setRealPilot : setDemoPilot;
-  const auditLogs = appMode === "real" ? realAuditLogs : demoAuditLogs;
+  const auditLogs = (appMode === "real" && realAuditLogs.length > 0) ? realAuditLogs : demoAuditLogs;
   const setAuditLogs = appMode === "real" ? setRealAuditLogs : setDemoAuditLogs;
-  const notifications = appMode === "real" ? realNotifications : demoNotifications;
+  const notifications = (appMode === "real" && realNotifications.length > 0) ? realNotifications : demoNotifications;
   const setNotifications = appMode === "real" ? setRealNotifications : setDemoNotifications;
-  const currentUser = appMode === "real" ? realUser : demoUser;
+  const currentUser = appMode === "real" ? (realUser || demoUser) : demoUser;
 
   // Persist demo state (strictly isolated)
   useEffect(() => {
