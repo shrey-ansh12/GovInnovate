@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { useApp } from "@/context/AppContext";
-import { DashboardSwitcher } from "@/components/DashboardSwitcher";
-import { BlockchainSafetyBanner } from "@/components/BlockchainSafetyBanner";
+
+
 import { 
   Rocket, 
   CheckCircle2, 
@@ -88,12 +88,6 @@ export const StartupDashboard: React.FC = () => {
 
   return (
     <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-8 font-sans space-y-6">
-      {/* 1. EASY DASHBOARD SWITCH OPTION */}
-      <DashboardSwitcher />
-
-      {/* 2. BLOCKCHAIN DATA SAFETY BANNER */}
-      <BlockchainSafetyBanner />
-
       {/* 3. STARTUP BANNER */}
       <div className="bg-[#0F3854] text-white rounded-xl p-6 sm:p-8 border border-[#1D4E72] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
         <div>

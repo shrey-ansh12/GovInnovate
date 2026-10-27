@@ -3,8 +3,8 @@
 import { Challenge } from "@/types";
 import React from "react";
 import { useApp, ActiveView } from "@/context/AppContext";
-import { DashboardSwitcher } from "@/components/DashboardSwitcher";
-import { BlockchainSafetyBanner } from "@/components/BlockchainSafetyBanner";
+
+
 import { 
   Building2, 
   PlusCircle, 
@@ -33,12 +33,6 @@ export const GovernmentDashboard: React.FC = () => {
 
   return (
     <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-8 font-sans space-y-6">
-      {/* Easy Dashboard Switch Option */}
-      <DashboardSwitcher />
-
-      {/* Blockchain Data Safety Banner */}
-      <BlockchainSafetyBanner />
-
       {/* Top Banner / Hero */}
       <div className="bg-[#0F3854] text-white rounded-xl p-6 sm:p-8 border border-[#1D4E72] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-sm">
         <div>
