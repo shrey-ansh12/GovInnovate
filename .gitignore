@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+**/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -19,6 +20,12 @@
 
 # production
 /build
+
+# blockchain
+govinnovate-blockchain/cache/
+govinnovate-blockchain/artifacts/
+govinnovate-blockchain/typechain/
+govinnovate-blockchain/typechain-types/
 
 # misc
 .DS_Store

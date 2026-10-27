@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { useApp } from "@/context/AppContext";
@@ -41,11 +41,21 @@ export const StartupDashboard: React.FC = () => {
   const [selectedMilestoneId, setSelectedMilestoneId] = useState<string>(pilot.milestones[0]?.id || "M-01");
   const [evidenceText, setEvidenceText] = useState("");
   const [evidenceDocUrl, setEvidenceDocUrl] = useState("https://example.com/docs/field-report.pdf");
+  const [selectedEvidenceFile, setSelectedEvidenceFile] = useState<File | null>(null);
+  const [isUploadingEvidence, setIsUploadingEvidence] = useState(false);
   const [evidenceSuccess, setEvidenceSuccess] = useState(false);
 
-  const handleSubmitEvidence = (e: React.FormEvent) => {
+  const handleSubmitEvidence = async (e: React.FormEvent) => {
     e.preventDefault();
-    submitMilestoneEvidenceAction(pilot.id, selectedMilestoneId, evidenceText || "Verified physical installation and telemetry calibration sign-off.", evidenceDocUrl);
+    setIsUploadingEvidence(true);
+    await submitMilestoneEvidenceAction(
+      pilot.id, 
+      selectedMilestoneId, 
+      evidenceText || "Verified physical installation and telemetry calibration sign-off.", 
+      evidenceDocUrl,
+      selectedEvidenceFile || undefined
+    );
+    setIsUploadingEvidence(false);
     setEvidenceSuccess(true);
     setTimeout(() => setEvidenceSuccess(false), 4000);
   };
@@ -217,6 +227,22 @@ export const StartupDashboard: React.FC = () => {
 
               <div>
                 <label className="block text-[11px] font-mono text-[#5B6A78] uppercase mb-1">
+                  Upload Deliverable Document / PDF (Computed SHA-256 Checksum)
+                </label>
+                <input
+                  type="file"
+                  onChange={(e) => setSelectedEvidenceFile(e.target.files?.[0] || null)}
+                  className="w-full text-xs rounded border border-dashed border-[#B8B0A2] p-2 bg-[#FAF8F5] file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#0F3854] file:text-white"
+                />
+                {selectedEvidenceFile && (
+                  <p className="text-[10px] font-mono text-[#147452] mt-1">
+                    Selected: {selectedEvidenceFile.name} ({Math.round(selectedEvidenceFile.size / 1024)} KB). Hashed on server bytes.
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-mono text-[#5B6A78] uppercase mb-1">
                   Document / Report Evidence Link
                 </label>
                 <input
@@ -232,16 +258,17 @@ export const StartupDashboard: React.FC = () => {
               {evidenceSuccess && (
                 <div className="p-3 bg-[#EBF6F0] border border-[#C2E5D2] rounded text-xs text-[#147452] flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0" />
-                  <span>Evidence recorded successfully! Evaluators and Department officials have been notified.</span>
+                  <span>Evidence recorded and hashed successfully! Evaluators and Department officials have been notified.</span>
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded bg-[#147452] hover:bg-[#0E593D] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs"
+                disabled={isUploadingEvidence}
+                className="w-full py-2.5 rounded bg-[#147452] hover:bg-[#0E593D] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs disabled:opacity-50"
               >
                 <Upload className="h-4 w-4" />
-                <span>Upload & Request Milestone Verification</span>
+                <span>{isUploadingEvidence ? "Hashing & Registering On Ledger..." : "Upload & Request Milestone Verification"}</span>
               </button>
             </form>
           </div>

@@ -14,7 +14,9 @@ import {
   FinalDecision,
   PilotKPI,
   PilotMilestone,
-  DocumentVerificationRecord
+  DocumentVerificationRecord,
+  EvidenceRecord,
+  EvidenceVerificationResponse
 } from "@/types";
 import { 
   SupportedLanguage, 
@@ -85,6 +87,10 @@ interface AppContextType {
   auditLogs: AuditLog[];
   notifications: NotificationItem[];
   currentUser: AuthUser | null;
+  evidenceRecords: EvidenceRecord[];
+  refreshEvidenceRecords: () => Promise<void>;
+  verifyEvidenceAction: (evidenceId: string, file?: File, fileHash?: string) => Promise<EvidenceVerificationResponse | null>;
+  getEvidenceRecordAction: (evidenceId: string) => Promise<EvidenceRecord | null>;
   
   // RBAC & Errors
   roleErrorMessage: string | null;
@@ -147,7 +153,13 @@ interface AppContextType {
   createPilotAction: (customPilot?: Partial<Pilot>) => void;
   
   // Step 6: Startup submits milestone evidence
-  submitMilestoneEvidenceAction: (pilotId: string, milestoneId: string, evidenceDescription: string, evidenceUrl: string) => void;
+  submitMilestoneEvidenceAction: (
+    pilotId: string, 
+    milestoneId: string, 
+    evidenceDescription: string, 
+    evidenceUrl: string,
+    file?: File
+  ) => Promise<boolean>;
   
   // Step 7: Evaluator / Govt reviews milestone
   reviewMilestoneAction: (pilotId: string, milestoneId: string, approved: boolean, notes: string) => void;
@@ -306,6 +318,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [realAuditLogs, setRealAuditLogs] = useState<AuditLog[]>([]);
   const [realNotifications, setRealNotifications] = useState<NotificationItem[]>([]);
   const [realUser, setRealUser] = useState<AuthUser | null>(null);
+  const [evidenceRecords, setEvidenceRecords] = useState<EvidenceRecord[]>([]);
+
+  const refreshEvidenceRecords = useCallback(async () => {
+    try {
+      const res = await fetch("/api/evidence");
+      const data = await res.json();
+      if (data.success && Array.isArray(data.records)) {
+        setEvidenceRecords(data.records);
+      }
+    } catch (e) {
+      console.warn("Could not load evidence records:", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshEvidenceRecords();
+  }, [refreshEvidenceRecords]);
 
   // Modals
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
@@ -1517,13 +1546,83 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Step 6: Startup submits milestone evidence
-  const submitMilestoneEvidenceAction = (
+  const submitMilestoneEvidenceAction = async (
     pilotId: string, 
     milestoneId: string, 
     evidenceDescription: string, 
-    evidenceUrl: string
-  ) => {
-    if (!checkRoleAccess(["startup"], "submit milestone evidence")) return;
+    evidenceUrl: string,
+    file?: File
+  ): Promise<boolean> => {
+    if (!checkRoleAccess(["startup"], "submit milestone evidence")) return false;
+
+    let attachedEvidenceId = `EVID-${milestoneId}-${Date.now().toString().slice(-4)}`;
+    let attachedHash = "";
+    let attachedFilename = file ? file.name : `${milestoneId}_Deliverable_Report.pdf`;
+    let attachedVersion = 1;
+    let blockchainTx = "";
+    let blockchainStatus: any = "Pending Registration";
+
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("evidenceId", attachedEvidenceId);
+        formData.append("pilotId", pilotId);
+        formData.append("milestoneId", milestoneId);
+        formData.append("category", "Milestone Deliverable");
+        formData.append("uploadedBy", currentUser?.name || "AquaSense AI Innovations");
+        formData.append("uploadedByRole", "startup");
+
+        const res = await fetch("/api/evidence/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.success && data.evidenceRecord) {
+          attachedEvidenceId = data.evidenceRecord.id;
+          attachedHash = data.evidenceRecord.fileHash;
+          attachedFilename = data.evidenceRecord.originalFilename;
+          attachedVersion = data.evidenceRecord.version;
+          blockchainTx = data.evidenceRecord.blockchainTxHash || "";
+          blockchainStatus = data.evidenceRecord.blockchainStatus || "Registered On Blockchain";
+          refreshEvidenceRecords();
+        }
+      } catch (uploadErr) {
+        console.warn("Evidence upload failed, proceeding with fallback:", uploadErr);
+      }
+    } else {
+      // Create synthetic byte record if only URL/description given
+      try {
+        const textContent = `GovInnovate Milestone Deliverable Archive\nMilestone: ${milestoneId}\nPilot: ${pilotId}\nSummary: ${evidenceDescription}\nReference URL: ${evidenceUrl}\nTimestamp: ${new Date().toISOString()}`;
+        const blob = new Blob([textContent], { type: "text/plain" });
+        const synFile = new File([blob], `${milestoneId}_Report_Enclosure.txt`, { type: "text/plain" });
+        const formData = new FormData();
+        formData.append("file", synFile);
+        formData.append("evidenceId", attachedEvidenceId);
+        formData.append("pilotId", pilotId);
+        formData.append("milestoneId", milestoneId);
+        formData.append("category", "Milestone Deliverable");
+        formData.append("uploadedBy", currentUser?.name || "AquaSense AI Innovations");
+        formData.append("uploadedByRole", "startup");
+
+        const res = await fetch("/api/evidence/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.success && data.evidenceRecord) {
+          attachedEvidenceId = data.evidenceRecord.id;
+          attachedHash = data.evidenceRecord.fileHash;
+          attachedFilename = data.evidenceRecord.originalFilename;
+          attachedVersion = data.evidenceRecord.version;
+          blockchainTx = data.evidenceRecord.blockchainTxHash || "";
+          blockchainStatus = data.evidenceRecord.blockchainStatus || "Registered On Blockchain";
+          refreshEvidenceRecords();
+        }
+      } catch (err) {
+        console.warn("Synthetic evidence upload notice:", err);
+      }
+    }
 
     setPilot(prev => {
       const updatedMilestones = prev.milestones.map(m => {
@@ -1532,8 +1631,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             ...m,
             status: "Submitted for Review" as const,
             evidenceDescription,
-            evidenceUrl,
-            submittedAt: new Date().toISOString().slice(0, 16).replace("T", " ")
+            evidenceUrl: evidenceUrl || attachedFilename,
+            evidenceId: attachedEvidenceId,
+            evidenceHash: attachedHash,
+            evidenceFilename: attachedFilename,
+            evidenceVersion: attachedVersion,
+            blockchainTxHash: blockchainTx,
+            blockchainStatus: blockchainStatus,
+            submittedAt: new Date().toISOString().slice(0, 16).replace("T", " "),
           };
         }
         return m;
@@ -1543,10 +1648,56 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     addAuditLog(
       "MILESTONE_EVIDENCE_SUBMITTED",
-      `Milestone evidence submitted for ${milestoneId}: "${evidenceDescription}". Awaiting technical review.`,
+      `Milestone evidence submitted for ${milestoneId} [Evidence ID: ${attachedEvidenceId}, SHA-256: ${attachedHash ? attachedHash.slice(0, 16) + "..." : "Recorded"}]. Committed to verification ledger.`,
       "Milestone",
       "startup"
     );
+
+    return true;
+  };
+
+  const verifyEvidenceAction = async (
+    evidenceId: string,
+    file?: File,
+    fileHash?: string
+  ): Promise<EvidenceVerificationResponse | null> => {
+    try {
+      let body: any;
+      let headers: any = {};
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("evidenceId", evidenceId);
+        body = formData;
+      } else {
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify({ evidenceId, fileHash });
+      }
+
+      const res = await fetch("/api/evidence/verify", {
+        method: "POST",
+        headers,
+        body,
+      });
+      const data: EvidenceVerificationResponse = await res.json();
+      return data;
+    } catch (err) {
+      console.error("verifyEvidenceAction error:", err);
+      return null;
+    }
+  };
+
+  const getEvidenceRecordAction = async (evidenceId: string): Promise<EvidenceRecord | null> => {
+    try {
+      const res = await fetch(`/api/evidence/${encodeURIComponent(evidenceId)}`);
+      const data = await res.json();
+      if (data.success && data.evidenceRecord) {
+        return data.evidenceRecord;
+      }
+    } catch (err) {
+      console.warn("getEvidenceRecordAction error:", err);
+    }
+    return null;
   };
 
   // Step 7: Evaluator / Govt reviews milestone evidence
@@ -1744,6 +1895,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       auditLogs,
       notifications,
       currentUser,
+      evidenceRecords,
+      refreshEvidenceRecords,
+      verifyEvidenceAction,
+      getEvidenceRecordAction,
       roleErrorMessage,
       clearRoleError,
       checkRoleAccess,

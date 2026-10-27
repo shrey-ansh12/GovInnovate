@@ -1,4 +1,4 @@
-﻿import { Challenge, Startup, Application, Pilot, AuditLog, NotificationItem } from "@/types";
+import { Challenge, Startup, Application, Pilot, AuditLog, NotificationItem } from "@/types";
 
 export const initialChallenge: Challenge = {
   id: "CH-2026-WQ01",
@@ -485,6 +485,12 @@ export const samplePilot: Pilot = {
       paymentRef: "Demo Payment Reference (Simulated) #PR-2026-0911",
       evidenceDescription: "15 HydroGuard probes installed and calibrated across 5 intake stations. Commissioning certificates co-signed by municipal site engineers.",
       evidenceUrl: "https://example.com/evidence/m1-commissioning-report.pdf",
+      evidenceId: "EVID-WQ-2026-001",
+      evidenceHash: "e8b2a1c49f82d10374e29b87a64c120e3f89410385721a9c40217498cdae7192",
+      evidenceFilename: "WaterTestingLab_Benchmarking_Audit.pdf",
+      evidenceVersion: 1,
+      blockchainTxHash: "0x8f48a1c97a2139048a1209cb8d9e27140a831278456102394781290374619a02",
+      blockchainStatus: "Registered On Blockchain",
       submittedAt: "2026-10-15 11:30",
       reviewedAt: "2026-10-16 14:00",
       reviewedBy: "Dr. Rajeshwar Sharma (Director, Water Mission)",
@@ -499,6 +505,12 @@ export const samplePilot: Pilot = {
       paymentRef: "Demo Payment Reference (Simulated) #PR-2026-0924",
       evidenceDescription: "API telemetry stream operational. Edge AI model trained on local municipal intake baseline with zero data drop over 30 continuous days.",
       evidenceUrl: "https://example.com/evidence/m2-telemetry-validation.pdf",
+      evidenceId: "EVID-WQ-2026-002",
+      evidenceHash: "4a82b901ecfa4219904728abcdf01289456729aebdf109283748291038472910",
+      evidenceFilename: "Site10_SensorTelemetry_TelemetryAudit.pdf",
+      evidenceVersion: 1,
+      blockchainTxHash: "0x4a82b901ecfa4219904728abcdf01289456729aebdf109283748291038472910",
+      blockchainStatus: "Registered On Blockchain",
       submittedAt: "2026-11-14 10:20",
       reviewedAt: "2026-11-15 16:30",
       reviewedBy: "Dr. Rajeshwar Sharma (Director, Water Mission)",

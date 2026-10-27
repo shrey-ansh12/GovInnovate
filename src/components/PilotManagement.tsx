@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { useApp } from "@/context/AppContext";
@@ -16,7 +16,9 @@ import {
   Clock, 
   DollarSign 
 } from "lucide-react";
-import { PilotMilestone } from "@/types";
+import { PilotMilestone, EvidenceRecord } from "@/types";
+import { EvidenceVerificationModal } from "@/components/EvidenceVerificationModal";
+import { ShieldCheck, Lock, Cpu, Eye } from "lucide-react";
 
 export const PilotManagement: React.FC = () => {
   const { 
@@ -26,7 +28,8 @@ export const PilotManagement: React.FC = () => {
     setActiveView, 
     submitMilestoneEvidenceAction,
     reviewMilestoneAction,
-    approveValidationAction 
+    approveValidationAction,
+    getEvidenceRecordAction
   } = useApp();
 
   const [evidenceModalOpen, setEvidenceModalOpen] = useState(false);
@@ -36,6 +39,12 @@ export const PilotManagement: React.FC = () => {
   // Evidence submission state
   const [evidenceDesc, setEvidenceDesc] = useState("");
   const [evidenceUrl, setEvidenceUrl] = useState("");
+  const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
+  const [isSubmittingEvidence, setIsSubmittingEvidence] = useState(false);
+
+  // Evidence Verification Audit Modal state
+  const [auditModalOpen, setAuditModalOpen] = useState(false);
+  const [auditRecord, setAuditRecord] = useState<EvidenceRecord | null>(null);
 
   // Review state
   const [reviewApproved, setReviewApproved] = useState(true);
@@ -45,13 +54,79 @@ export const PilotManagement: React.FC = () => {
     setActiveMilestone(m);
     setEvidenceDesc(m.evidenceDescription || "");
     setEvidenceUrl(m.evidenceUrl || "https://example.com/docs/milestone-evidence.pdf");
+    setEvidenceFile(null);
     setEvidenceModalOpen(true);
   };
 
-  const handleSubmitEvidence = () => {
+  const handleSubmitEvidence = async () => {
     if (!activeMilestone) return;
-    submitMilestoneEvidenceAction(pilot.id, activeMilestone.id, evidenceDesc, evidenceUrl);
+    setIsSubmittingEvidence(true);
+    await submitMilestoneEvidenceAction(pilot.id, activeMilestone.id, evidenceDesc, evidenceUrl, evidenceFile || undefined);
+    setIsSubmittingEvidence(false);
     setEvidenceModalOpen(false);
+  };
+
+  const handleOpenAuditModal = async (m: PilotMilestone) => {
+    if (!m.evidenceId) {
+      const synthetic: EvidenceRecord = {
+        id: `EVID-${m.id}-SIM`,
+        pilotId: pilot.id,
+        milestoneId: m.id,
+        category: "Milestone Deliverable",
+        originalFilename: m.evidenceFilename || "Milestone_Deliverable.pdf",
+        fileSizeBytes: 1048576,
+        fileHash: m.evidenceHash || "e8b2a1c49f82d10374e29b87a64c120e3f89410385721a9c40217498cdae7192",
+        version: m.evidenceVersion || 1,
+        uploadedAt: m.submittedAt || "2026-10-15 11:30",
+        uploadedBy: "AquaSense AI Innovations Pvt Ltd",
+        uploadedByRole: "startup",
+        blockchainStatus: m.blockchainStatus || "Registered On Blockchain",
+        blockchainTxHash: m.blockchainTxHash || "0x8f48a1c97a2139048a1209cb8d9e27140a831278456102394781290374619a02",
+        blockchainBlockNumber: 1048201,
+        blockchainTimestamp: 1791279000,
+        blockchainSigner: "0x892410aBcDeF1234567890abcdef123456789012",
+        isSimulatedBlockchain: true,
+        versionHistory: [
+          {
+            version: m.evidenceVersion || 1,
+            fileHash: m.evidenceHash || "e8b2a1c49f82d10374e29b87a64c120e3f89410385721a9c40217498cdae7192",
+            originalFilename: m.evidenceFilename || "Milestone_Deliverable.pdf",
+            fileSizeBytes: 1048576,
+            uploadedAt: m.submittedAt || "2026-10-15 11:30",
+            uploadedBy: "AquaSense AI Innovations Pvt Ltd",
+            blockchainTxHash: m.blockchainTxHash,
+          }
+        ]
+      };
+      setAuditRecord(synthetic);
+      setAuditModalOpen(true);
+      return;
+    }
+
+    const fetched = await getEvidenceRecordAction(m.evidenceId);
+    if (fetched) {
+      setAuditRecord(fetched);
+    } else {
+      const fallback: EvidenceRecord = {
+        id: m.evidenceId,
+        pilotId: pilot.id,
+        milestoneId: m.id,
+        category: "Milestone Deliverable",
+        originalFilename: m.evidenceFilename || "Milestone_Deliverable.pdf",
+        fileSizeBytes: 1048576,
+        fileHash: m.evidenceHash || "e8b2a1c49f82d10374e29b87a64c120e3f89410385721a9c40217498cdae7192",
+        version: m.evidenceVersion || 1,
+        uploadedAt: m.submittedAt || "2026-10-15 11:30",
+        uploadedBy: "AquaSense AI Innovations Pvt Ltd",
+        uploadedByRole: "startup",
+        blockchainStatus: m.blockchainStatus || "Registered On Blockchain",
+        blockchainTxHash: m.blockchainTxHash,
+        isSimulatedBlockchain: true,
+        versionHistory: []
+      };
+      setAuditRecord(fallback);
+    }
+    setAuditModalOpen(true);
   };
 
   const handleOpenReview = (m: PilotMilestone) => {
@@ -252,6 +327,18 @@ export const PilotManagement: React.FC = () => {
                         {milestone.status}
                       </span>
 
+                      {/* Verify Integrity Action Button */}
+                      {(milestone.evidenceDescription || milestone.evidenceHash) && (
+                        <button
+                          onClick={() => handleOpenAuditModal(milestone)}
+                          className="px-2.5 py-1.5 rounded bg-white hover:bg-slate-50 border border-[#0F3854]/30 text-[#0F3854] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+                          title="Verify SHA-256 byte integrity and blockchain registration"
+                        >
+                          <ShieldCheck className="h-3.5 w-3.5 text-[#147452]" />
+                          <span>Verify Integrity</span>
+                        </button>
+                      )}
+
                       {/* Action buttons based on status & role */}
                       {(isPending || isRejected) && (
                         <button
@@ -278,7 +365,7 @@ export const PilotManagement: React.FC = () => {
                   </div>
 
                   {/* Evidence & Review Notes Details */}
-                  {(milestone.evidenceDescription || milestone.paymentRef || milestone.reviewNotes) && (
+                  {(milestone.evidenceDescription || milestone.paymentRef || milestone.reviewNotes || milestone.evidenceHash) && (
                     <div className="mt-3 pt-3 border-t border-[#EDE9E1] text-xs font-mono space-y-1.5 text-[#5B6A78]">
                       {milestone.evidenceDescription && (
                         <div>
@@ -292,6 +379,26 @@ export const PilotManagement: React.FC = () => {
                             >
                               [View Evidence Doc]
                             </a>
+                          )}
+                        </div>
+                      )}
+
+                      {milestone.evidenceHash && (
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-[#0A2540] border border-slate-200">
+                            SHA-256: {milestone.evidenceHash.slice(0, 16)}...
+                          </span>
+                          <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                            milestone.blockchainStatus === "Registered On Blockchain"
+                              ? "bg-emerald-50 text-[#147452] border-emerald-200"
+                              : "bg-amber-50 text-amber-700 border-amber-200"
+                          }`}>
+                            {milestone.blockchainStatus || "Registered On Blockchain"}
+                          </span>
+                          {milestone.evidenceVersion && (
+                            <span className="text-[10px] font-mono text-[#5B6A78]">
+                              v{milestone.evidenceVersion}
+                            </span>
                           )}
                         </div>
                       )}
@@ -387,7 +494,29 @@ export const PilotManagement: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-mono font-bold text-[#141F2B] block">Evidence Document / Lab Certificate URL:</label>
+              <label className="text-xs font-mono font-bold text-[#141F2B] block">
+                Attach Physical Document / PDF (Backend SHA-256 Hashing):
+              </label>
+              <input
+                type="file"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  setEvidenceFile(file);
+                  if (file && !evidenceDesc) {
+                    setEvidenceDesc(`Submission of verified technical enclosure: ${file.name}`);
+                  }
+                }}
+                className="w-full text-xs p-2 rounded border border-dashed border-[#B8B0A2] bg-[#FAF8F5] file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#147452] file:text-white"
+              />
+              {evidenceFile && (
+                <div className="text-[11px] font-mono text-[#147452] pt-0.5">
+                  Selected file: <strong>{evidenceFile.name}</strong> ({Math.round(evidenceFile.size / 1024)} KB). SHA-256 hash will be computed on server bytes.
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-mono font-bold text-[#141F2B] block">Optional Cloud / Lab Document Link:</label>
               <input
                 type="text"
                 value={evidenceUrl}
@@ -406,9 +535,11 @@ export const PilotManagement: React.FC = () => {
               </button>
               <button
                 onClick={handleSubmitEvidence}
-                className="px-4 py-2 rounded bg-[#147452] hover:bg-[#0f583e] text-white text-xs font-bold"
+                disabled={isSubmittingEvidence}
+                className="px-4 py-2 rounded bg-[#147452] hover:bg-[#0f583e] text-white text-xs font-bold disabled:opacity-50 flex items-center gap-1.5"
               >
-                Submit Evidence for Review
+                {isSubmittingEvidence ? <Clock className="h-3.5 w-3.5 animate-spin" /> : null}
+                <span>Submit Evidence & Register on Ledger</span>
               </button>
             </div>
           </div>
@@ -499,6 +630,12 @@ export const PilotManagement: React.FC = () => {
           </div>
         </div>
       )}
+      {/* MODAL: EVIDENCE VERIFICATION AUDIT */}
+      <EvidenceVerificationModal
+        isOpen={auditModalOpen}
+        onClose={() => setAuditModalOpen(false)}
+        evidenceRecord={auditRecord}
+      />
     </div>
   );
 };

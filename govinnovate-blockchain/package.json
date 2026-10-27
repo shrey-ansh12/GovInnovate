@@ -1,0 +1,22 @@
+{
+  "name": "govinnovate-blockchain",
+  "version": "1.0.0",
+  "description": "GovInnovate Blockchain Evidence Registry Smart Contracts and Hardhat Workspace",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "node": "hardhat node"
+  },
+  "keywords": [
+    "govinnovate",
+    "blockchain",
+    "solidity",
+    "evidence-verification"
+  ],
+  "author": "GovInnovate Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.18"
+  }
+}

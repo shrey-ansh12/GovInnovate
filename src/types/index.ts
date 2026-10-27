@@ -179,6 +179,12 @@ export interface PilotMilestone {
   paymentRef?: string; // Demo Payment Reference (Simulated)
   evidenceDescription?: string;
   evidenceUrl?: string;
+  evidenceId?: string;
+  evidenceHash?: string;
+  evidenceFilename?: string;
+  evidenceVersion?: number;
+  blockchainTxHash?: string;
+  blockchainStatus?: "Pending Registration" | "Registered On Blockchain" | "Blockchain Unavailable";
   submittedAt?: string;
   reviewedAt?: string;
   reviewedBy?: string;
@@ -235,3 +241,78 @@ export interface NotificationItem {
   read: boolean;
   type: "info" | "success" | "warning";
 }
+
+// ============================================================================
+// BLOCKCHAIN & SHA-256 EVIDENCE INTEGRITY SYSTEM TYPES
+// ============================================================================
+
+export type BlockchainRegistrationStatus =
+  | "Pending Registration"
+  | "Registered On Blockchain"
+  | "Integrity Verified"
+  | "Integrity Mismatch"
+  | "Blockchain Unavailable"
+  | "Verification Failed";
+
+export type VerificationResultStatus =
+  | "INTEGRITY_VERIFIED"
+  | "INTEGRITY_MISMATCH"
+  | "RECORD_NOT_FOUND";
+
+export interface EvidenceVersion {
+  version: number;
+  fileHash: string; // SHA-256
+  originalFilename: string;
+  fileSizeBytes: number;
+  uploadedAt: string;
+  uploadedBy: string;
+  blockchainTxHash?: string;
+  blockchainBlockNumber?: number;
+  blockchainTimestamp?: number;
+}
+
+export interface EvidenceRecord {
+  id: string; // e.g. "EVID-2026-001"
+  pilotId: string; // e.g. "PILOT-WQ-2026-01"
+  milestoneId?: string; // e.g. "M-01"
+  category: string; // "Technical Audit" | "Milestone Deliverable" | "Laboratory Report" | "DPIIT Certificate" | etc.
+  originalFilename: string;
+  fileSizeBytes: number;
+  fileHash: string; // SHA-256
+  version: number;
+  uploadedAt: string;
+  uploadedBy: string;
+  uploadedByRole: UserRole;
+  blockchainStatus: BlockchainRegistrationStatus;
+  blockchainTxHash?: string;
+  blockchainBlockNumber?: number;
+  blockchainTimestamp?: number;
+  blockchainSigner?: string;
+  isSimulatedBlockchain?: boolean;
+  versionHistory: EvidenceVersion[];
+  notes?: string;
+}
+
+export interface EvidenceVerificationResponse {
+  status: VerificationResultStatus;
+  message: string;
+  computedHash: string;
+  databaseHash?: string;
+  blockchainHash?: string;
+  isDatabaseMatch: boolean;
+  isBlockchainMatch: boolean;
+  evidenceRecord?: EvidenceRecord;
+  verificationTimestamp: string;
+  blockchainDetails?: {
+    isRegistered: boolean;
+    network: string;
+    contractAddress?: string;
+    txHash?: string;
+    timestamp?: number;
+    signer?: string;
+    isSimulated?: boolean;
+  };
+  failureReason?: string;
+  legalNotice: string;
+}
+
