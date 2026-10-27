@@ -1,12 +1,11 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import { SUPPORTED_LANGUAGES } from "@/lib/translations";
+import { DashboardSwitcher } from "@/components/DashboardSwitcher";
+import { ProcessRoadmap } from "@/components/ProcessRoadmap";
 import { 
-  Building2, 
-  Rocket, 
-  Award, 
   RotateCcw,
   Sparkles,
   Globe,
@@ -17,8 +16,10 @@ import {
   Database,
   PlayCircle,
   LogOut,
-  User,
-  ShieldCheck
+  ShieldCheck,
+  FileText,
+  History,
+  Blocks
 } from "lucide-react";
 
 export const NavigationBar: React.FC = () => {
@@ -30,6 +31,7 @@ export const NavigationBar: React.FC = () => {
     resetDemoAction, 
     challenge,
     openAuthModal,
+    openBlockchainModal,
     language,
     setLanguage,
     t,
@@ -60,35 +62,37 @@ export const NavigationBar: React.FC = () => {
 
   return (
     <>
-      {/* 1. TOP STATUTORY BENCHMARK BAR */}
+      {/* 1. CLEAN SLIM STATUTORY BENCHMARK BAR */}
       <div className="w-full bg-[#0F3854] text-white border-b border-[#1D4E72] text-[12px] font-normal tracking-wide">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-2 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="inline-flex items-center gap-1.5 font-medium text-slate-100">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>National Public Innovation Sandbox • Transparent Procurement-to-Pilot Rails</span>
-            </div>
-            <span className="hidden md:inline text-white/30">•</span>
-            <span className="hidden md:inline text-slate-300 font-normal">GFR 2017 Innovation Guidelines (Safe Harbor)</span>
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-1.5 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="font-semibold text-slate-100 text-xs tracking-tight">
+              National Public Innovation Sandbox
+            </span>
+            <span className="hidden sm:inline text-white/30">•</span>
+            <span className="hidden sm:inline text-slate-300 font-normal text-xs">
+              Transparent Procurement-to-Pilot Rails (GFR 2017 Safe Harbor)
+            </span>
           </div>
 
           <div className="flex items-center gap-3 text-slate-300 font-mono text-[11px]">
-            {/* Mode Indicator & Switcher */}
+            {/* Mode Switcher */}
             {appMode === "demo" ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] tracking-wider uppercase font-semibold flex items-center gap-1">
                   <PlayCircle className="h-3 w-3" />
-                  Demo Mode Active
+                  Demo Mode
                 </span>
                 <button
                   onClick={() => setAppMode("real")}
                   className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-slate-200 text-[10px] tracking-wider font-semibold transition-colors"
                 >
-                  Exit Demo Mode
+                  Exit Demo
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] tracking-wider uppercase font-semibold flex items-center gap-1">
                   <Database className="h-3 w-3" />
                   Real Mode ({isLiveDbConnected ? "Supabase Live" : "DB Offline"})
@@ -97,42 +101,57 @@ export const NavigationBar: React.FC = () => {
                   onClick={() => setAppMode("demo")}
                   className="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[10px] tracking-wider font-semibold transition-colors"
                 >
-                  Enter Demo Mode
+                  Enter Demo
                 </button>
               </div>
             )}
+
+            {/* Language Selector */}
+            <div className="relative" ref={langDropdownRef}>
+              <button
+                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-200 bg-white/10 hover:bg-white/20 transition-colors"
+                title="Select Language / भाषा चुनें"
+                aria-expanded={langDropdownOpen}
+              >
+                <Globe className="h-3 w-3 text-emerald-300" />
+                <span>{currentLangOption.nativeLabel}</span>
+                <ChevronDown className={`h-3 w-3 transition-transform ${langDropdownOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {langDropdownOpen && (
+                <div className="absolute right-0 mt-1 w-48 bg-white text-[#141F2B] rounded-lg shadow-xl border border-[#E2DED6] py-1 z-50 animate-in fade-in duration-150">
+                  <div className="px-3 py-1 text-[10px] uppercase font-mono font-bold tracking-wider text-[#7E8B97] border-b border-[#EDE9E1] mb-1">
+                    Select Language / भाषा
+                  </div>
+                  {SUPPORTED_LANGUAGES.map((lang) => {
+                    const isSelected = lang.code === language;
+                    return (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setLanguage(lang.code);
+                          setLangDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-1.5 text-xs text-left transition-colors ${
+                          isSelected 
+                            ? "bg-[#EBF6F0] text-[#147452] font-bold" 
+                            : "hover:bg-[#FAF8F5]"
+                        }`}
+                      >
+                        <span>{lang.nativeLabel} ({lang.label})</span>
+                        {isSelected && <Check className="h-3.5 w-3.5 text-[#147452]" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 1B. DEMO MODE WARNING STRIP */}
-      {appMode === "demo" && (
-        <div className="w-full bg-[#FEF7EA] text-[#8A5B0B] border-b border-[#F6E1B9] text-[11px] py-1 px-4 flex items-center justify-between">
-          <div className="max-w-[1360px] mx-auto w-full flex items-center justify-between">
-            <span className="flex items-center gap-1.5 font-medium">
-              <PlayCircle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
-              <span>
-                <strong>Demo Sandbox Active:</strong> You are exploring simulated scenario data. Real database records and live tenders are strictly unaffected.
-              </span>
-            </span>
-            <button
-              onClick={() => setAppMode("real")}
-              className="font-bold underline text-[11px] ml-4 hover:text-[#583a05]"
-            >
-              Switch to Real Mode →
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 1C. STATUTORY DISCLAIMER STRIP */}
-      <div className="w-full bg-[#FAF0D9] text-[#784A05] border-b border-[#F0D598] text-[11px] py-1 px-4 text-center font-medium">
-        <span>
-          <strong>Legal Disclaimer:</strong> Procurement decisions are subject to applicable GFR, GeM rules, departmental policies, and competent-authority approval. All simulated milestones and figures are illustrative demo references.
-        </span>
-      </div>
-
-      {/* 1D. ROLE ERROR TOAST / BANNER */}
+      {/* Role Error Toast (if any) */}
       {roleErrorMessage && (
         <div className="w-full bg-red-600 text-white px-4 py-2 text-xs flex items-center justify-between shadow-md">
           <div className="max-w-[1360px] mx-auto flex items-center gap-2">
@@ -149,94 +168,54 @@ export const NavigationBar: React.FC = () => {
         </div>
       )}
 
-      {/* 2. STREAMLINED CIVIC NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E2DED6]">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
-          {/* Brand Title */}
+      {/* 2. MAIN HEADER WITH PROMINENT DASHBOARD SWITCHER */}
+      <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E2DED6] shadow-2xs">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+          {/* Brand Logo & Title */}
           <div 
             className="flex items-center gap-3 cursor-pointer group shrink-0" 
             onClick={() => setActiveView("landing")}
+            title="Go to Three Dashboards Hub"
           >
-            <div className="w-9 h-9 rounded-sm bg-[#0F3854] flex items-center justify-center text-white shadow-xs">
-              <span className="material-symbols-outlined text-[20px]">account_balance</span>
+            <div className="w-9 h-9 rounded-md bg-[#0F3854] flex items-center justify-center text-white shadow-xs group-hover:bg-[#1D4E72] transition-colors">
+              <span className="material-symbols-outlined text-[22px]">account_balance</span>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-[18px] text-[#0A2540] tracking-tight">
-                  {t("brand.name")}
+                  GovInnovate
                 </span>
-                <span className="px-1.5 py-0.5 rounded-xs text-[10px] font-mono font-medium bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2] uppercase">
-                  {t("brand.badge")}
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2] uppercase">
+                  3 Dashboards
                 </span>
               </div>
-              <span className="text-[11px] text-[#5B6A78] tracking-wide">
-                {t("brand.tagline")}
+              <span className="text-[11px] text-[#5B6A78] tracking-wide hidden sm:inline">
+                Public Procurement-to-Pilot Rails
               </span>
             </div>
           </div>
 
-          {/* Quick Scenario Status Bar */}
-          <div className="hidden xl:flex items-center gap-2 bg-[#F2EFEB] px-3.5 py-1.5 rounded border border-[#E2DED6] text-xs text-[#5B6A78]">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#147452] animate-pulse"></span>
-            <span className="font-semibold text-[#141F2B] font-mono">{t("scenario.label")}</span>
-            <span className="truncate max-w-[170px] text-[#5B6A78] font-medium">{challenge.title.slice(0, 24)}...</span>
-            <span className="text-[#E2DED6]">|</span>
-            <span className="font-mono font-semibold text-[#0F3854] uppercase text-[10px] bg-white px-2 py-0.5 rounded border border-[#E2DED6]">
-              {t("scenario.stage")} {challenge.status}
-            </span>
+          {/* CENTER: THE EASY DASHBOARD SWITCH OPTION (PROMINENT!) */}
+          <div className="flex-1 flex justify-center min-w-[280px] max-w-xl">
+            <DashboardSwitcher variant="header" />
           </div>
 
-          {/* Actions: Multi-language, Auth, Role Switchers */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Multi-Language Selector Dropdown */}
-            <div className="relative" ref={langDropdownRef}>
-              <button
-                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded text-[13px] font-medium text-[#141F2B] bg-white hover:bg-[#F2EFEB] border border-[#E2DED6] transition-colors"
-                title="Select Language / भाषा चुनें"
-                aria-expanded={langDropdownOpen}
-              >
-                <Globe className="h-4 w-4 text-[#0F3854]" />
-                <span className="font-semibold">{currentLangOption.nativeLabel}</span>
-                <ChevronDown className={`h-3.5 w-3.5 text-[#5B6A78] transition-transform duration-200 ${langDropdownOpen ? "rotate-180" : ""}`} />
-              </button>
-
-              {langDropdownOpen && (
-                <div className="absolute right-0 mt-1.5 w-52 bg-white rounded shadow-xl border border-[#E2DED6] py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                  <div className="px-3 py-1.5 text-[10px] uppercase font-mono font-bold tracking-wider text-[#7E8B97] border-b border-[#EDE9E1] mb-1">
-                    Select Language / भाषा
-                  </div>
-                  {SUPPORTED_LANGUAGES.map((lang) => {
-                    const isSelected = lang.code === language;
-                    return (
-                      <button
-                        key={lang.code}
-                        onClick={() => {
-                          setLanguage(lang.code);
-                          setLangDropdownOpen(false);
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-2 text-xs text-left transition-colors ${
-                          isSelected 
-                            ? "bg-[#EBF6F0] text-[#147452] font-bold" 
-                            : "text-[#141F2B] hover:bg-[#FAF8F5]"
-                        }`}
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-medium">{lang.nativeLabel}</span>
-                          <span className="text-[10px] text-[#7E8B97] font-mono">{lang.label}</span>
-                        </div>
-                        {isSelected && <Check className="h-3.5 w-3.5 text-[#147452]" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+          {/* RIGHT ACTIONS: BLOCKCHAIN SAFETY EXPLORER, AUTH, RESET */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* Direct 1-Click Blockchain Safety & Ledger Explorer Button */}
+            <button
+              onClick={openBlockchainModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border bg-emerald-50 text-[#147452] border-emerald-300 hover:bg-emerald-100 shadow-2xs"
+              title="Open Blockchain Proof of Data Safety & Smart Contract Registry"
+            >
+              <Blocks className="h-4 w-4 text-emerald-600" />
+              <span className="hidden sm:inline">Blockchain Safety</span>
+            </button>
 
             {/* User Session / Sign In Buttons */}
             {currentUser ? (
               <div className="flex items-center gap-2">
-                <div className="hidden sm:flex flex-col text-right">
+                <div className="hidden md:flex flex-col text-right">
                   <span className="text-xs font-bold text-[#0A2540] truncate max-w-[130px]">
                     {currentUser.name}
                   </span>
@@ -246,81 +225,28 @@ export const NavigationBar: React.FC = () => {
                 </div>
                 <button
                   onClick={logoutUser}
-                  className="p-2 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded transition-colors border border-transparent hover:border-red-200"
+                  className="p-1.5 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200"
                   title="Sign Out"
                 >
                   <LogOut className="h-4 w-4" />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => openAuthModal("signin")}
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium text-[#141F2B] bg-transparent hover:bg-[#F2EFEB] rounded border border-[#E2DED6] transition-colors"
-                  title="Sign in to your account"
-                >
-                  <span className="material-symbols-outlined text-[17px] text-[#5B6A78]">login</span>
-                  <span>{t("nav.signIn")}</span>
-                </button>
-
-                <button
-                  onClick={() => openAuthModal("signup", "startup")}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-[#0F3854] hover:bg-[#1D4E72] rounded shadow-none transition-colors"
-                  title="Register Startup"
-                >
-                  <span>Enter Sandbox</span>
-                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                </button>
-              </div>
+              <button
+                onClick={() => openAuthModal("signin")}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#141F2B] bg-white hover:bg-[#F2EFEB] rounded-lg border border-[#E2DED6] transition-colors"
+                title="Sign in to your account"
+              >
+                <span className="material-symbols-outlined text-[16px] text-[#5B6A78]">login</span>
+                <span>{t("nav.signIn")}</span>
+              </button>
             )}
-
-            {/* Role Switcher Pill */}
-            <div className="hidden md:flex items-center bg-[#F2EFEB] p-1 rounded border border-[#E2DED6]">
-              <button
-                onClick={() => { setRole("government"); setActiveView("gov_dashboard"); }}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
-                  role === "government"
-                    ? "bg-[#0F3854] text-white shadow-xs"
-                    : "text-[#5B6A78] hover:text-[#141F2B]"
-                }`}
-                title="Switch to Government View"
-              >
-                <Building2 className="h-3 w-3" />
-                <span>{t("role.govt")}</span>
-              </button>
-
-              <button
-                onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
-                  role === "startup"
-                    ? "bg-[#147452] text-white shadow-xs"
-                    : "text-[#5B6A78] hover:text-[#141F2B]"
-                }`}
-                title="Switch to Startup View"
-              >
-                <Rocket className="h-3 w-3" />
-                <span>{t("role.startup")}</span>
-              </button>
-
-              <button
-                onClick={() => { setRole("evaluator"); setActiveView("evaluator_dashboard"); }}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
-                  role === "evaluator"
-                    ? "bg-[#8A5B0B] text-white shadow-xs"
-                    : "text-[#5B6A78] hover:text-[#141F2B]"
-                }`}
-                title="Switch to Evaluator View"
-              >
-                <Award className="h-3 w-3" />
-                <span>{t("role.eval")}</span>
-              </button>
-            </div>
 
             {/* Quick Reset Demo */}
             {appMode === "demo" && (
               <button
                 onClick={resetDemoAction}
-                className="p-2 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded transition-colors border border-transparent hover:border-red-200"
+                className="p-1.5 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200"
                 title={t("nav.resetDemo")}
               >
                 <RotateCcw className="h-4 w-4" />
@@ -330,55 +256,42 @@ export const NavigationBar: React.FC = () => {
         </div>
       </header>
 
-      {/* 3. SECONDARY FAST-HOP FLOW NAVIGATION */}
-      <div className="bg-[#0F3854] text-slate-200 px-4 py-2 text-xs overflow-x-auto whitespace-nowrap border-b border-[#1D4E72]">
-        <div className="max-w-[1360px] mx-auto flex items-center gap-4">
-          <span className="font-semibold text-slate-300 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> {t("scenario.flow")}
-          </span>
-          <div className="flex items-center gap-2">
-            <NavPill label={t("flow.landing")} active={activeView === "landing"} onClick={() => setActiveView("landing")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.govDashboard")} active={activeView === "gov_dashboard"} onClick={() => { setRole("government"); setActiveView("gov_dashboard"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.createChallenge")} active={activeView === "create_challenge"} onClick={() => { setRole("government"); setActiveView("create_challenge"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.aiMatches")} active={activeView === "ai_startup_matches"} onClick={() => setActiveView("ai_startup_matches")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.startupProfile")} active={activeView === "startup_profile"} onClick={() => setActiveView("startup_profile")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.startupDashboard")} active={activeView === "startup_dashboard"} onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.reviewShortlist")} active={activeView === "application_review"} onClick={() => { setRole("government"); setActiveView("application_review"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.evalScorecard")} active={activeView === "evaluation_scorecard"} onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.pilot")} active={activeView === "pilot_management"} onClick={() => setActiveView("pilot_management")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.kpi")} active={activeView === "kpi_monitoring"} onClick={() => setActiveView("kpi_monitoring")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.validation")} active={activeView === "validation_report"} onClick={() => setActiveView("validation_report")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.scaleUp")} active={activeView === "scale_up"} onClick={() => setActiveView("scale_up")} />
-            <span className="text-slate-500">|</span>
-            <NavPill label={t("flow.auditTrail")} active={activeView === "audit_trail"} onClick={() => setActiveView("audit_trail")} />
-            <NavPill label={t("flow.documents")} active={activeView === "documents"} onClick={() => setActiveView("documents")} />
+      {/* 3. SIMPLE, CLEAR PROCESS PROGRESSION BAR */}
+      <div className="bg-[#0F3854] text-slate-200 px-4 py-1.5 border-b border-[#1D4E72] shadow-xs">
+        <div className="max-w-[1360px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+          {/* Process Stepper */}
+          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto py-0.5 scrollbar-none">
+            <span className="font-semibold text-slate-300 font-mono text-[11px] uppercase tracking-wider shrink-0 flex items-center gap-1">
+              <Sparkles className="h-3 w-3 text-emerald-400" />
+              Process:
+            </span>
+            <ProcessRoadmap variant="compact-bar" />
+          </div>
+
+          {/* Quick Utility Links */}
+          <div className="flex items-center gap-3 shrink-0 text-slate-300 text-xs font-mono">
+            <button 
+              onClick={() => setActiveView("audit_trail")}
+              className={`hover:text-white transition-colors flex items-center gap-1 ${
+                activeView === "audit_trail" ? "text-emerald-400 font-bold underline" : ""
+              }`}
+            >
+              <History className="h-3 w-3" />
+              <span>Audit Log</span>
+            </button>
+            <span className="text-white/20">|</span>
+            <button 
+              onClick={() => setActiveView("documents")}
+              className={`hover:text-white transition-colors flex items-center gap-1 ${
+                activeView === "documents" ? "text-emerald-400 font-bold underline" : ""
+              }`}
+            >
+              <FileText className="h-3 w-3" />
+              <span>Docs</span>
+            </button>
           </div>
         </div>
       </div>
     </>
   );
 };
-
-const NavPill: React.FC<{ label: string; active: boolean; onClick: () => void }> = ({ label, active, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`px-3 py-1 rounded text-[11px] font-mono transition-all ${
-      active 
-        ? "bg-white text-[#0F3854] font-bold shadow-xs" 
-        : "text-slate-300 hover:text-white hover:bg-white/10"
-    }`}
-  >
-    {label}
-  </button>
-);

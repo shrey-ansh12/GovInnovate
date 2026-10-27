@@ -92,6 +92,15 @@ interface AppContextType {
   verifyEvidenceAction: (evidenceId: string, file?: File, fileHash?: string) => Promise<EvidenceVerificationResponse | null>;
   getEvidenceRecordAction: (evidenceId: string) => Promise<EvidenceRecord | null>;
   
+  // Challenges List & Selection
+  challenges: Challenge[];
+  selectChallengeAction: (challengeId: string) => void;
+
+  // Blockchain Modal
+  blockchainModalOpen: boolean;
+  openBlockchainModal: () => void;
+  closeBlockchainModal: () => void;
+
   // RBAC & Errors
   roleErrorMessage: string | null;
   clearRoleError: () => void;
@@ -211,6 +220,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedAppIdForScore, setSelectedAppIdForScore] = useState<string>(sampleApplications[0]?.id || "APP-WQ-091");
 
   // Demo State (isolated from real database)
+  const [demoChallenges, setDemoChallenges] = useState<Challenge[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem(DEMO_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.challenges && Array.isArray(parsed.challenges) && parsed.challenges.length > 0) {
+            return parsed.challenges;
+          }
+        }
+      } catch {}
+    }
+    return [initialChallenge];
+  });
+
+  const [blockchainModalOpen, setBlockchainModalOpen] = useState<boolean>(false);
+  const openBlockchainModal = () => setBlockchainModalOpen(true);
+  const closeBlockchainModal = () => setBlockchainModalOpen(false);
+
   const [demoChallenge, setDemoChallenge] = useState<Challenge>(() => {
     if (typeof window !== "undefined") {
       try {
@@ -342,7 +370,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [authModalRole, setAuthModalRole] = useState<UserRole>("startup");
 
   // Active getters depending on mode
+  const challenges = appMode === "real" ? [realChallenge] : demoChallenges;
   const challenge = appMode === "real" ? realChallenge : demoChallenge;
+
+  const selectChallengeAction = (challengeId: string) => {
+    const found = demoChallenges.find(c => c.id === challengeId);
+    if (found) {
+      setDemoChallenge(found);
+      recalculateMatchesAction(found);
+    }
+  };
   const setChallenge = appMode === "real" ? setRealChallenge : setDemoChallenge;
   const startups = appMode === "real" ? realStartups : demoStartups;
   const setStartups = appMode === "real" ? setRealStartups : setDemoStartups;
@@ -360,6 +397,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     try {
       const stateToPersist = {
+        challenges: demoChallenges,
         challenge: demoChallenge,
         startups: demoStartups,
         applications: demoApplications,
@@ -571,6 +609,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const checkRoleAccess = (allowedRoles: UserRole[], actionDescription: string): boolean => {
+    if (appMode === "demo") {
+      if (!allowedRoles.includes(role)) {
+        const nextRole = allowedRoles[0];
+        setRoleState(nextRole);
+      }
+      setRoleErrorMessage(null);
+      return true;
+    }
+
     if (!allowedRoles.includes(role)) {
       const message = `Access Denied: Only users with the "${allowedRoles.join(" or ")}" role can ${actionDescription}. Your active role is "${role}". Switch roles or sign in with appropriate credentials.`;
       setRoleErrorMessage(message);
@@ -745,65 +792,57 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const createChallengeAction = async (data: Partial<Challenge>) => {
     if (!checkRoleAccess(["government", "admin"], "publish a procurement challenge")) return;
 
-    if (appMode === "real") {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        const res = await fetch("/api/challenges", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
-          },
-          body: JSON.stringify(data)
-        });
-        const result = await res.json();
-        if (!res.ok) {
-          alert(`GovInnovate Database Notice:\n\n${result.error || "Failed to create challenge"}\n\nFalling back to local session so you can continue testing your workflow.`);
-          const fallbackChallenge: Challenge = {
-            ...demoChallenge,
-            ...data,
-            id: data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`,
-            status: "Open",
-            applicationsCount: 0
-          };
-          setDemoChallenge(fallbackChallenge);
-          setActiveView("ai_startup_matches");
-          return;
-        }
-        await refreshLiveData();
-        setActiveView("ai_startup_matches");
-      } catch (err) {
-        console.error("Error creating challenge:", err);
-        const fallbackChallenge: Challenge = {
-          ...demoChallenge,
-          ...data,
-          id: data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`,
-          status: "Open",
-          applicationsCount: 0
-        };
-        setDemoChallenge(fallbackChallenge);
-        setActiveView("ai_startup_matches");
-      }
-    } else {
-      // Demo Mode
-      const updated: Challenge = {
-        ...demoChallenge,
-        ...data,
-        id: data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`,
-        status: "Open",
-        applicationsCount: 0
-      };
-      setDemoChallenge(updated);
-      recalculateMatchesAction(updated);
-      addAuditLog(
-        "CHALLENGE_PUBLISHED", 
-        `Published challenge "${updated.title}" under statutory sandbox guidelines (Subject to GFR rules and competent authority approval).`, 
-        "Procurement", 
-        "government"
-      );
-      setActiveView("ai_startup_matches");
-    }
+    const newId = data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`;
+    const randomTx = `0x${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}`;
+    const randomBlock = 10842 + Math.floor(Math.random() * 20);
+
+    const updated: Challenge = {
+      ...demoChallenge,
+      ...data,
+      id: newId,
+      title: data.title || "Untitled Civic Challenge",
+      department: data.department || "Government Department",
+      ministry: data.ministry || "Ministry of Public Works",
+      category: data.category || "Public Sector Innovation",
+      budget: data.budget || "₹25,00,000",
+      pilotDuration: data.pilotDuration || "90 Days",
+      deadline: "Day 45",
+      status: "Open",
+      summary: data.summary || data.problemStatement || "",
+      problemStatement: data.problemStatement || "",
+      expectedOutcomes: data.expectedOutcomes && data.expectedOutcomes.length > 0 ? data.expectedOutcomes : [
+        "Sub-5 minute automated edge alert latency",
+        "98.0%+ sensor and hardware operational uptime",
+        "Under 2% false-positive anomaly rate"
+      ],
+      technicalThresholds: data.technicalThresholds && data.technicalThresholds.length > 0 ? data.technicalThresholds : [
+        "Minimum TRL 7 (Operational demonstration)",
+        "Domestic Local Content >= 50% (Make in India Class-1)",
+        "DPIIT startup recognition with relaxation under GFR 170"
+      ],
+      targetLocations: data.targetLocations || 5,
+      scaleLocations: data.scaleLocations || 50,
+      applicationsCount: 0,
+      matchedCount: 3,
+      blockchainTx: randomTx,
+      blockNumber: randomBlock,
+      createdAt: new Date().toISOString()
+    };
+
+    setDemoChallenges(prev => [updated, ...prev.filter(c => c.id !== updated.id)]);
+    setDemoChallenge(updated);
+    recalculateMatchesAction(updated);
+
+    addAuditLog(
+      "CHALLENGE_PUBLISHED", 
+      `Published new procurement challenge: "${updated.title}" (ID: ${updated.id}) by ${updated.department}. Budget: ${updated.budget}. Blockchain Anchor: TX ${updated.blockchainTx} (Block #${updated.blockNumber}).`, 
+      "Procurement", 
+      "government"
+    );
+
+    // Switch to Startup Dashboard with startup role so the user immediately sees the challenge!
+    setRoleState("startup");
+    setActiveView("startup_dashboard");
   };
 
   // Step 2: Register Startup (Demo Mode fallback)
@@ -1242,85 +1281,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const applyToChallengeAction = async (startupId: string, proposalData?: Partial<Application>) => {
     if (!checkRoleAccess(["startup"], "apply to a procurement challenge")) return;
 
-    if (appMode === "real") {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        const res = await fetch("/api/applications", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
-          },
-          body: JSON.stringify({
-            challengeId: challenge.id,
-            startupName: currentUser?.organization || "DPIIT Verified Startup",
-            solutionOverview: proposalData?.solutionOverview || "Edge sensing IoT deployment with real-time telemetry",
-            proposedCost: proposalData?.proposedCost || "₹28,50,000",
-            deploymentTime: proposalData?.deploymentTime || "14 Calendar Days",
-            proposalSummary: proposalData?.proposalSummary || "Turnkey sensing deployment with zero pipeline modifications",
-            trlLevel: 7,
-            localContentPercentage: 65,
-            patentsCount: 1,
-            evidenceLinks: proposalData?.evidenceLinks || ["https://example.com/docs/technical-spec.pdf"],
-          })
-        });
-        const result = await res.json();
-        if (!res.ok) {
-          alert(`Application error: ${result.error || "Failed to submit application"}`);
-          return;
-        }
-        await refreshLiveData();
-        setActiveView("startup_dashboard");
-      } catch (err) {
-        console.error("Error submitting application:", err);
-      }
-    } else {
-      // Demo Mode
-      const startup = demoStartups.find(s => s.id === startupId) || demoStartups[0];
-      const newAppId = `APP-WQ-10${demoApplications.length + 1}`;
+    const startup = demoStartups.find(s => s.id === startupId) || demoStartups[0];
+    const newAppId = `APP-${new Date().getFullYear()}-${Math.floor(Math.random() * 900 + 100)}`;
+    const randomTx = `0x${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}`;
+    const randomBlock = 10844 + Math.floor(Math.random() * 15);
 
-      const newApp: Application = {
-        id: newAppId,
-        challengeId: demoChallenge.id,
-        startupId: startup.id,
-        startupName: startup.name,
-        appliedDate: new Date().toISOString().slice(0, 10),
-        status: "Submitted",
-        dpiitVerified: startup.isDpiitVerified,
-        financialTurnover: "₹1.42 Cr (Eligible for relaxation subject to tender conditions)",
-        solutionOverview: proposalData?.solutionOverview || startup.products[0]?.description || "Edge sensor IoT deployment with real-time analytics.",
-        proposedCost: proposalData?.proposedCost || "₹28,50,000",
-        deploymentTime: proposalData?.deploymentTime || "14 Calendar Days",
-        proposalSummary: proposalData?.proposalSummary || "Turnkey sensing deployment with zero pipeline modifications and cloud API reporting.",
-        trlLevel: startup.trlLevel || 7,
-        localContentPercentage: startup.localContentPercentage || 65,
-        patentsCount: startup.patents || 1,
-        evidenceLinks: proposalData?.evidenceLinks || ["https://example.com/docs/technical-spec.pdf"],
-        documentRecord: startup.documentRecord,
-        tamperStatus: startup.tamperStatus || "VERIFIED"
-      };
+    const newApp: Application = {
+      id: newAppId,
+      challengeId: demoChallenge.id,
+      startupId: startup.id,
+      startupName: startup.name,
+      appliedDate: new Date().toISOString().slice(0, 10),
+      status: "Submitted",
+      dpiitVerified: startup.isDpiitVerified,
+      financialTurnover: "Eligible for GFR Rule 170(i) turnover & experience relaxation",
+      solutionOverview: proposalData?.solutionOverview || startup.products[0]?.description || "AI & IoT edge sensing deployment tailored for public challenge requirements.",
+      proposedCost: proposalData?.proposedCost || demoChallenge.budget || "₹24,50,000",
+      deploymentTime: proposalData?.deploymentTime || "14 Calendar Days",
+      proposalSummary: proposalData?.proposalSummary || "Turnkey sensing deployment with zero civil modifications, NABL-traceable calibration, and real-time dashboard API telemetry.",
+      trlLevel: startup.trlLevel || 7,
+      localContentPercentage: startup.localContentPercentage || 65,
+      patentsCount: startup.patents || 1,
+      evidenceLinks: proposalData?.evidenceLinks || ["https://example.com/docs/technical-spec.pdf"],
+      documentRecord: startup.documentRecord,
+      tamperStatus: startup.tamperStatus || "VERIFIED",
+      blockchainTx: randomTx,
+      blockNumber: randomBlock
+    };
 
-      setDemoApplications(prev => {
-        const filtered = prev.filter(a => a.startupId !== startup.id);
-        return [newApp, ...filtered];
-      });
+    setDemoApplications(prev => {
+      const filtered = prev.filter(a => !(a.startupId === startup.id && a.challengeId === demoChallenge.id));
+      return [newApp, ...filtered];
+    });
 
-      setDemoChallenge(prev => ({
-        ...prev,
-        applicationsCount: prev.applicationsCount + 1,
-        status: "Reviewing"
-      }));
+    setDemoChallenge(prev => ({
+      ...prev,
+      applicationsCount: (prev.applicationsCount || 0) + 1,
+      status: "Reviewing"
+    }));
 
-      addAuditLog(
-        "APPLICATION_SUBMITTED",
-        `Application ${newAppId} submitted by ${startup.name} for challenge "${demoChallenge.title}".`,
-        "Procurement",
-        "startup"
-      );
+    setDemoChallenges(prev => prev.map(c => c.id === demoChallenge.id ? { ...c, applicationsCount: (c.applicationsCount || 0) + 1, status: "Reviewing" } : c));
 
-      setActiveView("startup_dashboard");
-    }
+    addAuditLog(
+      "APPLICATION_SUBMITTED",
+      `Application ${newAppId} submitted by ${startup.name} for challenge "${demoChallenge.title}". Proposed Cost: ${newApp.proposedCost}. Blockchain Anchor: TX ${newApp.blockchainTx} (Block #${newApp.blockNumber}).`,
+      "Procurement",
+      "startup"
+    );
+
+    setActiveView("startup_dashboard");
   };
 
   // Step 3: Verify & Shortlist (Gov only)
@@ -1391,59 +1400,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const evaluateApplicationAction = async (appId: string, score: EvaluatorScore) => {
     if (!checkRoleAccess(["evaluator", "admin"], "score and evaluate an application")) return;
 
-    if (appMode === "real") {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        const res = await fetch("/api/evaluations", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
-          },
-          body: JSON.stringify({
-            applicationId: appId,
-            evaluatorName: score.evaluatorName || currentUser?.name || "Certified Technical Evaluator",
-            innovation: score.innovation,
-            feasibility: score.feasibility,
-            impact: score.impact,
-            scalability: score.scalability,
-            viability: score.viability,
-            justifications: score.justifications,
-            comments: score.feedback,
-            evidenceReferences: score.evidenceReferences,
-          })
-        });
-        const result = await res.json();
-        if (!res.ok) {
-          alert(`Evaluation submission error: ${result.error || "Failed to record score"}`);
-          return;
-        }
-        await refreshLiveData();
-      } catch (err) {
-        console.error("Error submitting evaluation:", err);
+    const randomTx = `0x${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}`;
+    const randomBlock = 10846 + Math.floor(Math.random() * 15);
+
+    const scoredWithBlockchain: EvaluatorScore = {
+      ...score,
+      blockchainTx: randomTx,
+      blockNumber: randomBlock
+    };
+
+    setDemoApplications(prev => prev.map(a => {
+      if (a.id === appId) {
+        return {
+          ...a,
+          status: "Evaluated",
+          evaluatorScore: scoredWithBlockchain
+        };
       }
-    } else {
-      setDemoApplications(prev => prev.map(a => {
-        if (a.id === appId) {
-          return {
-            ...a,
-            status: "Evaluated",
-            evaluatorScore: score
-          };
-        }
-        return a;
-      }));
-    }
+      return a;
+    }));
+
+    const targetApp = demoApplications.find(a => a.id === appId);
+    const appName = targetApp?.startupName || appId;
 
     addAuditLog(
       "APPLICATION_SCORED",
-      `Technical Committee score awarded: ${score.total}/100 across 5 pillars (Inn: ${score.innovation}, Feas: ${score.feasibility}, Imp: ${score.impact}, Scal: ${score.scalability}, Viab: ${score.viability}). Evaluator: ${score.evaluatorName}.`,
+      `Technical Committee awarded ${score.total}/100 to ${appName} across 5 pillars (Inn: ${score.innovation}, Feas: ${score.feasibility}, Imp: ${score.impact}, Scal: ${score.scalability}, Viab: ${score.viability}). Evaluator: ${score.evaluatorName}. Blockchain Proof: TX ${scoredWithBlockchain.blockchainTx} (Block #${scoredWithBlockchain.blockNumber}).`,
       "Evaluation",
       "evaluator"
     );
 
-    setActiveView("application_review");
+    setActiveView("evaluator_dashboard");
   };
 
   // Step 5: Commission Pilot (Gov only)
@@ -1876,6 +1863,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider value={{
       appMode,
+      challenges,
+      selectChallengeAction,
+      blockchainModalOpen,
+      openBlockchainModal,
+      closeBlockchainModal,
       setAppMode,
       isLiveDbConnected,
       isLoadingLiveData,

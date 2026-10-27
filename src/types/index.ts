@@ -114,6 +114,9 @@ export interface Challenge {
   scaleLocations: number;
   matchedCount: number;
   applicationsCount: number;
+  blockchainTx?: string;
+  blockNumber?: number;
+  createdAt?: string;
 }
 
 export interface EvaluatorScore {
@@ -134,6 +137,8 @@ export interface EvaluatorScore {
   feedback: string;
   evaluatorName: string;
   evaluatedAt: string;
+  blockchainTx?: string;
+  blockNumber?: number;
 }
 
 export interface Application {
@@ -157,6 +162,8 @@ export interface Application {
   // Document and hash attachment
   documentRecord?: DocumentVerificationRecord;
   tamperStatus?: "VERIFIED" | "FLAGGED_FOR_REVIEW";
+  blockchainTx?: string;
+  blockNumber?: number;
 }
 
 export interface PilotKPI {
@@ -315,4 +322,3 @@ export interface EvidenceVerificationResponse {
   failureReason?: string;
   legalNotice: string;
 }
-

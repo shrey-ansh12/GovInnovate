@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { useApp } from "@/context/AppContext";
@@ -22,6 +22,7 @@ import { DocumentsView } from "@/components/DocumentsView";
 import { NotificationsView } from "@/components/NotificationsView";
 import { AuditTrail } from "@/components/AuditTrail";
 import { AuthModal } from "@/components/AuthModal";
+import { BlockchainSafetyModal } from "@/components/BlockchainSafetyModal";
 import { Chatbot } from "@/components/Chatbot";
 
 export default function Home() {
@@ -74,6 +75,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#FAF8F5] text-[#141F2B] flex flex-col font-sans">
       <NavigationBar />
       <AuthModal />
+      <BlockchainSafetyModal />
       <main className="flex-1">
         {renderActiveView()}
       </main>

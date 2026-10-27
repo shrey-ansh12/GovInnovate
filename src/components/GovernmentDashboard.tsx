@@ -1,7 +1,9 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { useApp, ActiveView } from "@/context/AppContext";
+import { DashboardSwitcher } from "@/components/DashboardSwitcher";
+import { BlockchainSafetyBanner } from "@/components/BlockchainSafetyBanner";
 import { 
   Building2, 
   PlusCircle, 
@@ -9,7 +11,9 @@ import {
   CheckCircle2, 
   ArrowRight, 
   FileText,
-  Scale
+  Scale,
+  Award,
+  Blocks
 } from "lucide-react";
 
 export const GovernmentDashboard: React.FC = () => {
@@ -27,9 +31,15 @@ export const GovernmentDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-10 font-sans">
+    <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-8 font-sans space-y-6">
+      {/* Easy Dashboard Switch Option */}
+      <DashboardSwitcher />
+
+      {/* Blockchain Data Safety Banner */}
+      <BlockchainSafetyBanner />
+
       {/* Top Banner / Hero */}
-      <div className="bg-[#0F3854] text-white rounded p-6 sm:p-8 mb-8 border border-[#1D4E72] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-sm">
+      <div className="bg-[#0F3854] text-white rounded-xl p-6 sm:p-8 border border-[#1D4E72] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-sm">
         <div>
           <div className="flex items-center gap-2 text-xs font-mono font-medium text-emerald-400 uppercase tracking-wider mb-2">
             <Building2 className="h-4 w-4" />
@@ -46,14 +56,14 @@ export const GovernmentDashboard: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setActiveView("create_challenge")}
-            className="px-5 py-2.5 rounded bg-white text-[#0F3854] font-bold text-xs hover:bg-slate-100 flex items-center gap-2 transition-colors shadow-2xs"
+            className="px-5 py-2.5 rounded-lg bg-white text-[#0F3854] font-bold text-xs hover:bg-slate-100 flex items-center gap-2 transition-colors shadow-2xs"
           >
             <PlusCircle className="h-4 w-4 text-[#0F3854]" />
             <span>Create New Challenge</span>
           </button>
           <button
             onClick={() => setActiveView("audit_trail")}
-            className="px-4 py-2.5 rounded bg-transparent hover:bg-white/10 text-white font-semibold text-xs border border-white/30 transition-colors flex items-center gap-2"
+            className="px-4 py-2.5 rounded-lg bg-transparent hover:bg-white/10 text-white font-semibold text-xs border border-white/30 transition-colors flex items-center gap-2"
           >
             <FileText className="h-4 w-4 text-emerald-300" />
             <span>Vigilance Audit Trail</span>
@@ -62,8 +72,8 @@ export const GovernmentDashboard: React.FC = () => {
       </div>
 
       {/* Primary KPI Row (Data-driven from state) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white p-5 rounded border border-[#E2DED6] shadow-2xs">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white p-5 rounded-xl border border-[#E2DED6] shadow-2xs">
           <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-1">Active Challenge</div>
           <div className="text-2xl font-bold text-[#0A2540] truncate">{challenge.status}</div>
           <div className="text-[11px] text-[#0F3854] font-semibold mt-1 flex items-center gap-1.5 font-mono">
@@ -71,7 +81,7 @@ export const GovernmentDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded border border-[#E2DED6] shadow-2xs">
+        <div className="bg-white p-5 rounded-xl border border-[#E2DED6] shadow-2xs">
           <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-1">Proposals Submitted</div>
           <div className="text-2xl font-bold text-[#0F3854]">{applications.length} Bids</div>
           <div className="text-[11px] text-[#147452] font-semibold mt-1 flex items-center gap-1 font-mono">
@@ -79,7 +89,7 @@ export const GovernmentDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded border border-[#E2DED6] shadow-2xs">
+        <div className="bg-white p-5 rounded-xl border border-[#E2DED6] shadow-2xs">
           <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-1">Milestones Verified</div>
           <div className="text-2xl font-bold text-[#147452]">{approvedMilestonesCount} / {pilot.milestones.length}</div>
           <div className="text-[11px] text-[#147452] font-semibold mt-1 flex items-center gap-1 font-mono">
@@ -87,7 +97,7 @@ export const GovernmentDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded border border-[#E2DED6] shadow-2xs">
+        <div className="bg-white p-5 rounded-xl border border-[#E2DED6] shadow-2xs">
           <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-1">Pilot Locations</div>
           <div className="text-2xl font-bold text-[#0A2540]">{pilot.locationsCount} Sites</div>
           <div className="text-[11px] text-[#5B6A78] font-mono mt-1">
@@ -97,7 +107,7 @@ export const GovernmentDashboard: React.FC = () => {
       </div>
 
       {/* Featured Challenge Lifecycle Pipeline Card */}
-      <div className="bg-white rounded border border-[#E2DED6] p-6 sm:p-8 mb-8 shadow-2xs">
+      <div className="bg-white rounded-xl border border-[#E2DED6] p-6 sm:p-8 shadow-2xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-[#EDE9E1] gap-4">
           <div>
             <div className="flex items-center gap-2">
@@ -105,6 +115,11 @@ export const GovernmentDashboard: React.FC = () => {
                 Active Sandbox Track
               </span>
               <span className="text-xs font-mono text-[#5B6A78]">ID: {challenge.id}</span>
+              {challenge.blockchainTx && (
+                <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded flex items-center gap-1">
+                  <Blocks className="h-3 w-3" /> Block #{challenge.blockNumber || 10842}
+                </span>
+              )}
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-[#0A2540] mt-2">
               {challenge.title}
@@ -117,14 +132,14 @@ export const GovernmentDashboard: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setActiveView("application_review")}
-              className="px-4 py-2 text-xs font-semibold rounded bg-[#F2EFEB] text-[#0F3854] hover:bg-[#EDE9E1] border border-[#E2DED6] transition-colors flex items-center gap-1.5"
+              className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#F2EFEB] text-[#0F3854] hover:bg-[#EDE9E1] border border-[#E2DED6] transition-colors flex items-center gap-1.5"
             >
               <Scale className="h-3.5 w-3.5 text-[#0F3854]" />
               <span>Review & Compare Bids ({applications.length})</span>
             </button>
             <button
               onClick={() => setActiveView("pilot_management")}
-              className="px-4 py-2 text-xs font-semibold rounded bg-[#0F3854] text-white hover:bg-[#1D4E72] transition-colors flex items-center gap-1.5 shadow-2xs"
+              className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#0F3854] text-white hover:bg-[#1D4E72] transition-colors flex items-center gap-1.5 shadow-2xs"
             >
               <span>Manage Pilot Sandbox</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -143,7 +158,7 @@ export const GovernmentDashboard: React.FC = () => {
               <div
                 key={step.num}
                 onClick={() => setActiveView(step.view)}
-                className={`p-3 rounded border text-center cursor-pointer transition-all hover:border-[#0F3854] ${
+                className={`p-3 rounded-lg border text-center cursor-pointer transition-all hover:border-[#0F3854] ${
                   step.done 
                     ? "bg-[#FAF8F5] border-[#0F3854] text-[#0A2540]" 
                     : "bg-[#F2EFEB] border-[#E2DED6] text-[#7E8B97]"
@@ -162,19 +177,19 @@ export const GovernmentDashboard: React.FC = () => {
 
         {/* Live Pilot Metrics Snippet */}
         <div className="mt-8 grid md:grid-cols-3 gap-4 pt-6 border-t border-[#EDE9E1]">
-          <div className="p-4 rounded bg-[#FAF8F5] border border-[#E2DED6]">
+          <div className="p-4 rounded-lg bg-[#FAF8F5] border border-[#E2DED6]">
             <span className="text-[10px] font-mono uppercase font-bold text-[#5B6A78]">Contractor Startup</span>
             <p className="text-sm font-bold text-[#0A2540] mt-1">AquaSense AI Innovations Pvt Ltd</p>
             <p className="text-xs text-[#147452] font-mono mt-0.5">DPIIT-REC-89241-DL (TRL-8 Probes)</p>
           </div>
 
-          <div className="p-4 rounded bg-[#FAF8F5] border border-[#E2DED6]">
+          <div className="p-4 rounded-lg bg-[#FAF8F5] border border-[#E2DED6]">
             <span className="text-[10px] font-mono uppercase font-bold text-[#5B6A78]">Pilot Telemetry Uptime</span>
             <p className="text-sm font-bold text-[#0A2540] mt-1">5 Intake Monitoring Sites</p>
             <p className="text-xs text-[#0F3854] font-mono mt-0.5">99.8% Hardware Uptime</p>
           </div>
 
-          <div className="p-4 rounded bg-[#FAF8F5] border border-[#E2DED6]">
+          <div className="p-4 rounded-lg bg-[#FAF8F5] border border-[#E2DED6]">
             <span className="text-[10px] font-mono uppercase font-bold text-[#5B6A78]">Next Step</span>
             <p className="text-sm font-bold text-[#0A2540] mt-1">Competent Authority Review</p>
             <p className="text-xs text-[#0A2540] font-mono mt-0.5">Status: {challenge.status}</p>
