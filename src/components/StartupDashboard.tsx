@@ -5,7 +5,6 @@ import { TextToSpeechButton } from "@/components/TextToSpeechButton";
 import React, { useState } from "react";
 import { useApp } from "@/context/AppContext";
 
-
 import { 
   Rocket, 
   CheckCircle2, 
@@ -19,8 +18,67 @@ import {
   Award,
   Clock,
   Blocks,
-  Building2
+  Building2,
+  Sparkles,
+  PenTool,
+  Check,
+  Plus,
+  Loader2
 } from "lucide-react";
+
+interface SolutionOption {
+  id: string;
+  name: string;
+  tagline: string;
+  costEstimate: string;
+  timeline: string;
+  technicalSummary: string;
+  methodology: string;
+  trlLevel: number;
+}
+
+const SOLUTION_OPTIONS: SolutionOption[] = [
+  {
+    id: "edge-iot-telemetry",
+    name: "Option 1: Edge-AI IoT Sensing & Telemetry Node",
+    tagline: "Sub-5 min alert latency, solar/battery backup & zero civil infrastructure modifications",
+    costEstimate: "₹24,50,000",
+    timeline: "14 Calendar Days",
+    technicalSummary: "Turnkey deployment of industrial-grade edge sensing probes featuring on-device anomalous pattern recognition, solar/battery backup, and secure REST/MQTT telemetry to municipal command dashboards with zero civil modifications.",
+    methodology: "Pre-calibrated against NABL reference standards, IP68 hermetically sealed enclosure, Make-in-India Class-1 hardware with 98%+ guaranteed field uptime.",
+    trlLevel: 7
+  },
+  {
+    id: "computer-vision-edge",
+    name: "Option 2: Deep Learning Edge Computer Vision & Analytics",
+    tagline: "Sub-200ms neural vision inferencing with automated priority emergency dispatch",
+    costEstimate: "₹26,00,000",
+    timeline: "21 Calendar Days",
+    technicalSummary: "Edge computer vision node executing lightweight deep neural networks on low-power silicon, enabling 24/7 classification under adverse environmental conditions (fog, low light, rain) with automated event triggering and encrypted cloud synchronization.",
+    methodology: "Local edge processing prevents cloud bandwidth bottlenecks; bi-directional API integration with existing government command and control center (ICCC).",
+    trlLevel: 8
+  },
+  {
+    id: "autonomous-aerial-mesh",
+    name: "Option 3: Autonomous Drone Multispectral & Sensor Mesh",
+    tagline: "Aerial multispectral imaging combined with ground micro-sensor arrays",
+    costEstimate: "₹22,00,000",
+    timeline: "10 Calendar Days",
+    technicalSummary: "Rapid deployment of autonomous survey drones equipped with calibrated multispectral payloads paired with ground LoRaWAN sensor nodes, providing 7-day predictive anomaly alerts and geo-referenced spatial heatmaps within 4 hours.",
+    methodology: "DGCA-compliant flight operations with localized edge computation for automated vernacular advisory generation.",
+    trlLevel: 7
+  },
+  {
+    id: "reagent-free-spectro",
+    name: "Option 4: Reagent-Free Modular Digital Probe Array",
+    tagline: "Solid-state optical and electrochemical sensor array with ultrasonic self-cleaning",
+    costEstimate: "₹25,00,000",
+    timeline: "15 Calendar Days",
+    technicalSummary: "Solid-state optical and electrochemical sensor array operating reagent-free with ultrasonic self-cleaning probes, ensuring 24-month continuous operation without consumable replenishment.",
+    methodology: "Factory calibrated against government statutory thresholds; decentralized cryptographic logging of telemetry pulses on the verification ledger.",
+    trlLevel: 8
+  }
+];
 
 export const StartupDashboard: React.FC = () => {
   const { 
@@ -49,8 +107,11 @@ export const StartupDashboard: React.FC = () => {
     )
   );
 
+  const [proposalMode, setProposalMode] = useState<"option" | "manual">("option");
+  const [selectedOptionId, setSelectedOptionId] = useState<string>("edge-iot-telemetry");
+
   const [proposalInput, setProposalInput] = useState(
-    "We propose deploying an AI & IoT edge sensing telemetry unit with real-time anomaly detection, calibrated under NABL-traceable lab benchmarks, with zero civil modifications to existing infrastructure."
+    `${SOLUTION_OPTIONS[0].technicalSummary} ${SOLUTION_OPTIONS[0].methodology}`
   );
   const [proposedCostInput, setProposedCostInput] = useState(challenge.budget || "₹24,50,000");
 
@@ -59,6 +120,7 @@ export const StartupDashboard: React.FC = () => {
       setProposedCostInput(challenge.budget);
     }
   }, [challenge.id, challenge.budget]);
+
   const [deploymentTimeInput, setDeploymentTimeInput] = useState("14 Calendar Days");
   const [isSubmittingProposal, setIsSubmittingProposal] = useState(false);
 
@@ -69,6 +131,20 @@ export const StartupDashboard: React.FC = () => {
   const [selectedEvidenceFile, setSelectedEvidenceFile] = useState<File | null>(null);
   const [isUploadingEvidence, setIsUploadingEvidence] = useState(false);
   const [evidenceSuccess, setEvidenceSuccess] = useState(false);
+
+  const handleSelectSolutionOption = (opt: SolutionOption) => {
+    setSelectedOptionId(opt.id);
+    setProposalInput(`${opt.technicalSummary} ${opt.methodology}`);
+    setProposedCostInput(opt.costEstimate);
+    setDeploymentTimeInput(opt.timeline);
+  };
+
+  const handleAddQuickTag = (tag: string) => {
+    setProposalInput(prev => {
+      const trimmed = prev.trim();
+      return trimmed ? `${trimmed} • ${tag}` : tag;
+    });
+  };
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,7 +217,7 @@ export const StartupDashboard: React.FC = () => {
           <select
             value={challenge.id}
             onChange={(e) => selectChallengeAction(e.target.value)}
-            className="text-xs font-semibold p-2 rounded-lg border border-[#E2DED6] bg-[#FAF8F5] text-[#0A2540] max-w-md"
+            className="text-xs font-semibold p-2 rounded-lg border border-[#E2DED6] bg-[#FAF8F5] text-[#0A2540] max-w-md cursor-pointer"
           >
             {challenges.map((c) => (
               <option key={c.id} value={c.id}>
@@ -181,7 +257,7 @@ export const StartupDashboard: React.FC = () => {
 
               <button
                 onClick={() => setActiveView("challenge_details")}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#F2EFEB] text-[#0F3854] hover:bg-[#EDE9E1] border border-[#E2DED6] transition-colors shrink-0"
+                className="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#F2EFEB] text-[#0F3854] hover:bg-[#EDE9E1] border border-[#E2DED6] transition-colors shrink-0 cursor-pointer"
               >
                 View Scope
               </button>
@@ -324,7 +400,7 @@ export const StartupDashboard: React.FC = () => {
                       </span>
                       <button
                         onClick={openBlockchainModal}
-                        className="text-xs font-bold text-[#0F3854] hover:underline"
+                        className="text-xs font-bold text-[#0F3854] hover:underline cursor-pointer"
                       >
                         Verify TX On-Chain →
                       </button>
@@ -343,7 +419,7 @@ export const StartupDashboard: React.FC = () => {
                         setRole("evaluator");
                         setActiveView("evaluator_dashboard");
                       }}
-                      className="px-3.5 py-1.5 rounded-lg bg-[#8A5B0B] text-white font-bold text-xs hover:bg-[#6c4708] transition-colors shrink-0"
+                      className="px-3.5 py-1.5 rounded-lg bg-[#8A5B0B] text-white font-bold text-xs hover:bg-[#6c4708] transition-colors shrink-0 cursor-pointer"
                     >
                       Score as Evaluator →
                     </button>
@@ -351,25 +427,133 @@ export const StartupDashboard: React.FC = () => {
                 )}
               </div>
             ) : (
-              /* BID SUBMISSION FORM */
+              /* BID SUBMISSION FORM WITH OPTION SELECTION & MANUAL DRAFTING */
               <form onSubmit={handleApply} className="space-y-4 pt-2">
                 <div className="p-3 bg-[#EBF6F0] border border-[#C2E5D2] rounded-lg text-xs text-[#147452] flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 shrink-0" />
                   <span>
-                    <strong>Open for Bids:</strong> Submit your prototype specifications and deployment schedule for this government challenge.
+                    <strong>Open for Bids:</strong> Choose a pre-configured solution option below or write your custom engineering proposal.
                   </span>
                 </div>
 
+                {/* Mode Switcher Tabs */}
+                <div className="bg-[#FAF8F5] p-1.5 rounded-xl border border-[#E2DED6] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setProposalMode("option")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                        proposalMode === "option"
+                          ? "bg-[#0F3854] text-white shadow-2xs"
+                          : "text-[#5B6A78] hover:text-[#0A2540] hover:bg-white"
+                      }`}
+                    >
+                      <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                      <span>Choose Solution Option (Preset)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setProposalMode("manual")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                        proposalMode === "manual"
+                          ? "bg-[#0F3854] text-white shadow-2xs"
+                          : "text-[#5B6A78] hover:text-[#0A2540] hover:bg-white"
+                      }`}
+                    >
+                      <PenTool className="h-3.5 w-3.5" />
+                      <span>Write Custom Proposal (Manual)</span>
+                    </button>
+                  </div>
+
+                  <span className="text-[10px] font-mono text-[#5B6A78] px-2">
+                    {proposalMode === "option" ? "⚡ Preset Mode" : "✍️ Manual Mode"}
+                  </span>
+                </div>
+
+                {/* Option Selection Mode View */}
+                {proposalMode === "option" && (
+                  <div className="space-y-2.5">
+                    <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-[#5B6A78]">
+                      Select Pre-Configured Solution Option (4 Verified Archetypes):
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {SOLUTION_OPTIONS.map((opt) => {
+                        const isSelected = selectedOptionId === opt.id;
+                        return (
+                          <div
+                            key={opt.id}
+                            onClick={() => handleSelectSolutionOption(opt)}
+                            className={`p-3 rounded-lg border text-left cursor-pointer transition-all ${
+                              isSelected
+                                ? "bg-amber-50/70 border-amber-500 shadow-2xs ring-2 ring-amber-400"
+                                : "bg-[#FAF8F5] hover:bg-white border-[#E2DED6]"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-1 mb-1">
+                              <span className="text-xs font-bold text-[#0A2540]">{opt.name}</span>
+                              {isSelected && <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0 font-bold" />}
+                            </div>
+                            <p className="text-[11px] text-[#5B6A78] line-clamp-2 leading-relaxed">
+                              {opt.tagline}
+                            </p>
+                            <div className="mt-2 pt-1.5 border-t border-[#EDE9E1] flex items-center justify-between text-[10px] font-mono">
+                              <span className="text-emerald-700 font-bold">{opt.costEstimate}</span>
+                              <span className="text-[#5B6A78]">⏳ {opt.timeline}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Manual Mode Quick Tags */}
+                {proposalMode === "manual" && (
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-mono font-bold text-[#5B6A78] uppercase block">
+                      Fast Capability Tags (Click to Append to Proposal):
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        "Zero Civil Infrastructure Work",
+                        "NABL-Calibrated Sensor Probes",
+                        "Sub-5 Min Latency Alerts",
+                        "Class-1 Make in India (≥50% Local Content)",
+                        "98.5%+ Operational Uptime Guarantee",
+                        "REST / MQTT Command Integration",
+                        "Solar-Powered Battery Backup",
+                        "TRL 7+ Field Proven"
+                      ].map((tag, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleAddQuickTag(tag)}
+                          className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FAF8F5] hover:bg-white text-[#0F3854] border border-[#E2DED6] hover:border-[#0F3854] transition-all cursor-pointer flex items-center gap-1"
+                        >
+                          <Plus className="h-3 w-3 text-emerald-600" />
+                          <span>{tag}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Editable Technical Solution Textarea */}
                 <div>
-                  <label className="block text-xs font-bold text-[#0A2540] mb-1">
-                    Technical Solution & Proposal Summary
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-bold text-[#0A2540]">
+                      Proposed Technical Solution & Specification Details
+                    </label>
+                    <span className="text-[10px] font-mono text-[#5B6A78]">
+                      {proposalMode === "option" ? "Editable Preset" : "Custom Draft"}
+                    </span>
+                  </div>
                   <textarea
-                    rows={3}
+                    rows={4}
                     value={proposalInput}
                     onChange={(e) => setProposalInput(e.target.value)}
                     required
-                    className="w-full text-xs rounded-lg border border-[#E2DED6] p-3 text-[#141F2B] bg-[#FAF8F5] focus:bg-white focus:outline-none focus:border-[#0F3854]"
+                    className="w-full text-xs rounded-lg border border-[#E2DED6] p-3 text-[#141F2B] bg-[#FAF8F5] focus:bg-white focus:outline-none focus:border-[#0F3854] leading-relaxed"
                     placeholder="Describe your technical innovation, TRL readiness, edge hardware design, and sensor calibration..."
                   />
                 </div>
@@ -383,7 +567,7 @@ export const StartupDashboard: React.FC = () => {
                       type="text"
                       value={proposedCostInput}
                       onChange={(e) => setProposedCostInput(e.target.value)}
-                      className="w-full text-xs rounded-lg border border-[#E2DED6] p-2.5 bg-[#FAF8F5] font-mono"
+                      className="w-full text-xs rounded-lg border border-[#E2DED6] p-2.5 bg-[#FAF8F5] font-mono focus:bg-white"
                       placeholder="e.g. ₹24,50,000"
                     />
                   </div>
@@ -395,7 +579,7 @@ export const StartupDashboard: React.FC = () => {
                       type="text"
                       value={deploymentTimeInput}
                       onChange={(e) => setDeploymentTimeInput(e.target.value)}
-                      className="w-full text-xs rounded-lg border border-[#E2DED6] p-2.5 bg-[#FAF8F5] font-mono"
+                      className="w-full text-xs rounded-lg border border-[#E2DED6] p-2.5 bg-[#FAF8F5] font-mono focus:bg-white"
                       placeholder="e.g. 14 Calendar Days"
                     />
                   </div>
@@ -404,9 +588,13 @@ export const StartupDashboard: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmittingProposal}
-                  className="w-full py-3 px-5 rounded-lg bg-[#0F3854] hover:bg-[#1D4E72] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs disabled:opacity-50"
+                  className="w-full py-3.5 px-5 rounded-lg bg-[#0F3854] hover:bg-[#1D4E72] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
                 >
-                  <Send className="h-4 w-4" />
+                  {isSubmittingProposal ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
                   <span>{isSubmittingProposal ? "Submitting to Blockchain Ledger..." : "Submit Formal Bid Proposal to Government"}</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
@@ -441,7 +629,7 @@ export const StartupDashboard: React.FC = () => {
                 <select
                   value={selectedMilestoneId}
                   onChange={(e) => setSelectedMilestoneId(e.target.value)}
-                  className="w-full text-xs rounded-lg border border-[#E2DED6] p-2.5 bg-[#FAF8F5] font-mono"
+                  className="w-full text-xs rounded-lg border border-[#E2DED6] p-2.5 bg-[#FAF8F5] font-mono cursor-pointer"
                 >
                   {pilot.milestones.map((m) => (
                     <option key={m.id} value={m.id}>
@@ -490,7 +678,7 @@ export const StartupDashboard: React.FC = () => {
               <button
                 type="submit"
                 disabled={isUploadingEvidence}
-                className="w-full py-2.5 px-4 rounded-lg bg-[#147452] hover:bg-[#0e583e] text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-2xs disabled:opacity-50"
+                className="w-full py-2.5 px-4 rounded-lg bg-[#147452] hover:bg-[#0e583e] text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-2xs disabled:opacity-50 cursor-pointer"
               >
                 <Upload className="h-4 w-4" />
                 <span>{isUploadingEvidence ? "Hashing & Registering On Ledger..." : "Upload & Request Milestone Verification"}</span>
