@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { useApp } from "@/context/AppContext";
@@ -25,9 +25,30 @@ import { AuthModal } from "@/components/AuthModal";
 import { Chatbot } from "@/components/Chatbot";
 
 export default function Home() {
-  const { activeView } = useApp();
+  const { activeView, currentUser } = useApp();
 
   const renderActiveView = () => {
+    // Role-based view isolation for authenticated users
+    if (currentUser?.role === "government") {
+      if (activeView === "startup_dashboard" || activeView === "evaluator_dashboard") {
+        return <GovernmentDashboard />;
+      }
+    } else if (currentUser?.role === "startup") {
+      if (
+        activeView === "gov_dashboard" || 
+        activeView === "evaluator_dashboard" || 
+        activeView === "create_challenge" || 
+        activeView === "application_review" || 
+        activeView === "evaluation_scorecard"
+      ) {
+        return <StartupDashboard />;
+      }
+    } else if (currentUser?.role === "evaluator") {
+      if (activeView === "gov_dashboard" || activeView === "startup_dashboard" || activeView === "create_challenge") {
+        return <EvaluatorDashboard />;
+      }
+    }
+
     switch (activeView) {
       case "landing":
         return <LandingPage />;

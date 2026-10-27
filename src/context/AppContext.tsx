@@ -5,6 +5,7 @@ import {
   UserRole, 
   AuthUser,
   Challenge, 
+  ChallengeStatus,
   Startup, 
   Application, 
   Pilot, 
@@ -401,6 +402,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (data.authenticated && data.user) {
         setRealUser(data.user);
         setRoleState(data.user.role);
+        setActiveView(prev => {
+          if (prev === "landing" || prev === "gov_dashboard" || prev === "startup_dashboard" || prev === "evaluator_dashboard") {
+            return data.user.role === "government"
+              ? "gov_dashboard"
+              : data.user.role === "startup"
+              ? "startup_dashboard"
+              : "evaluator_dashboard";
+          }
+          return prev;
+        });
       }
     } catch (err) {
       console.warn("Error fetching profile:", err);
@@ -419,26 +430,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const resChallenges = await fetch("/api/challenges", { headers });
       const chalData = await resChallenges.json();
       if (chalData.success && Array.isArray(chalData.challenges) && chalData.challenges.length > 0) {
-        const topChal = chalData.challenges[0];
-        setRealChallenge({
-          id: topChal.id,
-          title: topChal.title,
-          department: topChal.department_name,
-          ministry: topChal.ministry,
-          category: topChal.category,
-          budget: topChal.budget,
-          pilotDuration: topChal.pilot_duration,
-          deadline: topChal.application_deadline || "2026-11-30",
-          status: topChal.status,
-          summary: topChal.summary || topChal.title,
-          problemStatement: topChal.problem_statement,
-          expectedOutcomes: topChal.expected_outcomes || [],
-          technicalThresholds: topChal.technical_thresholds || [],
-          targetLocations: topChal.target_locations || 5,
-          scaleLocations: topChal.scale_locations || 50,
+        const mappedList: Challenge[] = chalData.challenges.map((c: any) => ({
+          id: c.id,
+          title: c.title,
+          department: c.department_name,
+          ministry: c.ministry,
+          category: c.category,
+          budget: c.budget,
+          pilotDuration: c.pilot_duration,
+          deadline: c.application_deadline || "2026-11-30",
+          status: (c.status === "published" ? "Open" : c.status) as ChallengeStatus || "Open",
+          summary: c.summary || c.title,
+          problemStatement: c.problem_statement,
+          expectedOutcomes: c.expected_outcomes || [],
+          technicalThresholds: c.technical_thresholds || [],
+          targetLocations: c.target_locations || 5,
+          scaleLocations: c.scale_locations || 50,
           matchedCount: 0,
           applicationsCount: 0,
-        });
+        }));
+        setRealChallenges(mappedList);
+        setRealChallenge(prev => mappedList.find(c => c.id === prev.id) || mappedList[0]);
       }
 
       // Applications
@@ -527,48 +539,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [isLiveDbConnected, fetchProfileAndSetUser]);
 
   const setRole = (newRole: UserRole) => {
+    // If user is authenticated in real mode, keep their registered role
+    if (realUser) {
+      setRoleState(realUser.role);
+      return;
+    }
     setRoleState(newRole);
-    if (appMode === "demo") {
-      if (newRole === "government") {
-        setDemoUser({
-          id: "GOV-DEMO-01",
-          name: "Dr. Rajeshwar Sharma, IAS",
-          email: "rajeshwar.sharma@jalshakti.gov.in",
-          role: "government",
-          organization: "Ministry of Jal Shakti",
-          designation: "Director (Procurement & Innovation)",
-          identifier: "GOV-IAS-2024-991"
-        });
-      } else if (newRole === "startup") {
-        setDemoUser({
-          id: "ST-AQUASENSE",
-          name: "Dr. Aranya Sen",
-          email: "aranya@aquasense-ai.in",
-          role: "startup",
-          organization: "AquaSense AI Innovations Pvt Ltd",
-          designation: "Founder & CEO",
-          identifier: "DPIIT-REC-89241-DL"
-        });
-      } else if (newRole === "evaluator") {
-        setDemoUser({
-          id: "EVAL-DEMO-01",
-          name: "Prof. Vinod Nair",
-          email: "vinod.nair@iitd.ac.in",
-          role: "evaluator",
-          organization: "IIT Delhi / Technical Evaluation Board",
-          designation: "Chairman, Expert Committee",
-          identifier: "EVAL-IITD-770"
-        });
-      } else {
-        setDemoUser({
-          id: "ADMIN-DEMO-01",
-          name: "Administrator (GovInnovate)",
-          email: "admin@govinnovate.gov.in",
-          role: "admin",
-          organization: "Public Innovation Oversight Bureau",
-          designation: "Chief Administrator",
-        });
-      }
+    if (demoUser) {
+      setDemoUser(prev => prev ? { ...prev, role: newRole } : null);
     }
   };
 
@@ -709,6 +687,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (resData.user) {
         setRealUser(resData.user);
         setRoleState(resData.user.role);
+        if (resData.user.role === "government") {
+          setActiveView("gov_dashboard");
+        } else if (resData.user.role === "startup") {
+          setActiveView("startup_dashboard");
+        } else if (resData.user.role === "evaluator") {
+          setActiveView("evaluator_dashboard");
+        }
       }
       return { success: true };
     } catch (err: unknown) {
@@ -786,12 +771,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             status: "Open",
             applicationsCount: 0
           };
-          setDemoChallenge(fallbackChallenge);
-          setActiveView("ai_startup_matches");
+          setRealChallenges(prev => [fallbackChallenge, ...prev.filter(c => c.id !== fallbackChallenge.id)]);
+          setRealChallenge(fallbackChallenge);
+          setSelectedChallengeId(fallbackChallenge.id);
+          setActiveView("gov_dashboard");
           return;
         }
+
+        if (result.challenge) {
+          const newChal: Challenge = {
+            id: result.challenge.id,
+            title: result.challenge.title,
+            department: result.challenge.department_name,
+            ministry: result.challenge.ministry,
+            category: result.challenge.category,
+            budget: result.challenge.budget,
+            pilotDuration: result.challenge.pilot_duration,
+            deadline: result.challenge.application_deadline || "2026-11-30",
+            status: (result.challenge.status === "published" ? "Open" : result.challenge.status) as ChallengeStatus || "Open",
+            summary: result.challenge.summary || result.challenge.title,
+            problemStatement: result.challenge.problem_statement,
+            expectedOutcomes: result.challenge.expected_outcomes || [],
+            technicalThresholds: result.challenge.technical_thresholds || [],
+            targetLocations: result.challenge.target_locations || 5,
+            scaleLocations: result.challenge.scale_locations || 50,
+            matchedCount: 0,
+            applicationsCount: 0,
+          };
+          setRealChallenges(prev => [newChal, ...prev.filter(c => c.id !== newChal.id)]);
+          setRealChallenge(newChal);
+          setSelectedChallengeId(newChal.id);
+        }
+
         await refreshLiveData();
-        setActiveView("ai_startup_matches");
+        setActiveView("gov_dashboard");
       } catch (err) {
         console.error("Error creating challenge:", err);
         const fallbackChallenge: Challenge = {
@@ -801,8 +814,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           status: "Open",
           applicationsCount: 0
         };
-        setDemoChallenge(fallbackChallenge);
-        setActiveView("ai_startup_matches");
+        setRealChallenges(prev => [fallbackChallenge, ...prev.filter(c => c.id !== fallbackChallenge.id)]);
+        setRealChallenge(fallbackChallenge);
+        setSelectedChallengeId(fallbackChallenge.id);
+        setActiveView("gov_dashboard");
       }
     } else {
       // Demo Mode
@@ -813,7 +828,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         status: "Open",
         applicationsCount: 0
       };
+      setDemoChallenges(prev => [updated, ...prev.filter(c => c.id !== updated.id)]);
       setDemoChallenge(updated);
+      setSelectedChallengeId(updated.id);
       recalculateMatchesAction(updated);
       addAuditLog(
         "CHALLENGE_PUBLISHED", 
@@ -821,7 +838,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         "Procurement", 
         "government"
       );
-      setActiveView("ai_startup_matches");
+      setActiveView("gov_dashboard");
     }
   };
 
@@ -1289,6 +1306,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           alert(`Application error: ${result.error || "Failed to submit application"}`);
           return;
         }
+        if (result.application) {
+          const newApp: Application = {
+            id: result.application.id,
+            challengeId: result.application.challenge_id || challenge.id,
+            startupId: result.application.startup_id || result.application.startup_user_id || currentUser?.id || "ST-01",
+            startupName: result.application.startup_name || currentUser?.organization || "DPIIT Verified Startup",
+            appliedDate: result.application.submitted_at?.slice(0, 10) || new Date().toISOString().slice(0, 10),
+            status: result.application.status || "Submitted",
+            dpiitVerified: true,
+            financialTurnover: "Relaxation under GFR 149/170 applicable",
+            proposalSummary: result.application.proposal_summary || proposalData?.proposalSummary || "",
+            solutionOverview: result.application.proposed_solution || proposalData?.solutionOverview || "",
+            proposedCost: result.application.proposed_cost || "₹28,50,000",
+            deploymentTime: result.application.deployment_time || "14 Calendar Days",
+            trlLevel: result.application.trl_level || 7,
+            localContentPercentage: result.application.local_content_percentage || 65,
+            patentsCount: result.application.patents_count || 1,
+            evidenceLinks: result.application.evidence_links || [],
+          };
+          setRealApplications(prev => [newApp, ...prev.filter(a => a.id !== newApp.id)]);
+        }
         await refreshLiveData();
         setActiveView("startup_dashboard");
       } catch (err) {
@@ -1301,7 +1339,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       const newApp: Application = {
         id: newAppId,
-        challengeId: demoChallenge.id,
+        challengeId: challenge.id,
         startupId: startup.id,
         startupName: startup.name,
         appliedDate: new Date().toISOString().slice(0, 10),
@@ -1321,7 +1359,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
 
       setDemoApplications(prev => {
-        const filtered = prev.filter(a => a.startupId !== startup.id);
+        const filtered = prev.filter(a => !(a.startupId === startup.id && a.challengeId === challenge.id));
         return [newApp, ...filtered];
       });
 

@@ -16,6 +16,7 @@ import {
 export const CreateChallenge: React.FC = () => {
   const { createChallengeAction, role, setRole, appMode } = useApp();
 
+  const [title, setTitle] = useState("AI-Based Water Quality Monitoring & Predictive Contamination Warning System");
   const [rawProblem, setRawProblem] = useState(
     "Our municipal water distribution lines experience sudden industrial pollutant dumps and heavy metal contamination. Lab testing takes 24-48 hours which is too slow. We need an automated IoT sensing solution to detect contamination spikes within 5 minutes across 5 pilot sites, with zero false positives, before expanding city-wide."
   );
@@ -69,8 +70,10 @@ export const CreateChallenge: React.FC = () => {
 
       if (res.ok) {
         const data = await res.json();
+        const synthesizedTitle = data.structuredTitle || "Automated Public Challenge Solution";
+        setTitle(synthesizedTitle);
         setStructuredDecomposition({
-          structuredTitle: data.structuredTitle || "Automated Public Challenge Solution",
+          structuredTitle: synthesizedTitle,
           summary: data.summary || "",
           problemStatement: data.problemStatement || rawProblem,
           expectedOutcomes: data.expectedOutcomes || [],
@@ -88,14 +91,15 @@ export const CreateChallenge: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const finalTitle = title.trim() || structuredDecomposition?.structuredTitle || "Public Innovation Procurement Challenge";
       await createChallengeAction({
-        title: structuredDecomposition?.structuredTitle || "AI-Based Water Quality Monitoring System",
+        title: finalTitle,
         department,
         ministry,
         category,
         budget,
         pilotDuration,
-        summary: structuredDecomposition?.summary || "",
+        summary: structuredDecomposition?.summary || rawProblem.slice(0, 160),
         problemStatement: structuredDecomposition?.problemStatement || rawProblem,
         expectedOutcomes: structuredDecomposition?.expectedOutcomes || [],
         technicalThresholds: structuredDecomposition?.technicalThresholds || [],
@@ -149,6 +153,19 @@ export const CreateChallenge: React.FC = () => {
       <div className="grid lg:grid-cols-12 gap-8">
         {/* Left Form: Inputs */}
         <div className="lg:col-span-7 bg-white rounded border border-[#E2DED6] p-6 space-y-6 shadow-2xs">
+          <div>
+            <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-2">
+              Challenge Title / Problem Name
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. AI-Based Predictive Water Contamination Warning System"
+              className="w-full text-xs font-bold rounded border border-[#E2DED6] px-3 py-2.5 bg-[#FAF8F5] focus:bg-white text-[#0A2540]"
+            />
+          </div>
+
           <div>
             <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-2">
               Procuring Department & Ministry
@@ -297,7 +314,7 @@ export const CreateChallenge: React.FC = () => {
                 <div>
                   <p className="text-[10px] font-mono uppercase text-slate-400">Formal Challenge Title</p>
                   <p className="text-sm font-bold text-white mt-0.5">
-                    {structuredDecomposition.structuredTitle}
+                    {title || structuredDecomposition.structuredTitle}
                   </p>
                 </div>
 

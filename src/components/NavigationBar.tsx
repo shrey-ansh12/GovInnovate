@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
@@ -28,7 +28,7 @@ export const NavigationBar: React.FC = () => {
     activeView, 
     setActiveView, 
     resetDemoAction, 
-    challenge,
+    challenge, challenges,
     openAuthModal,
     language,
     setLanguage,
@@ -279,47 +279,70 @@ export const NavigationBar: React.FC = () => {
               </div>
             )}
 
-            {/* Role Switcher Pill */}
-            <div className="hidden md:flex items-center bg-[#F2EFEB] p-1 rounded border border-[#E2DED6]">
-              <button
-                onClick={() => { setRole("government"); setActiveView("gov_dashboard"); }}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
-                  role === "government"
-                    ? "bg-[#0F3854] text-white shadow-xs"
-                    : "text-[#5B6A78] hover:text-[#141F2B]"
-                }`}
-                title="Switch to Government View"
-              >
-                <Building2 className="h-3 w-3" />
-                <span>{t("role.govt")}</span>
-              </button>
+            {/* Role Badge (when authenticated) or Preview Pills (when unauthenticated demo) */}
+            {currentUser ? (
+              <div className="hidden md:flex items-center px-3 py-1.5 rounded font-mono text-xs border bg-white shadow-2xs">
+                {currentUser.role === "government" && (
+                  <span className="flex items-center gap-1.5 font-bold text-[#0F3854]">
+                    <Building2 className="h-3.5 w-3.5 text-[#0F3854]" />
+                    <span>🏛 Govt Desk</span>
+                  </span>
+                )}
+                {currentUser.role === "startup" && (
+                  <span className="flex items-center gap-1.5 font-bold text-[#147452]">
+                    <Rocket className="h-3.5 w-3.5 text-[#147452]" />
+                    <span>🚀 Startup Portal</span>
+                  </span>
+                )}
+                {currentUser.role === "evaluator" && (
+                  <span className="flex items-center gap-1.5 font-bold text-[#8A5B0B]">
+                    <Award className="h-3.5 w-3.5 text-[#8A5B0B]" />
+                    <span>⚖️ Evaluator Panel</span>
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="hidden md:flex items-center bg-[#F2EFEB] p-1 rounded border border-[#E2DED6]">
+                <button
+                  onClick={() => { setRole("government"); setActiveView("gov_dashboard"); }}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+                    role === "government"
+                      ? "bg-[#0F3854] text-white shadow-xs"
+                      : "text-[#5B6A78] hover:text-[#141F2B]"
+                  }`}
+                  title="Switch to Government View"
+                >
+                  <Building2 className="h-3 w-3" />
+                  <span>{t("role.govt")}</span>
+                </button>
 
-              <button
-                onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
-                  role === "startup"
-                    ? "bg-[#147452] text-white shadow-xs"
-                    : "text-[#5B6A78] hover:text-[#141F2B]"
-                }`}
-                title="Switch to Startup View"
-              >
-                <Rocket className="h-3 w-3" />
-                <span>{t("role.startup")}</span>
-              </button>
+                <button
+                  onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+                    role === "startup"
+                      ? "bg-[#147452] text-white shadow-xs"
+                      : "text-[#5B6A78] hover:text-[#141F2B]"
+                  }`}
+                  title="Switch to Startup View"
+                >
+                  <Rocket className="h-3 w-3" />
+                  <span>{t("role.startup")}</span>
+                </button>
 
-              <button
-                onClick={() => { setRole("evaluator"); setActiveView("evaluator_dashboard"); }}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
-                  role === "evaluator"
-                    ? "bg-[#8A5B0B] text-white shadow-xs"
-                    : "text-[#5B6A78] hover:text-[#141F2B]"
-                }`}
-                title="Switch to Evaluator View"
-              >
-                <Award className="h-3 w-3" />
-                <span>{t("role.eval")}</span>
-              </button>
-            </div>
+                <button
+                  onClick={() => { setRole("evaluator"); setActiveView("evaluator_dashboard"); }}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+                    role === "evaluator"
+                      ? "bg-[#8A5B0B] text-white shadow-xs"
+                      : "text-[#5B6A78] hover:text-[#141F2B]"
+                  }`}
+                  title="Switch to Evaluator View"
+                >
+                  <Award className="h-3 w-3" />
+                  <span>{t("role.eval")}</span>
+                </button>
+              </div>
+            )}
 
             {/* Quick Reset Demo */}
             {appMode === "demo" && (
@@ -337,37 +360,50 @@ export const NavigationBar: React.FC = () => {
 
       {/* 3. SECONDARY FAST-HOP FLOW NAVIGATION */}
       <div className="bg-[#0F3854] text-slate-200 px-4 py-2 text-xs overflow-x-auto whitespace-nowrap border-b border-[#1D4E72]">
-        <div className="max-w-[1360px] mx-auto flex items-center gap-4">
-          <span className="font-semibold text-slate-300 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> {t("scenario.flow")}
-          </span>
+        <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <NavPill label={t("flow.landing")} active={activeView === "landing"} onClick={() => setActiveView("landing")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.govDashboard")} active={activeView === "gov_dashboard"} onClick={() => { setRole("government"); setActiveView("gov_dashboard"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.createChallenge")} active={activeView === "create_challenge"} onClick={() => { setRole("government"); setActiveView("create_challenge"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.aiMatches")} active={activeView === "ai_startup_matches"} onClick={() => setActiveView("ai_startup_matches")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.startupProfile")} active={activeView === "startup_profile"} onClick={() => setActiveView("startup_profile")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.startupDashboard")} active={activeView === "startup_dashboard"} onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.reviewShortlist")} active={activeView === "application_review"} onClick={() => { setRole("government"); setActiveView("application_review"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.evalScorecard")} active={activeView === "evaluation_scorecard"} onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.pilot")} active={activeView === "pilot_management"} onClick={() => setActiveView("pilot_management")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.kpi")} active={activeView === "kpi_monitoring"} onClick={() => setActiveView("kpi_monitoring")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.validation")} active={activeView === "validation_report"} onClick={() => setActiveView("validation_report")} />
-            <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.scaleUp")} active={activeView === "scale_up"} onClick={() => setActiveView("scale_up")} />
-            <span className="text-slate-500">|</span>
-            <NavPill label={t("flow.auditTrail")} active={activeView === "audit_trail"} onClick={() => setActiveView("audit_trail")} />
-            <NavPill label={t("flow.documents")} active={activeView === "documents"} onClick={() => setActiveView("documents")} />
+            <span className="font-semibold text-slate-300 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider mr-1">
+              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+              {role === "government" ? "Govt Desk:" : role === "startup" ? "Startup Portal:" : "Evaluator Panel:"}
+            </span>
+
+            {role === "government" ? (
+              <>
+                <NavPill label="🏛 Government Dashboard" active={activeView === "gov_dashboard"} onClick={() => setActiveView("gov_dashboard")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label="➕ Create Challenge" active={activeView === "create_challenge"} onClick={() => setActiveView("create_challenge")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label="⚖️ Review Proposals" active={activeView === "application_review"} onClick={() => setActiveView("application_review")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label="🚀 Pilot Sandbox Oversight" active={activeView === "pilot_management"} onClick={() => setActiveView("pilot_management")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label="📊 KPI Monitoring" active={activeView === "kpi_monitoring"} onClick={() => setActiveView("kpi_monitoring")} />
+                <span className="text-slate-500">|</span>
+                <NavPill label="📜 Vigilance Audit Trail" active={activeView === "audit_trail"} onClick={() => setActiveView("audit_trail")} />
+              </>
+            ) : role === "startup" ? (
+              <>
+                <NavPill label="🚀 Startup Dashboard" active={activeView === "startup_dashboard"} onClick={() => setActiveView("startup_dashboard")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label={`📋 Browse Challenges (${challenges.length})`} active={activeView === "ai_startup_matches"} onClick={() => setActiveView("ai_startup_matches")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label="🏢 DPIIT Startup Profile" active={activeView === "startup_profile"} onClick={() => setActiveView("startup_profile")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label="📤 Submit Milestone Evidence" active={activeView === "pilot_management"} onClick={() => setActiveView("pilot_management")} />
+                <span className="text-slate-500">|</span>
+                <NavPill label="📁 Compliance Documents" active={activeView === "documents"} onClick={() => setActiveView("documents")} />
+              </>
+            ) : (
+              <>
+                <NavPill label="⚖️ Evaluator Dashboard" active={activeView === "evaluator_dashboard"} onClick={() => setActiveView("evaluator_dashboard")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label="📊 5-Pillar Scorecard" active={activeView === "evaluation_scorecard"} onClick={() => setActiveView("evaluation_scorecard")} />
+                <span className="text-slate-500">→</span>
+                <NavPill label="🔍 Review Pilot Milestones" active={activeView === "pilot_management"} onClick={() => setActiveView("pilot_management")} />
+                <span className="text-slate-500">|</span>
+                <NavPill label="📜 Audit Trail" active={activeView === "audit_trail"} onClick={() => setActiveView("audit_trail")} />
+              </>
+            )}
           </div>
         </div>
       </div>
