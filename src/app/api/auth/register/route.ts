@@ -131,10 +131,22 @@ export async function POST(req: NextRequest) {
           local_content_percentage: 65.0,
           patents_count: 1,
           verification_status: "verified",
-        });
+        }, { onConflict: "user_id" });
       } catch (stErr) {
         console.warn("Startup profile upsert error:", stErr);
       }
+    }
+
+    // Insert welcome notification
+    try {
+      await supabase.from("notifications").insert({
+        recipient_user_id: userId,
+        title: "Welcome to GovInnovate Sandbox",
+        message: `Your account is registered as ${fullName} (${assignedRole.toUpperCase()}).`,
+        type: "success"
+      });
+    } catch (notifErr) {
+      console.warn("Notification insert skipped:", notifErr);
     }
 
     // Insert Audit Log (best-effort)
