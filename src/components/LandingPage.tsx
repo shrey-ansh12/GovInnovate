@@ -75,9 +75,6 @@ export const LandingPage: React.FC = () => {
               <strong>Statutory Safe-Harbor Notice:</strong> Procurement decisions are subject to applicable GFR, GeM rules, departmental policies, and competent-authority approval.
             </span>
           </div>
-          <span className="hidden md:inline font-mono text-[11px] font-medium bg-white/80 px-2 py-0.5 rounded border border-[#E2DED6]">
-            Sandbox Prototype v2.4
-          </span>
         </div>
       </div>
 
@@ -726,7 +723,7 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-[1360px] mx-auto flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="font-bold text-sm text-[#0A2540]">GovInnovate</div>
-            <div className="text-[11px] text-[#7E8B97] mt-0.5">National Public Innovation Sandbox Prototype</div>
+            <div className="text-[11px] text-[#7E8B97] mt-0.5">National Public Innovation Platform</div>
           </div>
           <div className="text-[11px] text-[#7E8B97] text-right">
             <span>Sustainathon 2.0 • Civic Technology Track</span>

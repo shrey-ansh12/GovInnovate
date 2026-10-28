@@ -84,7 +84,7 @@ export default function Home() {
         <footer className="bg-[#0F3854] border-t border-[#1D4E72] text-slate-300 py-6 px-6 text-xs">
           <div className="max-w-[1360px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <span className="font-semibold text-white">GovInnovate Sandbox Prototype</span> • Transparent Procurement-to-Pilot Rails
+              <span className="font-semibold text-white">GovInnovate</span> • Transparent Procurement-to-Pilot Rails
             </div>
             <div className="flex flex-wrap items-center gap-3 text-slate-300 font-mono text-[11px]">
               <span>DPIIT Startup Framework</span>
