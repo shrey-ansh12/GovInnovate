@@ -313,16 +313,11 @@ export const NavigationBar: React.FC = () => {
             <div className="hidden md:flex items-center bg-[#F2EFEB] p-1 rounded border border-[#E2DED6] gap-0.5">
               <button
                 onClick={() => {
-                  loginUser({
-                    id: "GOV-DEMO-01",
-                    name: "Dr. Rajeshwar Sharma, IAS",
-                    email: "rajeshwar.sharma@jalshakti.gov.in",
-                    role: "government",
-                    organization: "Ministry of Jal Shakti",
-                    designation: "Director (Procurement & Innovation)",
-                    identifier: "GOV-IAS-2024-991"
-                  });
-                  setActiveView("gov_dashboard");
+                  if (currentUser && currentUser.role === "government") {
+                    setActiveView("gov_dashboard");
+                  } else {
+                    openAuthModal("signin", "government");
+                  }
                 }}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
                   role === "government"
@@ -337,16 +332,11 @@ export const NavigationBar: React.FC = () => {
 
               <button
                 onClick={() => {
-                  loginUser({
-                    id: "ST-AQUASENSE",
-                    name: "Dr. Aranya Sen",
-                    email: "aranya@aquasense-ai.in",
-                    role: "startup",
-                    organization: "AquaSense AI Innovations Pvt Ltd",
-                    designation: "Founder & CEO",
-                    identifier: "DPIIT-REC-89241-DL"
-                  });
-                  setActiveView("startup_dashboard");
+                  if (currentUser && currentUser.role === "startup") {
+                    setActiveView("startup_dashboard");
+                  } else {
+                    openAuthModal("signin", "startup");
+                  }
                 }}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
                   role === "startup"
@@ -361,16 +351,11 @@ export const NavigationBar: React.FC = () => {
 
               <button
                 onClick={() => {
-                  loginUser({
-                    id: "EVAL-DEMO-01",
-                    name: "Prof. Vinod Nair",
-                    email: "vinod.nair@iitd.ac.in",
-                    role: "evaluator",
-                    organization: "IIT Delhi / Technical Evaluation Board",
-                    designation: "Chairman, Expert Committee",
-                    identifier: "EVAL-IITD-770"
-                  });
-                  setActiveView("evaluator_dashboard");
+                  if (currentUser && currentUser.role === "evaluator") {
+                    setActiveView("evaluator_dashboard");
+                  } else {
+                    openAuthModal("signin", "evaluator");
+                  }
                 }}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
                   role === "evaluator"

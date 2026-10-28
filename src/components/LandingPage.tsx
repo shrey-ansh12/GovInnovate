@@ -141,58 +141,25 @@ export const LandingPage: React.FC = () => {
                 Dashboard Logins:
               </span>
               <button
-                onClick={() => {
-                  loginUser({
-                    id: "GOV-DEMO-01",
-                    name: "Dr. Rajeshwar Sharma, IAS",
-                    email: "rajeshwar.sharma@jalshakti.gov.in",
-                    role: "government",
-                    organization: "Ministry of Jal Shakti",
-                    designation: "Director (Procurement & Innovation)",
-                    identifier: "GOV-IAS-2024-991"
-                  });
-                  setActiveView("gov_dashboard");
-                }}
+                onClick={() => openAuthModal("signin", "government")}
                 className="px-3 py-1.5 rounded bg-[#0F3854] text-white hover:bg-[#1D4E72] flex items-center gap-1.5 font-semibold text-xs cursor-pointer shadow-2xs transition-all"
-                title="Log in directly as Govt Officer into Government Dashboard"
+                title="Log in with Government Officer credentials into Government Dashboard"
               >
                 <Building2 className="h-3.5 w-3.5 text-emerald-300" />
                 <span>🏛️ Govt Login</span>
               </button>
               <button
-                onClick={() => {
-                  loginUser({
-                    id: "ST-AQUASENSE",
-                    name: "Dr. Aranya Sen",
-                    email: "aranya@aquasense-ai.in",
-                    role: "startup",
-                    organization: "AquaSense AI Innovations Pvt Ltd",
-                    designation: "Founder & CEO",
-                    identifier: "DPIIT-REC-89241-DL"
-                  });
-                  setActiveView("startup_dashboard");
-                }}
+                onClick={() => openAuthModal("signin", "startup")}
                 className="px-3 py-1.5 rounded bg-[#147452] text-white hover:bg-[#0f583e] flex items-center gap-1.5 font-semibold text-xs cursor-pointer shadow-2xs transition-all"
-                title="Log in directly as Startup Founder into Startup Dashboard"
+                title="Log in with Startup Founder credentials into Startup Dashboard"
               >
                 <Rocket className="h-3.5 w-3.5 text-emerald-300" />
                 <span>🚀 Startup Login</span>
               </button>
               <button
-                onClick={() => {
-                  loginUser({
-                    id: "EVAL-DEMO-01",
-                    name: "Prof. Vinod Nair",
-                    email: "vinod.nair@iitd.ac.in",
-                    role: "evaluator",
-                    organization: "IIT Delhi / Technical Evaluation Board",
-                    designation: "Chairman, Expert Committee",
-                    identifier: "EVAL-IITD-770"
-                  });
-                  setActiveView("evaluator_dashboard");
-                }}
+                onClick={() => openAuthModal("signin", "evaluator")}
                 className="px-3 py-1.5 rounded bg-[#8A5B0B] text-white hover:bg-[#6c4708] flex items-center gap-1.5 font-semibold text-xs cursor-pointer shadow-2xs transition-all"
-                title="Log in directly as Technical Committee into Evaluator Dashboard"
+                title="Log in with Technical Committee credentials into Evaluator Dashboard"
               >
                 <Award className="h-3.5 w-3.5 text-amber-300" />
                 <span>⚖️ Evaluator Login</span>
@@ -589,18 +556,7 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="pt-6 space-y-2">
               <button
-                onClick={() => {
-                  loginUser({
-                    id: "GOV-DEMO-01",
-                    name: "Dr. Rajeshwar Sharma, IAS",
-                    email: "rajeshwar.sharma@jalshakti.gov.in",
-                    role: "government",
-                    organization: "Ministry of Jal Shakti",
-                    designation: "Director (Procurement & Innovation)",
-                    identifier: "GOV-IAS-2024-991"
-                  });
-                  setActiveView("gov_dashboard");
-                }}
+                onClick={() => openAuthModal("signin", "government")}
                 className="w-full py-2.5 px-4 rounded bg-[#0F3854] text-white text-xs font-semibold hover:bg-[#1D4E72] transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
               >
                 <Building2 className="h-4 w-4" />
@@ -629,18 +585,7 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="pt-6 space-y-2">
               <button
-                onClick={() => {
-                  loginUser({
-                    id: "ST-AQUASENSE",
-                    name: "Dr. Aranya Sen",
-                    email: "aranya@aquasense-ai.in",
-                    role: "startup",
-                    organization: "AquaSense AI Innovations Pvt Ltd",
-                    designation: "Founder & CEO",
-                    identifier: "DPIIT-REC-89241-DL"
-                  });
-                  setActiveView("startup_dashboard");
-                }}
+                onClick={() => openAuthModal("signin", "startup")}
                 className="w-full py-2.5 px-4 rounded bg-[#147452] text-white text-xs font-semibold hover:bg-[#0f583e] transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
               >
                 <Rocket className="h-4 w-4" />
@@ -669,18 +614,7 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="pt-6 space-y-2">
               <button
-                onClick={() => {
-                  loginUser({
-                    id: "EVAL-DEMO-01",
-                    name: "Prof. Vinod Nair",
-                    email: "vinod.nair@iitd.ac.in",
-                    role: "evaluator",
-                    organization: "IIT Delhi / Technical Evaluation Board",
-                    designation: "Chairman, Expert Committee",
-                    identifier: "EVAL-IITD-770"
-                  });
-                  setActiveView("evaluator_dashboard");
-                }}
+                onClick={() => openAuthModal("signin", "evaluator")}
                 className="w-full py-2.5 px-4 rounded bg-[#8A5B0B] text-white text-xs font-semibold hover:bg-[#6c4708] transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
               >
                 <Award className="h-4 w-4" />

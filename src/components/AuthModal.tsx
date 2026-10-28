@@ -37,6 +37,25 @@ interface AuthModalInnerProps {
   initialRole: UserRole;
 }
 
+
+const DEMO_CREDENTIALS: Partial<Record<UserRole, { email: string; password: string; label: string }>> = {
+  government: {
+    email: "rajeshwar.sharma@jalshakti.gov.in",
+    password: "GovInnovate@2026",
+    label: "Govt Officer (Jal Shakti)"
+  },
+  startup: {
+    email: "aranya@aquasense-ai.in",
+    password: "Startup@2026",
+    label: "DPIIT Startup (AquaSense)"
+  },
+  evaluator: {
+    email: "vinod.nair@iitd.ac.in",
+    password: "Evaluator@2026",
+    label: "Technical Evaluator (IIT Delhi)"
+  }
+};
+
 const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRole }) => {
   const { 
     closeAuthModal, 
@@ -80,9 +99,19 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
   const [evaluatorEmail, setEvaluatorEmail] = useState("");
   const [evaluatorPassword, setEvaluatorPassword] = useState("");
 
-  // Sign In Form State
-  const [signInEmail, setSignInEmail] = useState("");
-  const [signInPassword, setSignInPassword] = useState("");
+    // Sign In Form State with authentic preset credentials
+  const [signInEmail, setSignInEmail] = useState(DEMO_CREDENTIALS[initialRole]?.email || "");
+  const [signInPassword, setSignInPassword] = useState(DEMO_CREDENTIALS[initialRole]?.password || "");
+
+  const switchRole = (newRole: UserRole) => {
+    setSelectedRole(newRole);
+    setAuthModalRole(newRole);
+    setErrorMessage(null);
+    if (DEMO_CREDENTIALS[newRole]) {
+      setSignInEmail(DEMO_CREDENTIALS[newRole]?.email || "");
+      setSignInPassword(DEMO_CREDENTIALS[newRole]?.password || "");
+    }
+  };
 
   // Forgot Password State
   const [resetEmail, setResetEmail] = useState("");
@@ -369,7 +398,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
             <div className="mt-5 grid grid-cols-3 gap-2 p-1 bg-black/25 rounded border border-white/10 font-mono text-xs">
               <button
                 type="button"
-                onClick={() => { setSelectedRole("startup"); setAuthModalRole("startup"); }}
+                onClick={() => switchRole("startup")}
                 className={`py-2 px-2 rounded text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all ${
                   selectedRole === "startup"
                     ? "bg-white text-[#0F3854] font-semibold"
@@ -381,7 +410,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
               </button>
               <button
                 type="button"
-                onClick={() => { setSelectedRole("government"); setAuthModalRole("government"); }}
+                onClick={() => switchRole("government")}
                 className={`py-2 px-2 rounded text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all ${
                   selectedRole === "government"
                     ? "bg-white text-[#0F3854] font-semibold"
@@ -393,7 +422,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
               </button>
               <button
                 type="button"
-                onClick={() => { setSelectedRole("evaluator"); setAuthModalRole("evaluator"); }}
+                onClick={() => switchRole("evaluator")}
                 className={`py-2 px-2 rounded text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all ${
                   selectedRole === "evaluator"
                     ? "bg-white text-[#0F3854] font-semibold"
@@ -460,7 +489,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
               {/* 1-Click Fast Sign In for any Stakeholder */}
               <div className="p-3.5 bg-[#FAF8F5] border border-[#E2DED6] rounded-lg font-mono space-y-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-bold text-[#0A2540]">Three Dashboard 1-Click Logins</p>
+                  <p className="text-xs font-bold text-[#0A2540]">Preset Role Credentials (Auto-Fill)</p>
                   <span className="text-[10px] text-[#147452] font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                     Auto-Route
                   </span>
@@ -472,7 +501,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
                     className="py-2 px-2 bg-white hover:bg-[#0F3854] hover:text-white border border-[#E2DED6] rounded-md text-[10px] font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5 text-[#0F3854]"
                   >
                     <span>🏛️ Govt Officer</span>
-                    <span className="text-[9px] opacity-75 font-normal">(Gov Desk)</span>
+                    <span className="text-[9px] opacity-75 font-normal">Auto-Fill Credentials</span>
                   </button>
                   <button
                     type="button"
@@ -480,7 +509,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
                     className="py-2 px-2 bg-white hover:bg-[#147452] hover:text-white border border-[#E2DED6] rounded-md text-[10px] font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5 text-[#147452]"
                   >
                     <span>🚀 Startup</span>
-                    <span className="text-[9px] opacity-75 font-normal">(Startup Hub)</span>
+                    <span className="text-[9px] opacity-75 font-normal">Auto-Fill Credentials</span>
                   </button>
                   <button
                     type="button"
@@ -488,7 +517,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
                     className="py-2 px-2 bg-white hover:bg-[#8A5B0B] hover:text-white border border-[#E2DED6] rounded-md text-[10px] font-bold transition-all text-center flex flex-col items-center justify-center gap-0.5 text-[#8A5B0B]"
                   >
                     <span>⚖️ Evaluator</span>
-                    <span className="text-[9px] opacity-75 font-normal">(Evaluator Panel)</span>
+                    <span className="text-[9px] opacity-75 font-normal">Auto-Fill Credentials</span>
                   </button>
                 </div>
               </div>
@@ -537,7 +566,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
                     onChange={(e) => setSignInPassword(e.target.value)}
                     placeholder="••••••••"
                     className="w-full pl-9 pr-3 py-2 text-xs rounded border border-[#E2DED6] focus:border-[#0F3854] focus:outline-none"
-                    required={appMode === "real"}
+                    required minLength={6}
                   />
                 </div>
               </div>

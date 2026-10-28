@@ -13,7 +13,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
   variant = "prominent",
   className = "" 
 }) => {
-  const { role, setRole, activeView, setActiveView, loginUser } = useApp();
+  const { role, setRole, activeView, setActiveView, loginUser, openAuthModal, currentUser } = useApp();
 
   const isGovActive = activeView === "gov_dashboard";
   const isStartupActive = activeView === "startup_dashboard";
@@ -22,42 +22,27 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
   const isHubActive = activeView === "landing";
 
   const switchToGov = () => {
-    loginUser({
-      id: "GOV-DEMO-01",
-      name: "Dr. Rajeshwar Sharma, IAS",
-      email: "rajeshwar.sharma@jalshakti.gov.in",
-      role: "government",
-      organization: "Ministry of Jal Shakti",
-      designation: "Director (Procurement & Innovation)",
-      identifier: "GOV-IAS-2024-991"
-    });
-    setActiveView("gov_dashboard");
+    if (currentUser && currentUser.role === "government") {
+      setActiveView("gov_dashboard");
+    } else {
+      openAuthModal("signin", "government");
+    }
   };
 
   const switchToStartup = () => {
-    loginUser({
-      id: "ST-AQUASENSE",
-      name: "Dr. Aranya Sen",
-      email: "aranya@aquasense-ai.in",
-      role: "startup",
-      organization: "AquaSense AI Innovations Pvt Ltd",
-      designation: "Founder & CEO",
-      identifier: "DPIIT-REC-89241-DL"
-    });
-    setActiveView("startup_dashboard");
+    if (currentUser && currentUser.role === "startup") {
+      setActiveView("startup_dashboard");
+    } else {
+      openAuthModal("signin", "startup");
+    }
   };
 
   const switchToEvaluator = () => {
-    loginUser({
-      id: "EVAL-DEMO-01",
-      name: "Prof. Vinod Nair",
-      email: "vinod.nair@iitd.ac.in",
-      role: "evaluator",
-      organization: "IIT Delhi / Technical Evaluation Board",
-      designation: "Chairman, Expert Committee",
-      identifier: "EVAL-IITD-770"
-    });
-    setActiveView("evaluator_dashboard");
+    if (currentUser && currentUser.role === "evaluator") {
+      setActiveView("evaluator_dashboard");
+    } else {
+      openAuthModal("signin", "evaluator");
+    }
   };
 
   const switchToAiMatches = () => {
