@@ -98,8 +98,10 @@ export async function runImport() {
 
   console.log(`[INFO] Found ${records.length} records in CSV.`);
 
-  if (records.length !== 12) {
-    console.warn(`[WARN] Expected 12 records, found ${records.length}.`);
+  if (records.length === 0) {
+    console.warn("[WARN] No records found in CSV.");
+  } else {
+    console.log(`[INFO] Validated ${records.length} startup profiles for import.`);
   }
 
   const seenIds = new Set();

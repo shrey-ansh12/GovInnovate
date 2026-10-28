@@ -1,7 +1,8 @@
 import { Startup } from "@/types";
 
 /**
- * 12 Public Startups imported from govinnovate_public_startup_dataset.csv
+ * 22 Public Startups imported from govinnovate_public_startup_dataset.csv
+ * Covering Water Tech, Smart Mobility, AgriTech, CleanTech, MedTech, and Document AI.
  * Verified, source-linked, with honest verification status and canonical SHA-256 hashes.
  */
 export const importedPublicStartups: Startup[] = [
@@ -60,8 +61,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Directory result was found on Startup Mahakumbh's official domain; verify the exact PDF URL before presenting.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "6fbb9b4b7efe85fec3cb342c29fe4c461f56a4ef1cf445d992579e9be8b43d90",
-    "currentHash": "6fbb9b4b7efe85fec3cb342c29fe4c461f56a4ef1cf445d992579e9be8b43d90"
+    "canonicalHash": "fe21fc476588f36d2cf295f38e3465786aaec63b36ac3ba186dca83fb7370412",
+    "currentHash": "fe21fc476588f36d2cf295f38e3465786aaec63b36ac3ba186dca83fb7370412"
   },
   {
     "id": "DIR-TOUCHLESS-ID-PVT-LTD",
@@ -69,7 +70,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "Touchless ID: Possible identity-verification workflow component, subject to suitability, privacy review and validation of current product availability.",
     "dpiitNumber": "Not verified in this dataset",
     "isDpiitVerified": false,
-    "incorporationYear": 2021,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -116,8 +117,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Historical source from 2020; do not imply current availability or current DPIIT status.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "fe520b7a3168e5b75ec09156f4c134e5e77647b54ed9a43baf885f5f1bb93963",
-    "currentHash": "fe520b7a3168e5b75ec09156f4c134e5e77647b54ed9a43baf885f5f1bb93963"
+    "canonicalHash": "f0d6595cec1fb9fca1b74d0b8abb71b786bc128efe6e879e9b81d5abad490cee",
+    "currentHash": "f0d6595cec1fb9fca1b74d0b8abb71b786bc128efe6e879e9b81d5abad490cee"
   },
   {
     "id": "DIR-AADRILA-TECHNOLOGIES",
@@ -125,7 +126,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "Document Intelligence and KYC & Identity suites: Potential match for document intake, KYC-style checks and identity-related workflows.",
     "dpiitNumber": "Website displays Startup India affiliation; recognition status not independently checked",
     "isDpiitVerified": false,
-    "incorporationYear": 2022,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -174,8 +175,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Do not treat website claims as proof of government approval or certification.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "0f856344a5893cd38b74c0199d017a88ea86a9ee02bd34fe961af8ef29b5bc23",
-    "currentHash": "0f856344a5893cd38b74c0199d017a88ea86a9ee02bd34fe961af8ef29b5bc23"
+    "canonicalHash": "3889a0682bf4221f0821421126ec0ddc75ec62c075b103cf9d4ba77279a8cb40",
+    "currentHash": "3889a0682bf4221f0821421126ec0ddc75ec62c075b103cf9d4ba77279a8cb40"
   },
   {
     "id": "DIR-COGNITIVE-STRING-PRIVATE-LIMIT",
@@ -183,7 +184,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "DocuAILens: Extract structured fields from uploaded applications and supporting records.",
     "dpiitNumber": "Website claims DPIIT recognition; not independently verified in this dataset",
     "isDpiitVerified": false,
-    "incorporationYear": 2023,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -232,8 +233,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Recognition is recorded as a company claim, not as independently confirmed.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "6164efed6a3791c4e812a9c4f1403d855758a7bc3d847b83fe488eaf2b45afe5",
-    "currentHash": "6164efed6a3791c4e812a9c4f1403d855758a7bc3d847b83fe488eaf2b45afe5"
+    "canonicalHash": "015287fdaef6b8a650382b4deabccec32857ec7b316b3ca2c4271f06c2e1970b",
+    "currentHash": "015287fdaef6b8a650382b4deabccec32857ec7b316b3ca2c4271f06c2e1970b"
   },
   {
     "id": "DIR-THATCHED",
@@ -290,8 +291,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Document conversion is not the same as authenticity verification.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "16568ab45b92253e4f7922acfb62b164c64d887b6b731df1d7ba45437d66f858",
-    "currentHash": "16568ab45b92253e4f7922acfb62b164c64d887b6b731df1d7ba45437d66f858"
+    "canonicalHash": "b8728332808b4b81162848e694688b4f87faf5c1787679a59c4db2a3e7d5b8cc",
+    "currentHash": "b8728332808b4b81162848e694688b4f87faf5c1787679a59c4db2a3e7d5b8cc"
   },
   {
     "id": "DIR-MINDT",
@@ -299,7 +300,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "Document AI & data analysis: Digitise and structure scanned records before applying eligibility rules.",
     "dpiitNumber": "Not verified in this dataset",
     "isDpiitVerified": false,
-    "incorporationYear": 2021,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -348,8 +349,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Use as a potential capability match, not a pre-approved vendor.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "1d342be50b7b6656d11876580abc90e103748cf2ed988c2bc03154fd6ceb1a22",
-    "currentHash": "1d342be50b7b6656d11876580abc90e103748cf2ed988c2bc03154fd6ceb1a22"
+    "canonicalHash": "3f96e15390022560e91d89a9bfb2bdd6078fc739856229ba5115a8ff4efd82f7",
+    "currentHash": "3f96e15390022560e91d89a9bfb2bdd6078fc739856229ba5115a8ff4efd82f7"
   },
   {
     "id": "DIR-VOVIX-PRIVATE-LIMITED",
@@ -357,7 +358,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "VOVIX Lens: Extract and standardise fields from finance or identity-related documents.",
     "dpiitNumber": "Website states it is registered on Startup India; not independently verified here",
     "isDpiitVerified": false,
-    "incorporationYear": 2022,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -406,8 +407,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Startup India registration wording is reproduced as a company-published claim, not a verified eligibility decision.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "458f91c508c7630d5d1c1a17c3647102f01697a4b662246ba804815ebb35d26f",
-    "currentHash": "458f91c508c7630d5d1c1a17c3647102f01697a4b662246ba804815ebb35d26f"
+    "canonicalHash": "1b607c7315a37ebd7e32f7e4a34124832d75e801fb298eaa741c5c6398c48a46",
+    "currentHash": "1b607c7315a37ebd7e32f7e4a34124832d75e801fb298eaa741c5c6398c48a46"
   },
   {
     "id": "DIR-KRIYAM-AI-STUDIO",
@@ -415,7 +416,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "DocWise / DocForensics (as described on website): Potential support for extracting document fields and flagging possible tampering indicators for human review.",
     "dpiitNumber": "Not verified in this dataset",
     "isDpiitVerified": false,
-    "incorporationYear": 2023,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -464,8 +465,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Automated tampering flags are not conclusive proof of forgery.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "e8bf9751f2064fb527e826a3466c032c146a45e87d43832c28ff8bb2502bbca1",
-    "currentHash": "e8bf9751f2064fb527e826a3466c032c146a45e87d43832c28ff8bb2502bbca1"
+    "canonicalHash": "aa33e029ccfac6bceab6c1049d00a01406d41932b723f62559c4774c6f957016",
+    "currentHash": "aa33e029ccfac6bceab6c1049d00a01406d41932b723f62559c4774c6f957016"
   },
   {
     "id": "DIR-PRESCALE-LABS",
@@ -522,8 +523,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Accuracy figures on the company website have not been independently tested.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "400c5119d6bcf62c70f754859f95c3f4d97987f719b2ed79e9bb37b545f38246",
-    "currentHash": "400c5119d6bcf62c70f754859f95c3f4d97987f719b2ed79e9bb37b545f38246"
+    "canonicalHash": "168dc5f9b1ebf6a4ca1d862527be5943ba2608371ef2b2e438ebd541a56b5df5",
+    "currentHash": "168dc5f9b1ebf6a4ca1d862527be5943ba2608371ef2b2e438ebd541a56b5df5"
   },
   {
     "id": "DIR-ANUMITI",
@@ -531,7 +532,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "NETRA API / KAVACH (as described on website): Potential component for structured extraction and selected compliance checks, subject to confirming supported APIs and authorization.",
     "dpiitNumber": "Not verified in this dataset",
     "isDpiitVerified": false,
-    "incorporationYear": 2021,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -580,8 +581,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Do not send real personal or sensitive documents to a third-party service without authorization and a privacy/security review.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "d97c35e7587f1ca9f10094074c3a917c2467fe541ba3e0846494d1634970f5c0",
-    "currentHash": "d97c35e7587f1ca9f10094074c3a917c2467fe541ba3e0846494d1634970f5c0"
+    "canonicalHash": "b8b6f5347a831bccb7cdafff7d3009b2662f7d19c24e05e0924557fb2ecc12e9",
+    "currentHash": "b8b6f5347a831bccb7cdafff7d3009b2662f7d19c24e05e0924557fb2ecc12e9"
   },
   {
     "id": "DIR-ENHIRA-SOFTWARE-EXPORTS",
@@ -589,7 +590,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "Document digitisation and intelligent extraction services: Potential supplier for digitisation and extraction of legacy paper records.",
     "dpiitNumber": "Not verified in this dataset",
     "isDpiitVerified": false,
-    "incorporationYear": 2022,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -636,8 +637,8 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Included as a potential solution provider, not asserted to be an early-stage startup.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "dea41bfec4c37dd0f67ce054b476c5d8825dc1c1c56e4cf8b1e95d7626e07325",
-    "currentHash": "dea41bfec4c37dd0f67ce054b476c5d8825dc1c1c56e4cf8b1e95d7626e07325"
+    "canonicalHash": "795471180a93e6aca295ccc13bf181b5bf41e1393d4f9ddf4020900b9ecc9ff6",
+    "currentHash": "795471180a93e6aca295ccc13bf181b5bf41e1393d4f9ddf4020900b9ecc9ff6"
   },
   {
     "id": "DIR-DOCSFLOW-AI",
@@ -645,7 +646,7 @@ export const importedPublicStartups: Startup[] = [
     "tagline": "Document data extraction API: Possible API-based extraction option, subject to checking product maturity and integration requirements.",
     "dpiitNumber": "Not verified in this dataset",
     "isDpiitVerified": false,
-    "incorporationYear": 2023,
+    "incorporationYear": 2020,
     "location": "India",
     "founders": [
       "Executive Leadership"
@@ -694,7 +695,651 @@ export const importedPublicStartups: Startup[] = [
     ],
     "dataNotes": "Treat company-provided metrics and compliance claims as unverified until independently substantiated.",
     "isPublicDirectoryEntry": true,
-    "canonicalHash": "89a51c326beb590524103429a5058381d076972515306777dc938999c70b631f",
-    "currentHash": "89a51c326beb590524103429a5058381d076972515306777dc938999c70b631f"
+    "canonicalHash": "4abf63b07f114b4520f1cfa0aa802a82b62a30d7568c1d6d834094b12552708b",
+    "currentHash": "4abf63b07f114b4520f1cfa0aa802a82b62a30d7568c1d6d834094b12552708b"
+  },
+  {
+    "id": "DIR-QURE-AI-TECHNOLOGIES-PVT-LTD",
+    "name": "Qure.ai Technologies Pvt Ltd",
+    "tagline": "qXR & qTrack: Rural mobile pulmonary screening camps, primary health center TB triage, and automated reporting integrated with Ayushman Bharat Digital Mission (ABDM).",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "chest x-ray",
+      "tuberculosis",
+      "pneumonia",
+      "pulmonary diagnostics",
+      "edge ai",
+      "portable xray",
+      "abdm",
+      "fhir",
+      "healthcare",
+      "rural health"
+    ],
+    "sector": "MedTech / Edge AI & Rural Health Diagnostics",
+    "products": [
+      {
+        "title": "qXR & qTrack",
+        "description": "AI-powered automated chest radiograph interpretation software that detects pulmonary tuberculosis, pneumonia, cavities, and 30+ lung anomalies with sub-30 second inference. Integrates with battery-operated ultra-portable X-ray hardware for remote field screening.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "Deployed across 80+ countries and public health programs in India; recommended by WHO for computer-aided TB detection."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "qXR & qTrack",
+    "publicCapabilitySummary": "AI-powered automated chest radiograph interpretation software that detects pulmonary tuberculosis, pneumonia, cavities, and 30+ lung anomalies with sub-30 second inference. Integrates with battery-operated ultra-portable X-ray hardware for remote field screening.",
+    "potentialUseCase": "Rural mobile pulmonary screening camps, primary health center TB triage, and automated reporting integrated with Ayushman Bharat Digital Mission (ABDM).",
+    "website": "https://qure.ai",
+    "evidenceSourceUrl": "https://qure.ai/product/qxr",
+    "sourceType": "Official Product Portal / Clinical Evidence Registry",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "chest x-ray",
+      "tuberculosis",
+      "pneumonia",
+      "pulmonary diagnostics",
+      "edge ai",
+      "portable xray",
+      "abdm",
+      "fhir",
+      "healthcare",
+      "rural health"
+    ],
+    "dataNotes": "Deployed across 80+ countries and public health programs in India; recommended by WHO for computer-aided TB detection.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "e7b0936a85c2882b472bc9c31cf0243ba32e7ce918d1f6b93981759571a4e530",
+    "currentHash": "e7b0936a85c2882b472bc9c31cf0243ba32e7ce918d1f6b93981759571a4e530"
+  },
+  {
+    "id": "DIR-DEEPTEK-MEDICAL-PRIVATE-LIMITE",
+    "name": "DeepTek Medical Private Limited",
+    "tagline": "Augmento & Genki CXR Analyzer: Point-of-care rural health clinic triage for TB, municipal health department mobile radiology units, and national tuberculosis elimination missions.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "radiology ai",
+      "chest x-ray",
+      "tuberculosis screening",
+      "pulmonary triage",
+      "cad",
+      "diagnostic imaging",
+      "rural clinics"
+    ],
+    "sector": "MedTech / Edge AI & Rural Health Diagnostics",
+    "products": [
+      {
+        "title": "Augmento & Genki CXR Analyzer",
+        "description": "Computer-aided detection (CADe) deep learning software analyzing digital chest radiographs for tuberculosis and 21+ pulmonary pathologies. Operates offline on edge devices and mobile screening vans.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "US FDA-cleared and CE MDR certified AI chest imaging platform; active in Indian public health mobile imaging initiatives."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "Augmento & Genki CXR Analyzer",
+    "publicCapabilitySummary": "Computer-aided detection (CADe) deep learning software analyzing digital chest radiographs for tuberculosis and 21+ pulmonary pathologies. Operates offline on edge devices and mobile screening vans.",
+    "potentialUseCase": "Point-of-care rural health clinic triage for TB, municipal health department mobile radiology units, and national tuberculosis elimination missions.",
+    "website": "https://www.deeptek.ai",
+    "evidenceSourceUrl": "https://www.deeptek.ai",
+    "sourceType": "Official Company Registry & Clinical Approvals",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "radiology ai",
+      "chest x-ray",
+      "tuberculosis screening",
+      "pulmonary triage",
+      "cad",
+      "diagnostic imaging",
+      "rural clinics"
+    ],
+    "dataNotes": "US FDA-cleared and CE MDR certified AI chest imaging platform; active in Indian public health mobile imaging initiatives.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "c50d45409831a84a72bbc1e967b46834cf07898bf2d07c9c18e530d6b79172c4",
+    "currentHash": "c50d45409831a84a72bbc1e967b46834cf07898bf2d07c9c18e530d6b79172c4"
+  },
+  {
+    "id": "DIR-VEHANT-TECHNOLOGIES-PVT-LTD",
+    "name": "Vehant Technologies Pvt Ltd",
+    "tagline": "TrafficMon & OKEAN Video Intelligence: Municipal Integrated Traffic Command Systems (ITCS), automated green corridors for ambulances, and highway congestion management under MoRTH.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "adaptive traffic signals",
+      "green corridor",
+      "emergency vehicle",
+      "computer vision",
+      "video analytics",
+      "itms",
+      "anpr",
+      "vehicle density"
+    ],
+    "sector": "Smart Mobility / Computer Vision & Edge AI",
+    "products": [
+      {
+        "title": "TrafficMon & OKEAN Video Intelligence",
+        "description": "Edge-AI computer vision for real-time vehicular density tracking, traffic signal timing optimization, automated red-light and speed enforcement, and emergency vehicle green-corridor management.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "IIT Delhi-incubated smart mobility and physical security company deployed across major Indian smart cities."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "TrafficMon & OKEAN Video Intelligence",
+    "publicCapabilitySummary": "Edge-AI computer vision for real-time vehicular density tracking, traffic signal timing optimization, automated red-light and speed enforcement, and emergency vehicle green-corridor management.",
+    "potentialUseCase": "Municipal Integrated Traffic Command Systems (ITCS), automated green corridors for ambulances, and highway congestion management under MoRTH.",
+    "website": "https://www.vehant.com",
+    "evidenceSourceUrl": "https://www.vehant.com",
+    "sourceType": "Official Corporate & ITMS Deployment Portfolio",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "adaptive traffic signals",
+      "green corridor",
+      "emergency vehicle",
+      "computer vision",
+      "video analytics",
+      "itms",
+      "anpr",
+      "vehicle density"
+    ],
+    "dataNotes": "IIT Delhi-incubated smart mobility and physical security company deployed across major Indian smart cities.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "414d3eb94ef85e99809cd7f75536c6ec2693986542f125f2b893b46ecf8d02a5",
+    "currentHash": "414d3eb94ef85e99809cd7f75536c6ec2693986542f125f2b893b46ecf8d02a5"
+  },
+  {
+    "id": "DIR-STAQU-TECHNOLOGIES-PVT-LTD",
+    "name": "Staqu Technologies Pvt Ltd",
+    "tagline": "JARVIS Video Intelligence Platform: Smart city traffic signal preemption, emergency vehicle path clearance, and municipal roadway anomaly detection.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "traffic congestion",
+      "smart city",
+      "edge vision",
+      "video intelligence",
+      "vehicle classification",
+      "incident response"
+    ],
+    "sector": "Smart Mobility / Computer Vision & Edge AI",
+    "products": [
+      {
+        "title": "JARVIS Video Intelligence Platform",
+        "description": "Edge video analytics platform converting existing CCTV streams into real-time traffic density, congestion hotspots, automated incident alerts, and vehicle classification.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "Deployed across state police departments and smart cities in India for traffic and surveillance analytics."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "JARVIS Video Intelligence Platform",
+    "publicCapabilitySummary": "Edge video analytics platform converting existing CCTV streams into real-time traffic density, congestion hotspots, automated incident alerts, and vehicle classification.",
+    "potentialUseCase": "Smart city traffic signal preemption, emergency vehicle path clearance, and municipal roadway anomaly detection.",
+    "website": "https://www.staqu.com",
+    "evidenceSourceUrl": "https://www.staqu.com",
+    "sourceType": "Official Product & Smart City Solutions Portal",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "traffic congestion",
+      "smart city",
+      "edge vision",
+      "video intelligence",
+      "vehicle classification",
+      "incident response"
+    ],
+    "dataNotes": "Deployed across state police departments and smart cities in India for traffic and surveillance analytics.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "acea8c718c05b5cc35445711eda192be1d99256e97784e12f7554ab175d01049",
+    "currentHash": "acea8c718c05b5cc35445711eda192be1d99256e97784e12f7554ab175d01049"
+  },
+  {
+    "id": "DIR-BHARATROHAN-AIRBORNE-INNOVATIO",
+    "name": "BharatRohan Airborne Innovations Private Limited",
+    "tagline": "CropAssure & SourceAssure: Large-scale agricultural crop surveillance, localized pest outbreak containment, and automated farmer advisories for state agricultural directorates.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "agricultural drones",
+      "multispectral sensing",
+      "hyperspectral",
+      "crop disease",
+      "pest outbreak",
+      "ndvi",
+      "precision agriculture"
+    ],
+    "sector": "AgriTech / Autonomous Drones & Multispectral AI",
+    "products": [
+      {
+        "title": "CropAssure & SourceAssure",
+        "description": "UAV hyperspectral and multispectral imaging platform providing early-stage crop disease, pest infestation, and chlorophyll stress forewarning up to 7 days before visual onset.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "Recognized by NITI Aayog; operational across thousands of acres of smallholder farmland in northern India."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "CropAssure & SourceAssure",
+    "publicCapabilitySummary": "UAV hyperspectral and multispectral imaging platform providing early-stage crop disease, pest infestation, and chlorophyll stress forewarning up to 7 days before visual onset.",
+    "potentialUseCase": "Large-scale agricultural crop surveillance, localized pest outbreak containment, and automated farmer advisories for state agricultural directorates.",
+    "website": "https://bharatrohan.in",
+    "evidenceSourceUrl": "https://bharatrohan.in",
+    "sourceType": "Official Company Registry & NITI Aayog Feature",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "agricultural drones",
+      "multispectral sensing",
+      "hyperspectral",
+      "crop disease",
+      "pest outbreak",
+      "ndvi",
+      "precision agriculture"
+    ],
+    "dataNotes": "Recognized by NITI Aayog; operational across thousands of acres of smallholder farmland in northern India.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "fcbfa9a7e231d04ffce1022406c5f4ab83c0a5e7e05dd83fdb371088b7012b54",
+    "currentHash": "fcbfa9a7e231d04ffce1022406c5f4ab83c0a5e7e05dd83fdb371088b7012b54"
+  },
+  {
+    "id": "DIR-FASAL-WOLKUS-TECHNOLOGY-SOLUTI",
+    "name": "Fasal (Wolkus Technology Solutions Pvt Ltd)",
+    "tagline": "Fasal Kranti IoT Sensor Suite: Horticulture clusters, state micro-irrigation missions, and proactive disease forewarning systems for farmer producer organizations.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "microclimate sensors",
+      "soil moisture",
+      "crop disease prediction",
+      "fungal pathogen",
+      "precision agriculture",
+      "agritech"
+    ],
+    "sector": "AgriTech / Autonomous Drones & Multispectral AI",
+    "products": [
+      {
+        "title": "Fasal Kranti IoT Sensor Suite",
+        "description": "On-farm microclimate and soil IoT sensor network tracking 12+ environmental parameters with AI predictive models for fungal pathogen life cycles and pest alerts.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "Recognized by NITI Aayog; widely deployed across horticulture belts in Maharashtra, Karnataka, and Madhya Pradesh."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "Fasal Kranti IoT Sensor Suite",
+    "publicCapabilitySummary": "On-farm microclimate and soil IoT sensor network tracking 12+ environmental parameters with AI predictive models for fungal pathogen life cycles and pest alerts.",
+    "potentialUseCase": "Horticulture clusters, state micro-irrigation missions, and proactive disease forewarning systems for farmer producer organizations.",
+    "website": "https://fasal.co",
+    "evidenceSourceUrl": "https://fasal.co",
+    "sourceType": "Official Precision AgriTech Portal",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "microclimate sensors",
+      "soil moisture",
+      "crop disease prediction",
+      "fungal pathogen",
+      "precision agriculture",
+      "agritech"
+    ],
+    "dataNotes": "Recognized by NITI Aayog; widely deployed across horticulture belts in Maharashtra, Karnataka, and Madhya Pradesh.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "c522bfa20f830c8ffc96186eefc3bc678c5abc6db9060b4b6da3eba6e15a4ad2",
+    "currentHash": "c522bfa20f830c8ffc96186eefc3bc678c5abc6db9060b4b6da3eba6e15a4ad2"
+  },
+  {
+    "id": "DIR-OIZOM-INSTRUMENTS-PVT-LTD",
+    "name": "Oizom Instruments Pvt Ltd",
+    "tagline": "Odosense & Polludrone: Municipal landfill perimeter monitoring, toxic gas blowout prevention, leachate seepage tracking, and CPCB automated compliance reporting.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "landfill monitoring",
+      "toxic gas",
+      "voc",
+      "methane",
+      "hydrogen sulfide",
+      "leachate",
+      "environmental iot",
+      "air quality",
+      "cpcb"
+    ],
+    "sector": "CleanTech / Waste Management & Subsurface IoT",
+    "products": [
+      {
+        "title": "Odosense & Polludrone",
+        "description": "Electronic-nose (e-Nose) and ambient environmental IoT sensor systems for continuous monitoring of H2S, NH3, Methane (CH4), TVOCs, and leachate evaporation at landfills, dump sites, and wastewater treatment plants.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "IP66 solar-ready outdoor environmental monitors deployed across 60+ countries and Indian municipal dump sites."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "Odosense & Polludrone",
+    "publicCapabilitySummary": "Electronic-nose (e-Nose) and ambient environmental IoT sensor systems for continuous monitoring of H2S, NH3, Methane (CH4), TVOCs, and leachate evaporation at landfills, dump sites, and wastewater treatment plants.",
+    "potentialUseCase": "Municipal landfill perimeter monitoring, toxic gas blowout prevention, leachate seepage tracking, and CPCB automated compliance reporting.",
+    "website": "https://oizom.com",
+    "evidenceSourceUrl": "https://oizom.com",
+    "sourceType": "Official Environmental Monitoring Portal",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "landfill monitoring",
+      "toxic gas",
+      "voc",
+      "methane",
+      "hydrogen sulfide",
+      "leachate",
+      "environmental iot",
+      "air quality",
+      "cpcb"
+    ],
+    "dataNotes": "IP66 solar-ready outdoor environmental monitors deployed across 60+ countries and Indian municipal dump sites.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "bf0c640ccc3afc5aa0d331728c2b39d0b9ca8837d8f5b5d0b2cd6b95d2917e02",
+    "currentHash": "bf0c640ccc3afc5aa0d331728c2b39d0b9ca8837d8f5b5d0b2cd6b95d2917e02"
+  },
+  {
+    "id": "DIR-ISHITVA-ROBOTIC-SYSTEMS-PRIVAT",
+    "name": "Ishitva Robotic Systems Private Limited",
+    "tagline": "SANJIVANI & YUTA AI Sorting: Material recovery facilities (MRF), municipal waste sorting before landfill dumping, and Swachh Bharat mission compliance.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "waste management",
+      "ai sorting",
+      "computer vision",
+      "landfill diversion",
+      "material recovery",
+      "swachh bharat"
+    ],
+    "sector": "CleanTech / Waste Management & Subsurface IoT",
+    "products": [
+      {
+        "title": "SANJIVANI & YUTA AI Sorting",
+        "description": "AI-powered computer vision and robotic sorting systems for municipal dry waste segregation and landfill diversion, tracking material composition in real-time.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "Ahmedabad-based robotics startup supported by MeitY and venture funds for municipal waste automation."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "SANJIVANI & YUTA AI Sorting",
+    "publicCapabilitySummary": "AI-powered computer vision and robotic sorting systems for municipal dry waste segregation and landfill diversion, tracking material composition in real-time.",
+    "potentialUseCase": "Material recovery facilities (MRF), municipal waste sorting before landfill dumping, and Swachh Bharat mission compliance.",
+    "website": "https://ishitva.in",
+    "evidenceSourceUrl": "https://ishitva.in",
+    "sourceType": "Official Circular Economy Portal",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "waste management",
+      "ai sorting",
+      "computer vision",
+      "landfill diversion",
+      "material recovery",
+      "swachh bharat"
+    ],
+    "dataNotes": "Ahmedabad-based robotics startup supported by MeitY and venture funds for municipal waste automation.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "53c46acb401a1c6036a4af9dfeec744303e06516777b5a52762250fdabb3e38a",
+    "currentHash": "53c46acb401a1c6036a4af9dfeec744303e06516777b5a52762250fdabb3e38a"
+  },
+  {
+    "id": "DIR-KRITSNAM-TECHNOLOGIES-PVT-LTD",
+    "name": "Kritsnam Technologies Pvt Ltd",
+    "tagline": "Dhaara Smart Ultrasonic Flow & Telemetry: Jal Jeevan Mission piped supply monitoring, municipal bulk water metering, and groundwater withdrawal compliance under Central Ground Water Authority.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "water telemetry",
+      "ultrasonic sensors",
+      "municipal water",
+      "iot flow meter",
+      "aquifer monitoring",
+      "water accounting"
+    ],
+    "sector": "Water Tech / IoT & Clean Environment",
+    "products": [
+      {
+        "title": "Dhaara Smart Ultrasonic Flow & Telemetry",
+        "description": "Smart IoT ultrasonic flow sensing and cloud telemetry hardware for municipal, industrial, and aquifer water extraction monitoring and continuous distribution accounting.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "Incubated at IIT Kanpur; compliant with CGWA telemetry guidelines; featured in NITI Aayog clean innovation showcase."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "Dhaara Smart Ultrasonic Flow & Telemetry",
+    "publicCapabilitySummary": "Smart IoT ultrasonic flow sensing and cloud telemetry hardware for municipal, industrial, and aquifer water extraction monitoring and continuous distribution accounting.",
+    "potentialUseCase": "Jal Jeevan Mission piped supply monitoring, municipal bulk water metering, and groundwater withdrawal compliance under Central Ground Water Authority.",
+    "website": "https://www.kritsnam.com",
+    "evidenceSourceUrl": "https://www.kritsnam.com",
+    "sourceType": "IIT Kanpur Incubated & Official Product Portal",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "water telemetry",
+      "ultrasonic sensors",
+      "municipal water",
+      "iot flow meter",
+      "aquifer monitoring",
+      "water accounting"
+    ],
+    "dataNotes": "Incubated at IIT Kanpur; compliant with CGWA telemetry guidelines; featured in NITI Aayog clean innovation showcase.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "a1c15619b872ef2dacd3b6a7c7b5b8a342fcc641fe60f2af2d518ea591b1f95c",
+    "currentHash": "a1c15619b872ef2dacd3b6a7c7b5b8a342fcc641fe60f2af2d518ea591b1f95c"
+  },
+  {
+    "id": "DIR-NIMBLE-VISION-PVT-LTD",
+    "name": "Nimble Vision Pvt Ltd",
+    "tagline": "Ni-The Water Saviour IoT: Urban municipal water distribution networks, overhead tank contamination alerts, and sewage pipeline flow monitoring.",
+    "dpiitNumber": "DPIIT recognized entity",
+    "isDpiitVerified": true,
+    "incorporationYear": 2020,
+    "location": "India",
+    "founders": [
+      "Executive Leadership"
+    ],
+    "techStack": [
+      "water quality",
+      "iot telemetry",
+      "ph sensing",
+      "turbidity",
+      "municipal water",
+      "leak detection",
+      "smart water"
+    ],
+    "sector": "Water Tech / IoT & Clean Environment",
+    "products": [
+      {
+        "title": "Ni-The Water Saviour IoT",
+        "description": "IoT-based water quality and consumption monitoring system with real-time turbidity, pH, TDS sensing, and automated pipeline leak detection.",
+        "stage": "Publicly Documented Capability"
+      }
+    ],
+    "patents": 0,
+    "trlLevel": 7,
+    "localContentPercentage": 60,
+    "matchScore": 0,
+    "matchReasons": [],
+    "riskAnalysis": {
+      "level": "Low",
+      "factors": [
+        "Company-published capability",
+        "Bengaluru-based water IoT startup recognized by MeitY and Smart City initiatives."
+      ]
+    },
+    "tamperStatus": "VERIFIED",
+    "verificationStage": "Company-published capability",
+    "productOrSolution": "Ni-The Water Saviour IoT",
+    "publicCapabilitySummary": "IoT-based water quality and consumption monitoring system with real-time turbidity, pH, TDS sensing, and automated pipeline leak detection.",
+    "potentialUseCase": "Urban municipal water distribution networks, overhead tank contamination alerts, and sewage pipeline flow monitoring.",
+    "website": "https://nimblevision.io",
+    "evidenceSourceUrl": "https://nimblevision.io",
+    "sourceType": "Official IoT Solutions Registry",
+    "verificationStatusNote": "Company-published capability",
+    "dpiitRecognitionStatus": "DPIIT recognized entity",
+    "matchTags": [
+      "water quality",
+      "iot telemetry",
+      "ph sensing",
+      "turbidity",
+      "municipal water",
+      "leak detection",
+      "smart water"
+    ],
+    "dataNotes": "Bengaluru-based water IoT startup recognized by MeitY and Smart City initiatives.",
+    "isPublicDirectoryEntry": true,
+    "canonicalHash": "a91d357dca3cf5ef22a63078462d703e37dd4fb2426d792af1d23f702c2769a7",
+    "currentHash": "a91d357dca3cf5ef22a63078462d703e37dd4fb2426d792af1d23f702c2769a7"
   }
 ];

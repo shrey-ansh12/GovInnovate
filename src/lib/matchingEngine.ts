@@ -55,6 +55,8 @@ export function calculateStartupMatch(
 
   // Meaningful keywords extraction (length > 3, exclude general stop words)
   const stopWords = new Set(["need", "with", "from", "that", "this", "have", "into", "over", "such", "than", "then", "them", "these", "those", "their", "will", "would", "about"]);
+  const genericTechWords = new Set(["edge", "system", "smart", "tech", "platform", "suite", "analytics", "intelligence", "solution", "solutions", "based"]);
+
   const words = challengeText
     .split(/[^a-zA-Z0-9]+/)
     .filter(w => w.length > 3 && !stopWords.has(w));
@@ -67,12 +69,21 @@ export function calculateStartupMatch(
     }
   }
 
-  const categoryMatch = Boolean(startup.sector && challenge.category && (
-    challenge.category.toLowerCase().includes(startup.sector.toLowerCase()) ||
-    startup.sector.toLowerCase().split(";").some(s => challenge.category.toLowerCase().includes(s.trim()))
+  const startupSector = (startup.sector || "").toLowerCase();
+  const challengeCategory = (challenge.category || "").toLowerCase();
+
+  const categoryMatch = Boolean(startupSector && challengeCategory && (
+    challengeCategory.includes(startupSector) ||
+    startupSector.split(";").some(s => challengeCategory.includes(s.trim())) ||
+    startupSector.split("/").some(s => challengeCategory.includes(s.trim())) ||
+    challengeCategory.split("/").some(c => startupSector.includes(c.trim()))
   ));
 
-  const sectorMatch = matchedKeywordsList.length >= 2 || categoryMatch;
+  const challengeTitleAndCat = `${challenge.title} ${challenge.category}`.toLowerCase();
+  const titleCategoryWords = challengeTitleAndCat.split(/[^a-zA-Z0-9]+/).filter(w => w.length > 3 && !stopWords.has(w) && !genericTechWords.has(w));
+  const hasTitleCatKeyword = titleCategoryWords.some(w => startupKeywords.includes(w));
+
+  const sectorMatch = (matchedKeywordsList.length >= 2 && hasTitleCatKeyword) || categoryMatch;
   
   const techTerms = [
     ...(startup.techStack || []),
@@ -81,7 +92,7 @@ export function calculateStartupMatch(
   const matchedTechTerms = techTerms.filter(t => {
     const termLower = t.toLowerCase();
     if (challengeText.includes(termLower)) return true;
-    const subWords = termLower.split(/[^a-zA-Z0-9]+/).filter(sw => sw.length > 3 && !stopWords.has(sw));
+    const subWords = termLower.split(/[^a-zA-Z0-9]+/).filter(sw => sw.length > 3 && !stopWords.has(sw) && !genericTechWords.has(sw));
     return subWords.length > 0 && subWords.some(sw => challengeText.includes(sw));
   });
   const techMatch = matchedTechTerms.length > 0;
