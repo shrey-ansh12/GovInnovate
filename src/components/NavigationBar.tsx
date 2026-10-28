@@ -40,7 +40,9 @@ export const NavigationBar: React.FC = () => {
     isLiveDbConnected,
     currentUser,
     logoutUser,
-    startups
+    startups,
+    challenges,
+    selectChallenge
   } = useApp();
 
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -176,15 +178,29 @@ export const NavigationBar: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Scenario Status Bar */}
-          <div className="hidden xl:flex items-center gap-2 bg-[#F2EFEB] px-3.5 py-1.5 rounded border border-[#E2DED6] text-xs text-[#5B6A78]">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#147452] animate-pulse"></span>
-            <span className="font-semibold text-[#141F2B] font-mono">{t("scenario.label")}</span>
-            <span className="truncate max-w-[170px] text-[#5B6A78] font-medium">{challenge.title.slice(0, 24)}...</span>
-            <span className="text-[#E2DED6]">|</span>
-            <span className="font-mono font-semibold text-[#0F3854] uppercase text-[10px] bg-white px-2 py-0.5 rounded border border-[#E2DED6]">
-              {t("scenario.stage")} {challenge.status}
-            </span>
+          {/* Quick Scenario / Challenge Switcher Bar */}
+          <div className="hidden xl:flex items-center gap-2 bg-[#F2EFEB] px-3 py-1.5 rounded border border-[#E2DED6] text-xs text-[#5B6A78]">
+            <span className="inline-block w-2 h-2 rounded-full bg-[#147452] animate-pulse shrink-0"></span>
+            <span className="font-semibold text-[#0F3854] font-mono shrink-0">Tender:</span>
+            <select
+              value={challenge.id}
+              onChange={(e) => selectChallenge(e.target.value)}
+              className="bg-white text-[#0A2540] font-medium text-xs rounded border border-[#D5D0C7] px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-[#0F3854] max-w-[210px] truncate cursor-pointer"
+              title="Switch Active Challenge to view matching startups"
+            >
+              {challenges.map((c) => (
+                <option key={c.id} value={c.id}>
+                  [{c.id.split("-").pop()}] {c.title}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => setActiveView("ai_startup_matches")}
+              className="text-[11px] font-semibold text-[#147452] hover:underline shrink-0"
+              title="Inspect matching startups for selected challenge"
+            >
+              Matches →
+            </button>
           </div>
 
           {/* Actions: Multi-language, Auth, Role Switchers */}

@@ -35,6 +35,8 @@ export const AiStartupMatches: React.FC = () => {
   const { 
     startups, 
     challenge, 
+    challenges,
+    selectChallenge,
     setActiveView, 
     applyToChallengeAction, 
     setRole,
@@ -66,7 +68,7 @@ export const AiStartupMatches: React.FC = () => {
     return ["All", ...Array.from(set).sort()];
   }, [startups]);
 
-  const filtered = useMemo(() => {
+    const filtered = useMemo(() => {
     return startups.filter(s => {
       // 1. Primary Tab Filter
       if (selectedFilter === "High Match (>80%)" && s.matchScore < 80) return false;
@@ -102,6 +104,11 @@ export const AiStartupMatches: React.FC = () => {
     });
   }, [startups, selectedFilter, selectedSector, searchQuery]);
 
+  // Sort startups by match score descending so top matching startups for active challenge are at the top
+  const sortedAndFiltered = useMemo(() => {
+    return [...filtered].sort((a, b) => b.matchScore - a.matchScore);
+  }, [filtered]);
+
   const handleVerifyIntegrity = async (startupId: string) => {
     setVerifyingId(startupId);
     await verifyStartupIntegrityAction(startupId);
@@ -124,8 +131,112 @@ export const AiStartupMatches: React.FC = () => {
 
   return (
     <div className="max-w-[1360px] mx-auto px-6 sm:px-8 py-10 font-sans">
-      {/* Header Banner */}
-      <div className="bg-white rounded border border-[#E2DED6] p-6 mb-8 shadow-2xs">
+      {/* 1. DYNAMIC PROCUREMENT CHALLENGE SELECTOR BAR */}
+      <div className="bg-[#0F3854] text-white rounded-t border border-[#1D4E72] p-5 mb-0 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono font-medium text-emerald-400 uppercase tracking-wider mb-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Statutory Sandbox Tender Rails • {challenges.length} Active Challenges Published</span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              <span>{challenge.title}</span>
+            </h1>
+            <p className="text-xs text-slate-300 mt-1">
+              {challenge.department} ({challenge.ministry}) • Budget: <strong className="text-white">{challenge.budget}</strong> • Category: <strong className="text-emerald-300">{challenge.category}</strong>
+            </p>
+          </div>
+
+          <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <label htmlFor="challenge-dropdown-select" className="text-xs text-slate-300 font-mono font-medium whitespace-nowrap">
+              Switch Challenge:
+            </label>
+            <select
+              id="challenge-dropdown-select"
+              value={challenge.id}
+              onChange={(e) => selectChallenge(e.target.value)}
+              className="bg-[#1D4E72] hover:bg-[#235880] text-white font-semibold text-xs rounded border border-[#2B6694] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer shadow-inner"
+              title="Select Challenge to view matching startups"
+            >
+              {challenges.map((c) => (
+                <option key={c.id} value={c.id} className="bg-[#0F3854] text-white">
+                  [{c.id.split("-").pop()}] {c.title.slice(0, 50)}...
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Quick Challenge Filter Pills */}
+        <div className="mt-4 pt-3 border-t border-[#1D4E72]/80">
+          <div className="text-[11px] font-mono text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+            <span>Select Challenge to Re-score & Rank Startups:</span>
+            <span className="text-emerald-400 font-semibold">{startups.filter(s => s.matchScore >= 80).length} High Match Startups Found</span>
+          </div>
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+            {challenges.map((c) => {
+              const isSelected = c.id === challenge.id;
+              // Clean short labels
+              let tagEmoji = "🎯";
+              if (c.id.includes("WQ") || c.category.includes("Water")) tagEmoji = "💧";
+              else if (c.id.includes("TR") || c.category.includes("Mobility")) tagEmoji = "🚦";
+              else if (c.id.includes("AG") || c.category.includes("Agri")) tagEmoji = "🌾";
+              else if (c.id.includes("LF") || c.category.includes("CleanTech")) tagEmoji = "♻️";
+              else if (c.id.includes("XR") || c.category.includes("MedTech")) tagEmoji = "🏥";
+              else if (c.id.includes("DC") || c.category.includes("Document")) tagEmoji = "📄";
+              else if (c.id.includes("ID") || c.category.includes("Identity")) tagEmoji = "🆔";
+              else if (c.id.includes("FR") || c.category.includes("Forensic")) tagEmoji = "⚖️";
+
+              const shortTitle = c.title.split("&")[0].split("/")[0].slice(0, 32);
+
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => selectChallenge(c.id)}
+                  className={`px-3 py-1.5 rounded text-xs whitespace-nowrap font-medium transition-all shrink-0 flex items-center gap-2 border ${
+                    isSelected
+                      ? "bg-emerald-600 text-white font-bold border-emerald-400 shadow-md ring-2 ring-emerald-300/40"
+                      : "bg-[#164566] text-slate-200 border-[#235880] hover:bg-[#1D4E72] hover:text-white"
+                  }`}
+                >
+                  <span>{tagEmoji}</span>
+                  <span className="font-mono text-[10px] text-slate-300">[{c.id.split("-").pop()}]</span>
+                  <span>{shortTitle}</span>
+                  {isSelected && <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span>}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Challenge Problem Statement & Outcomes Box */}
+        <div className="mt-4 p-3.5 rounded bg-[#0A273D] border border-[#1D4E72] text-xs">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+            <div className="md:col-span-9 space-y-1">
+              <span className="font-mono text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
+                Operational Problem Statement:
+              </span>
+              <p className="text-slate-200 leading-relaxed">
+                {challenge.problemStatement}
+              </p>
+            </div>
+            <div className="md:col-span-3 border-t md:border-t-0 md:border-l border-[#1D4E72] pt-2 md:pt-0 md:pl-3 flex flex-col justify-center space-y-1 font-mono text-[11px]">
+              <div className="text-slate-300">
+                <span className="text-slate-400">Duration:</span> <strong className="text-white">{challenge.pilotDuration}</strong>
+              </div>
+              <div className="text-slate-300">
+                <span className="text-slate-400">Locations:</span> <strong className="text-white">{challenge.targetLocations || 5} Pilot Sites</strong>
+              </div>
+              <div className="text-slate-300">
+                <span className="text-slate-400">High Match:</span> <strong className="text-emerald-400">{startups.filter(s => s.matchScore >= 80).length} Candidates (≥80%)</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Header Banner & Filters */}
+      <div className="bg-white rounded-b border-x border-b border-[#E2DED6] p-6 mb-8 shadow-2xs">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#0F3854] uppercase tracking-wider mb-1">
@@ -230,7 +341,7 @@ export const AiStartupMatches: React.FC = () => {
 
       {/* Startups List */}
       <div className="space-y-6">
-        {filtered.length === 0 ? (
+        {sortedAndFiltered.length === 0 ? (
           <div className="bg-white rounded border border-[#E2DED6] p-12 text-center text-[#5B6A78] space-y-2">
             <p className="font-semibold text-sm text-[#0A2540]">No startups match your current search and filter criteria.</p>
             <p className="text-xs">Try clearing the search query or selecting &quot;All Sectors&quot;.</p>
@@ -246,7 +357,7 @@ export const AiStartupMatches: React.FC = () => {
             </button>
           </div>
         ) : (
-          filtered.map((startup) => {
+          sortedAndFiltered.map((startup) => {
             const isTopMatch = startup.matchScore >= 90;
             const isFlagged = startup.tamperStatus === "FLAGGED_FOR_REVIEW";
             const isVerifying = verifyingId === startup.id;

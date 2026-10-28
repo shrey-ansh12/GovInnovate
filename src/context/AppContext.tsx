@@ -817,6 +817,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   }, [challenge]);
 
+  // Ensure startups always have fresh match scores whenever the selected challenge changes
+  useEffect(() => {
+    if (challenge && challenge.id) {
+      recalculateMatchesAction(challenge);
+    }
+  }, [challenge?.id, recalculateMatchesAction]);
+
   // Step 1: Create Challenge
   const createChallengeAction = async (data: Partial<Challenge>) => {
     let newId = data.id || `CH-${new Date().getFullYear()}-0${Math.floor(Math.random() * 90 + 10)}`;
