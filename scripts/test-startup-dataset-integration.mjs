@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
-import { parseCSV, generateDeterministicId, runImport } from "./import-startup-dataset.mjs";
+import { parseCSV, runImport } from "./import-startup-dataset.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,13 +24,63 @@ function computeCanonicalHash(s) {
   return crypto.createHash("sha256").update(payload).digest("hex");
 }
 
+const DOMAIN_CRITERIA = {
+  water: {
+    categoryKeywords: ["water tech", "municipal water", "potable water", "wastewater network", "water telemetry"],
+    techKeywords: ["water quality", "aquifer", "turbidity", "bod", "cod", "ph sensing", "submersible", "flow meter", "pipeline leak", "acoustic logger", "nitrates contamination", "heavy metals water"]
+  },
+  traffic_mobility: {
+    categoryKeywords: ["smart mobility", "traffic", "road transport", "highway safety", "intelligent transportation"],
+    techKeywords: ["traffic", "vehicular", "ambulance", "green corridor", "signal timing", "itms", "anpr", "congestion", "e-challan", "roadway", "speed detection"]
+  },
+  agritech: {
+    categoryKeywords: ["agritech", "agriculture", "crop surveillance", "farmers welfare", "precision agriculture"],
+    techKeywords: ["crop disease", "agriculture", "agricultural drone", "hyperspectral", "multispectral", "pest", "blight", "fungal pathogen", "ndvi", "soil moisture", "chlorophyll", "horticulture", "farmland"]
+  },
+  cleantech_waste: {
+    categoryKeywords: ["cleantech", "waste management", "landfill", "swachh bharat", "solid waste"],
+    techKeywords: ["landfill", "leachate", "voc", "methane", "toxic gas", "hydrogen sulfide", "h2s", "waste sorting", "mrf", "dump site", "plastic sorting", "odor", "air quality"]
+  },
+  medtech: {
+    categoryKeywords: ["medtech", "rural health", "pulmonary", "diagnostics", "tb elimination", "healthcare"],
+    techKeywords: ["chest x-ray", "radiography", "radiology", "tuberculosis", "pneumonia", "pulmonary", "lung", "triage", "abdm", "fhir", "cad", "healthcare", "x-ray", "clinics"]
+  },
+  document_ai: {
+    categoryKeywords: ["intelligent document processing", "document extraction", "multilingual ocr", "document digitisation", "ocr", "document processing"],
+    techKeywords: ["ocr", "document extraction", "form extraction", "document intelligence", "pdf conversion", "scanned", "multilingual", "digitisation", "invoice processing", "records management", "data extraction"]
+  },
+  identity_biometrics: {
+    categoryKeywords: ["identity tech", "biometrics", "touchless authentication", "identity verification", "identity technology"],
+    techKeywords: ["biometric", "touchless", "fingerprint", "facial liveness", "authentication", "kyc", "identity verification", "presentation attack", "anti-spoofing"]
+  },
+  forensics_fraud: {
+    categoryKeywords: ["compliance & anti-fraud", "document forensics", "invoicing reconciliation", "tampering", "anti-fraud", "audit trail"],
+    techKeywords: ["tampering", "forensic", "forgery", "splicing", "metadata checks", "digital signature", "gstin", "tax invoice", "compliance audit", "audit trail", "fraud", "tampering analysis"]
+  }
+};
+
+function detectChallengeDomain(ch) {
+  const cat = (ch.category || "").toLowerCase();
+  const id = (ch.id || "").toLowerCase();
+  const title = (ch.title || "").toLowerCase();
+
+  if (id.includes("wq") || cat.includes("water")) return "water";
+  if (id.includes("tr") || cat.includes("mobility") || cat.includes("traffic")) return "traffic_mobility";
+  if (id.includes("ag") || cat.includes("agri")) return "agritech";
+  if (id.includes("lf") || cat.includes("waste") || cat.includes("cleantech") || title.includes("landfill")) return "cleantech_waste";
+  if (id.includes("xr") || cat.includes("medtech") || cat.includes("health") || title.includes("radiography")) return "medtech";
+  if (id.includes("dc") || cat.includes("ocr") || cat.includes("document extraction")) return "document_ai";
+  if (id.includes("id") || cat.includes("biometrics") || title.includes("biometric")) return "identity_biometrics";
+  if (id.includes("fr") || cat.includes("forensic") || cat.includes("anti-fraud") || title.includes("forensic")) return "forensics_fraud";
+
+  return "general";
+}
+
 function calculateMatchTest(startup, challenge) {
   let score = 0;
-  const matchReasons = [];
-  const riskFactors = [];
+  const challengeDomain = detectChallengeDomain(challenge);
+  const domainCriteria = DOMAIN_CRITERIA[challengeDomain];
 
-  const challengeText = `${challenge.title} ${challenge.category} ${challenge.problemStatement} ${challenge.summary || ""}`.toLowerCase();
-  
   const startupCorpus = [
     startup.sector || "",
     startup.tagline || "",
@@ -38,87 +88,60 @@ function calculateMatchTest(startup, challenge) {
     startup.productOrSolution || "",
     startup.publicCapabilitySummary || "",
     startup.potentialUseCase || "",
-    (startup.matchTags || []).join(" ")
+    (startup.matchTags || []).join(" "),
+    (startup.products || []).map(p => `${p.title} ${p.description}`).join(" ")
   ].join(" ").toLowerCase();
 
-  const stopWords = new Set(["need", "with", "from", "that", "this", "have", "into", "over", "such", "than", "then", "them", "these", "those", "their", "will", "would", "about"]);
-  const genericTechWords = new Set(["edge", "system", "smart", "tech", "platform", "suite", "analytics", "intelligence", "solution", "solutions", "based"]);
+  // 1. Sector Alignment (0-35 points)
+  let sectorMatch = false;
+  let matchedSectorTerms = [];
+  if (domainCriteria) {
+    matchedSectorTerms = domainCriteria.categoryKeywords.filter(kw => startupCorpus.includes(kw));
+    sectorMatch = matchedSectorTerms.length > 0;
+  }
+  if (sectorMatch) {
+    score += 35;
+  }
 
-  const words = challengeText
-    .split(/[^a-zA-Z0-9]+/)
-    .filter(w => w.length > 3 && !stopWords.has(w));
-
-  const matchedKeywordsList = [];
-  const uniqueWords = Array.from(new Set(words));
-  for (const w of uniqueWords) {
-    if (startupCorpus.includes(w)) {
-      matchedKeywordsList.push(w);
+  // 2. Technology Fit (0-25 points)
+  let techMatch = false;
+  let matchedDomainTechs = [];
+  if (domainCriteria && sectorMatch) {
+    matchedDomainTechs = domainCriteria.techKeywords.filter(kw => startupCorpus.includes(kw));
+    techMatch = matchedDomainTechs.length > 0;
+    if (techMatch) {
+      score += 25;
+    } else {
+      score += 10;
     }
   }
 
-  const startupSector = (startup.sector || "").toLowerCase();
-  const challengeCategory = (challenge.category || "").toLowerCase();
+  // 3. TRL Readiness (0-15 points)
+  const trl = startup.trlLevel || 7;
+  if (trl >= 8) score += 15;
+  else if (trl >= 7) score += 12;
+  else score += 5;
 
-  const categoryMatch = Boolean(startupSector && challengeCategory && (
-    challengeCategory.includes(startupSector) ||
-    startupSector.split(";").some(s => challengeCategory.includes(s.trim())) ||
-    startupSector.split("/").some(s => challengeCategory.includes(s.trim())) ||
-    challengeCategory.split("/").some(c => startupSector.includes(c.trim()))
-  ));
+  // 4. Make in India Local Content (0-15 points)
+  const local = startup.localContentPercentage || 60;
+  if (local >= 50) score += 15;
+  else if (local >= 20) score += 8;
+  else score += 2;
 
-  const challengeTitleAndCat = `${challenge.title} ${challenge.category}`.toLowerCase();
-  const titleCategoryWords = challengeTitleAndCat.split(/[^a-zA-Z0-9]+/).filter(w => w.length > 3 && !stopWords.has(w) && !genericTechWords.has(w));
-  const hasTitleCatKeyword = titleCategoryWords.some(w => startupCorpus.includes(w));
+  // 5. Verification / DPIIT (0-10 points)
+  if (startup.isDpiitVerified) score += 10;
+  else if (startup.isPublicDirectoryEntry) score += 8;
+  else score += 4;
 
-  const sectorMatch = (matchedKeywordsList.length >= 2 && hasTitleCatKeyword) || categoryMatch;
-  const techTerms = [...(startup.techStack || []), ...(startup.matchTags || [])];
-  const matchedTechTerms = techTerms.filter(t => {
-    const termLower = t.toLowerCase();
-    if (challengeText.includes(termLower)) return true;
-    const subWords = termLower.split(/[^a-zA-Z0-9]+/).filter(sw => sw.length > 3 && !stopWords.has(sw) && !genericTechWords.has(sw));
-    return subWords.length > 0 && subWords.some(sw => challengeText.includes(sw));
-  });
-  const techMatch = matchedTechTerms.length > 0;
-
-  if (sectorMatch) {
-    score += 25;
-    matchReasons.push(`Potential match: Public profile describes ${matchedKeywordsList.slice(0, 3).join(", ") || "domain"} capabilities.`);
-  } else {
-    score += 10;
-  }
-
-  if (techMatch) {
-    score += 10;
-    matchReasons.push(`Capability Fit: Matched tags (${matchedTechTerms.slice(0, 2).join(", ")}) align with challenge requirements.`);
-  }
-
-  if (startup.trlLevel >= 7) {
-    score += 20;
-  } else {
-    score += 5;
-  }
-
-  if (startup.localContentPercentage >= 50) {
-    score += 20;
-  } else {
-    score += 10;
-  }
-
-  if (startup.isDpiitVerified) {
-    score += 20;
-  } else if (startup.isPublicDirectoryEntry) {
-    score += 10;
-    riskFactors.push(`DPIIT status: ${startup.dpiitRecognitionStatus || "Not verified in this dataset"}`);
-  } else {
-    score += 5;
+  if (startup.patents && startup.patents > 0) {
+    score = Math.min(100, score + Math.min(5, startup.patents * 2));
   }
 
   return {
     matchScore: Math.min(100, Math.max(10, score)),
-    matchReasons,
-    riskFactors,
     sectorMatch,
-    techMatch
+    techMatch,
+    matchedDomainTechs: matchedDomainTechs.slice(0, 3)
   };
 }
 
@@ -357,12 +380,27 @@ async function runTests() {
   }
   assert(allQualify, "Universal Match: Every single imported startup qualifies for at least one challenge with score >= 80%");
 
-  // 17. Discrimination check
+  // 17. Discrimination check & cross-domain gating
   const qureOnWater = calculateMatchTest(qure, waterChallenge);
-  assert(matchQure.matchScore > qureOnWater.matchScore, `Qure.ai scores higher on MedTech challenge than on Water challenge (${matchQure.matchScore}% vs ${qureOnWater.matchScore}%)`);
+  assert(qureOnWater.matchScore <= 40, `Qure.ai receives low irrelevant score on Water challenge (${qureOnWater.matchScore}% <= 40%)`);
+  assert(matchQure.matchScore > qureOnWater.matchScore + 50, `Qure.ai has > 50% score separation between MedTech (${matchQure.matchScore}%) and Water (${qureOnWater.matchScore}%)`);
 
   const kritsnamOnTraffic = calculateMatchTest(kritsnam, trafficChallenge);
-  assert(matchKritsnam.matchScore > kritsnamOnTraffic.matchScore, `Kritsnam scores higher on Water challenge than on Traffic challenge (${matchKritsnam.matchScore}% vs ${kritsnamOnTraffic.matchScore}%)`);
+  assert(kritsnamOnTraffic.matchScore <= 40, `Kritsnam receives low irrelevant score on Traffic challenge (${kritsnamOnTraffic.matchScore}% <= 40%)`);
+  assert(matchKritsnam.matchScore > kritsnamOnTraffic.matchScore + 50, `Kritsnam has > 50% score separation between Water (${matchKritsnam.matchScore}%) and Traffic (${kritsnamOnTraffic.matchScore}%)`);
+
+  // 18. Strict Distinct Matching per Challenge
+  for (const c of all8Challenges) {
+    const scoredList = importedStartups.map(s => ({
+      name: s.name,
+      ...calculateMatchTest(s, c)
+    }));
+    const highMatches = scoredList.filter(s => s.matchScore >= 80);
+    const irrelevantMatches = scoredList.filter(s => !s.sectorMatch);
+    const maxIrrelevantScore = Math.max(...irrelevantMatches.map(s => s.matchScore));
+    assert(highMatches.length > 0, `Challenge ${c.id} has at least 1 high-matching startup (Found: ${highMatches.length})`);
+    assert(maxIrrelevantScore <= 40, `Challenge ${c.id} rejects all unrelated domain startups (Max irrelevant score: ${maxIrrelevantScore}% <= 40%)`);
+  }
 
   console.log(`\n=================================================`);
   console.log(`Test Summary: ${passed} / ${total} tests passed.`);
