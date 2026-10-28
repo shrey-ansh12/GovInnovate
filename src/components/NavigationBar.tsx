@@ -302,9 +302,9 @@ export const NavigationBar: React.FC = () => {
                 <button
                   onClick={() => openAuthModal("signup", "startup")}
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-[#0F3854] hover:bg-[#1D4E72] rounded shadow-none transition-colors"
-                  title="Register Startup"
+                  title="Register"
                 >
-                  <span>Enter Sandbox</span>
+                  <span>{t("nav.register")}</span>
                   <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                 </button>
               </div>
