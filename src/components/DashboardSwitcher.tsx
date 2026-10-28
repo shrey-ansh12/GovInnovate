@@ -13,7 +13,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
   variant = "prominent",
   className = "" 
 }) => {
-  const { role, setRole, activeView, setActiveView } = useApp();
+  const { role, setRole, activeView, setActiveView, loginUser } = useApp();
 
   const isGovActive = activeView === "gov_dashboard";
   const isStartupActive = activeView === "startup_dashboard";
@@ -22,17 +22,41 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
   const isHubActive = activeView === "landing";
 
   const switchToGov = () => {
-    setRole("government");
+    loginUser({
+      id: "GOV-DEMO-01",
+      name: "Dr. Rajeshwar Sharma, IAS",
+      email: "rajeshwar.sharma@jalshakti.gov.in",
+      role: "government",
+      organization: "Ministry of Jal Shakti",
+      designation: "Director (Procurement & Innovation)",
+      identifier: "GOV-IAS-2024-991"
+    });
     setActiveView("gov_dashboard");
   };
 
   const switchToStartup = () => {
-    setRole("startup");
+    loginUser({
+      id: "ST-AQUASENSE",
+      name: "Dr. Aranya Sen",
+      email: "aranya@aquasense-ai.in",
+      role: "startup",
+      organization: "AquaSense AI Innovations Pvt Ltd",
+      designation: "Founder & CEO",
+      identifier: "DPIIT-REC-89241-DL"
+    });
     setActiveView("startup_dashboard");
   };
 
   const switchToEvaluator = () => {
-    setRole("evaluator");
+    loginUser({
+      id: "EVAL-DEMO-01",
+      name: "Prof. Vinod Nair",
+      email: "vinod.nair@iitd.ac.in",
+      role: "evaluator",
+      organization: "IIT Delhi / Technical Evaluation Board",
+      designation: "Chairman, Expert Committee",
+      identifier: "EVAL-IITD-770"
+    });
     setActiveView("evaluator_dashboard");
   };
 
@@ -67,7 +91,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
               ? "bg-[#0F3854] text-white shadow-xs"
               : "text-[#5B6A78] hover:text-[#0A2540] hover:bg-white/60"
           }`}
-          title="Switch to Government Dashboard"
+          title="Log in to Government Dashboard"
         >
           <Building2 className="h-3.5 w-3.5" />
           <span>Government</span>
@@ -81,7 +105,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
               ? "bg-[#147452] text-white shadow-xs"
               : "text-[#5B6A78] hover:text-[#0A2540] hover:bg-white/60"
           }`}
-          title="Switch to Startup Dashboard"
+          title="Log in to Startup Dashboard"
         >
           <Rocket className="h-3.5 w-3.5" />
           <span>Startup</span>
@@ -95,7 +119,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
               ? "bg-[#8A5B0B] text-white shadow-xs"
               : "text-[#5B6A78] hover:text-[#0A2540] hover:bg-white/60"
           }`}
-          title="Switch to Evaluator Dashboard"
+          title="Log in to Evaluator Dashboard"
         >
           <Award className="h-3.5 w-3.5" />
           <span>Evaluator</span>
@@ -124,7 +148,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
         <div className="flex items-center gap-2 px-2 text-xs font-mono font-semibold text-[#5B6A78] uppercase tracking-wider shrink-0">
           <span className="w-2 h-2 rounded-full bg-[#147452] animate-pulse"></span>
-          <span>Quick Switch View:</span>
+          <span>Quick Dashboard Logins:</span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 w-full sm:w-auto">
@@ -149,9 +173,10 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
                 ? "bg-[#0F3854] text-white shadow-sm ring-2 ring-[#0F3854]/20"
                 : "bg-[#FAF8F5] text-[#5B6A78] hover:text-[#0A2540] hover:bg-[#F2EFEB] border border-[#E2DED6]"
             }`}
+            title="Log in to Government Dashboard"
           >
             <Building2 className="h-3.5 w-3.5" />
-            <span>1. Gov</span>
+            <span>1. Govt Login</span>
             {isGovActive && (
               <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-400 text-[#0F3854] font-bold">
                 ACTIVE
@@ -167,9 +192,10 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
                 ? "bg-[#147452] text-white shadow-sm ring-2 ring-[#147452]/20"
                 : "bg-[#FAF8F5] text-[#5B6A78] hover:text-[#0A2540] hover:bg-[#F2EFEB] border border-[#E2DED6]"
             }`}
+            title="Log in to Startup Dashboard"
           >
             <Rocket className="h-3.5 w-3.5" />
-            <span>2. Startup</span>
+            <span>2. Startup Login</span>
             {isStartupActive && (
               <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-200 text-[#147452] font-bold">
                 ACTIVE
@@ -185,9 +211,10 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
                 ? "bg-[#8A5B0B] text-white shadow-sm ring-2 ring-[#8A5B0B]/20"
                 : "bg-[#FAF8F5] text-[#5B6A78] hover:text-[#0A2540] hover:bg-[#F2EFEB] border border-[#E2DED6]"
             }`}
+            title="Log in to Evaluator Dashboard"
           >
             <Award className="h-3.5 w-3.5" />
-            <span>3. Eval</span>
+            <span>3. Eval Login</span>
             {isEvaluatorActive && (
               <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-200 text-[#8A5B0B] font-bold">
                 ACTIVE

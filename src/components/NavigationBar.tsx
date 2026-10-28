@@ -42,7 +42,8 @@ export const NavigationBar: React.FC = () => {
     logoutUser,
     startups,
     challenges,
-    selectChallenge
+    selectChallenge,
+    loginUser
   } = useApp();
 
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -308,42 +309,75 @@ export const NavigationBar: React.FC = () => {
               </div>
             )}
 
-            {/* Role Switcher Pill */}
-            <div className="hidden md:flex items-center bg-[#F2EFEB] p-1 rounded border border-[#E2DED6]">
+            {/* 3 Dashboard Logins Pill */}
+            <div className="hidden md:flex items-center bg-[#F2EFEB] p-1 rounded border border-[#E2DED6] gap-0.5">
               <button
-                onClick={() => { setRole("government"); setActiveView("gov_dashboard"); }}
+                onClick={() => {
+                  loginUser({
+                    id: "GOV-DEMO-01",
+                    name: "Dr. Rajeshwar Sharma, IAS",
+                    email: "rajeshwar.sharma@jalshakti.gov.in",
+                    role: "government",
+                    organization: "Ministry of Jal Shakti",
+                    designation: "Director (Procurement & Innovation)",
+                    identifier: "GOV-IAS-2024-991"
+                  });
+                  setActiveView("gov_dashboard");
+                }}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
                   role === "government"
                     ? "bg-[#0F3854] text-white shadow-xs"
                     : "text-[#5B6A78] hover:text-[#141F2B]"
                 }`}
-                title="Switch to Government View"
+                title="Log in to Government Dashboard"
               >
                 <Building2 className="h-3 w-3" />
                 <span>{t("role.govt")}</span>
               </button>
 
               <button
-                onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }}
+                onClick={() => {
+                  loginUser({
+                    id: "ST-AQUASENSE",
+                    name: "Dr. Aranya Sen",
+                    email: "aranya@aquasense-ai.in",
+                    role: "startup",
+                    organization: "AquaSense AI Innovations Pvt Ltd",
+                    designation: "Founder & CEO",
+                    identifier: "DPIIT-REC-89241-DL"
+                  });
+                  setActiveView("startup_dashboard");
+                }}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
                   role === "startup"
                     ? "bg-[#147452] text-white shadow-xs"
                     : "text-[#5B6A78] hover:text-[#141F2B]"
                 }`}
-                title="Switch to Startup View"
+                title="Log in to Startup Dashboard"
               >
                 <Rocket className="h-3 w-3" />
                 <span>{t("role.startup")}</span>
               </button>
 
               <button
-                onClick={() => { setRole("evaluator"); setActiveView("evaluator_dashboard"); }}
+                onClick={() => {
+                  loginUser({
+                    id: "EVAL-DEMO-01",
+                    name: "Prof. Vinod Nair",
+                    email: "vinod.nair@iitd.ac.in",
+                    role: "evaluator",
+                    organization: "IIT Delhi / Technical Evaluation Board",
+                    designation: "Chairman, Expert Committee",
+                    identifier: "EVAL-IITD-770"
+                  });
+                  setActiveView("evaluator_dashboard");
+                }}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold transition-all ${
                   role === "evaluator"
                     ? "bg-[#8A5B0B] text-white shadow-xs"
                     : "text-[#5B6A78] hover:text-[#141F2B]"
                 }`}
-                title="Switch to Evaluator View"
+                title="Log in to Evaluator Dashboard"
               >
                 <Award className="h-3 w-3" />
                 <span>{t("role.eval")}</span>

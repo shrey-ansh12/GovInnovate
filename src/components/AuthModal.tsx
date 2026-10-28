@@ -460,7 +460,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
               {/* 1-Click Fast Sign In for any Stakeholder */}
               <div className="p-3.5 bg-[#FAF8F5] border border-[#E2DED6] rounded-lg font-mono space-y-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-bold text-[#0A2540]">1-Click Fast Sign In</p>
+                  <p className="text-xs font-bold text-[#0A2540]">Three Dashboard 1-Click Logins</p>
                   <span className="text-[10px] text-[#147452] font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                     Auto-Route
                   </span>
