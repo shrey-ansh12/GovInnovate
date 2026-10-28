@@ -22,7 +22,8 @@ import {
   TrendingUp,
   Cpu,
   RefreshCw,
-  FileCheck2
+  FileCheck2,
+  LogOut
 } from "lucide-react";
 import { Startup, Application } from "@/types";
 
@@ -34,7 +35,9 @@ export const EvaluatorDashboard: React.FC = () => {
     setActiveView, 
     setSelectedAppIdForScore, 
     openBlockchainModal,
-    verifyStartupIntegrityAction
+    verifyStartupIntegrityAction,
+    logoutUser,
+    currentUser
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<"scoring" | "ai_matching">("scoring");
@@ -107,6 +110,16 @@ export const EvaluatorDashboard: React.FC = () => {
             <p className="text-[10px] uppercase font-bold text-slate-300">AI Matched</p>
             <p className="text-xl font-bold text-cyan-300 mt-0.5">{startups.length} Startups</p>
           </div>
+          {currentUser && (
+            <button
+              onClick={logoutUser}
+              className="bg-red-500/20 hover:bg-red-500/30 text-red-200 px-3.5 py-2.5 rounded-xl border border-red-400/30 text-center font-mono text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Logout from Evaluator Workspace"
+            >
+              <LogOut className="h-3.5 w-3.5 text-red-300" />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
       </div>
 

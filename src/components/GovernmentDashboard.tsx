@@ -18,11 +18,12 @@ import {
   SlidersHorizontal,
   Sparkles,
   ExternalLink,
-  Globe
+  Globe,
+  LogOut
 } from "lucide-react";
 
 export const GovernmentDashboard: React.FC = () => {
-  const { challenge, challenges, selectChallenge, applications, startups, pilot, setActiveView } = useApp();
+  const { challenge, challenges, selectChallenge, applications, startups, pilot, setActiveView, logoutUser, currentUser } = useApp();
 
   const approvedMilestonesCount = pilot.milestones.filter(m => m.status === "Approved").length;
 
@@ -81,6 +82,16 @@ export const GovernmentDashboard: React.FC = () => {
             <FileText className="h-4 w-4 text-emerald-300" />
             <span>Vigilance Audit Trail</span>
           </button>
+          {currentUser && (
+            <button
+              onClick={logoutUser}
+              className="px-3.5 py-2.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-200 font-semibold text-xs border border-red-400/30 transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Logout from Government Workspace"
+            >
+              <LogOut className="h-4 w-4 text-red-300" />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
       </div>
 

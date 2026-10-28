@@ -281,10 +281,11 @@ export const NavigationBar: React.FC = () => {
                 </div>
                 <button
                   onClick={logoutUser}
-                  className="p-2 text-[#5B6A78] hover:text-red-700 hover:bg-red-50 rounded transition-colors border border-transparent hover:border-red-200"
-                  title="Sign Out"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded border border-red-200 hover:border-red-300 transition-colors cursor-pointer shadow-2xs"
+                  title="Sign Out of GovInnovate"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span>Logout</span>
                 </button>
               </div>
             ) : (

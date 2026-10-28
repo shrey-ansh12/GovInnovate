@@ -23,7 +23,8 @@ import {
   PenTool,
   Check,
   Plus,
-  Loader2
+  Loader2,
+  LogOut
 } from "lucide-react";
 
 interface SolutionOption {
@@ -92,7 +93,8 @@ export const StartupDashboard: React.FC = () => {
     applyToChallengeAction, 
     submitMilestoneEvidenceAction,
     currentUser,
-    openBlockchainModal
+    openBlockchainModal,
+    logoutUser
   } = useApp();
 
   // Find application specifically linked to this challenge
@@ -208,6 +210,16 @@ export const StartupDashboard: React.FC = () => {
             <p className="text-[10px] uppercase font-bold text-slate-300">Tender Relaxation</p>
             <p className="text-xs font-semibold text-slate-100 mt-0.5">Eligible (GFR 170)</p>
           </div>
+          {currentUser && (
+            <button
+              onClick={logoutUser}
+              className="bg-red-500/20 hover:bg-red-500/30 text-red-200 px-3.5 py-2.5 rounded-lg border border-red-400/30 text-center font-mono text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Logout from Startup Workspace"
+            >
+              <LogOut className="h-3.5 w-3.5 text-red-300" />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
       </div>
 

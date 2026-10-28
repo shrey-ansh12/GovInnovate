@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useApp } from "@/context/AppContext";
-import { Building2, Rocket, Award, Layers, Sparkles } from "lucide-react";
+import { Building2, Rocket, Award, Layers, Sparkles, LogOut } from "lucide-react";
 
 interface DashboardSwitcherProps {
   variant?: "header" | "card" | "prominent";
@@ -13,7 +13,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
   variant = "prominent",
   className = "" 
 }) => {
-  const { role, setRole, activeView, setActiveView, loginUser, openAuthModal, currentUser } = useApp();
+  const { role, setRole, activeView, setActiveView, loginUser, openAuthModal, currentUser, logoutUser } = useApp();
 
   const isGovActive = activeView === "gov_dashboard";
   const isStartupActive = activeView === "startup_dashboard";
@@ -124,6 +124,17 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
           <span>Matches</span>
           {isAiMatchesActive && <span className="w-1.5 h-1.5 rounded-full bg-white"></span>}
         </button>
+
+        {currentUser && (
+          <button
+            onClick={logoutUser}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-all ml-1 cursor-pointer"
+            title="Log out"
+          >
+            <LogOut className="h-3 w-3" />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
+        )}
       </div>
     );
   }
@@ -224,6 +235,17 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
               </span>
             )}
           </button>
+
+          {currentUser && (
+            <button
+              onClick={logoutUser}
+              className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer bg-red-50 text-red-700 hover:bg-red-100 border border-red-200"
+              title="Logout from current workspace"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Logout ({currentUser.role})</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

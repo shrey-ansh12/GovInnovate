@@ -805,13 +805,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const logoutUser = async () => {
-    if (appMode === "real" && isLiveDbConnected) {
-      await supabase.auth.signOut();
-      setRealUser(null);
-    } else {
-      setDemoUser(null);
+    try {
+      if (isLiveDbConnected) {
+        await supabase.auth.signOut();
+      }
+    } catch (err) {
+      console.warn("Sign out error from remote auth:", err);
     }
+    setRealUser(null);
+    setDemoUser(null);
+    setRoleState("government");
     setActiveView("landing");
+    setAuthModalOpen(false);
+
+    try {
+      const saved = localStorage.getItem(DEMO_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        parsed.currentUser = null;
+        localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(parsed));
+      }
+    } catch (e) {
+      console.warn("Could not clear stored user:", e);
+    }
+
+    addAuditLog("USER_LOGGED_OUT", "User successfully logged out of session.", "Security");
   };
 
   // Recalculates match score for all startups against active challenge
