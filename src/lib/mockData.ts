@@ -1,35 +1,243 @@
 import { Challenge, Startup, Application, Pilot, AuditLog, NotificationItem } from "@/types";
 import { importedPublicStartups } from "./importedStartupData";
 
-export const initialChallenge: Challenge = {
-  id: "CH-2026-WQ01",
-  title: "AI-Based Water Quality Monitoring & Predictive Contamination Warning System",
-  department: "National Water Mission & Urban Infrastructure Board",
-  ministry: "Ministry of Jal Shakti",
-  category: "Water Tech / IoT & Clean Environment",
-  budget: "₹28,50,000 (Pilot Phase Allocation • Scalable subject to approval)",
-  pilotDuration: "90 Days",
-  deadline: "2026-11-15",
-  status: "Draft",
-  summary: "Automated real-time sensing of biochemical contamination, pH, turbidity, heavy metals, and bacterial outbreak alerts with edge telemetry.",
-  problemStatement: "Traditional manual water sampling is reactive, intermittent, and vulnerable to undetected industrial contamination spills. Municipal bodies need continuous edge sensor telemetry to trigger proactive public health alerts within 5 minutes of water anomalies across urban supply lines.",
-  expectedOutcomes: [
-    "Sub-5 minute latency for heavy metal / chemical surge detection",
-    "98.0%+ sensor telemetry uptime in harsh submerged conditions",
-    "Under 2.0% false-positive rate on organic particulate fluctuations",
-    "Integration with state municipal command dashboards via standard REST/MQTT APIs"
-  ],
-  technicalThresholds: [
-    "Minimum TRL 7 (Demonstrated in operational environment)",
-    "Domestic Local Content ≥ 50% (Class 1 / Class 2 Local Supplier)",
-    "Reagent-free or low-maintenance probe design",
-    "Interoperable open data format for municipal telemetry"
-  ],
-  targetLocations: 5,
-  scaleLocations: 50,
-  matchedCount: 4,
-  applicationsCount: 2,
-};
+export const sampleChallenges: Challenge[] = [
+  {
+    id: "CH-2026-WQ01",
+    title: "AI-Based Water Quality Monitoring & Predictive Contamination Warning System",
+    department: "National Water Mission & Urban Infrastructure Board",
+    ministry: "Ministry of Jal Shakti",
+    category: "Water Tech / IoT & Clean Environment",
+    budget: "₹28,50,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "90 Days",
+    deadline: "2026-11-15",
+    status: "Draft",
+    summary: "Automated real-time sensing of biochemical contamination, pH, turbidity, heavy metals, and bacterial outbreak alerts with edge telemetry.",
+    problemStatement: "Traditional manual water sampling is reactive, intermittent, and vulnerable to undetected industrial contamination spills. Municipal bodies need continuous edge sensor telemetry to trigger proactive public health alerts within 5 minutes of water anomalies across urban supply lines.",
+    expectedOutcomes: [
+      "Sub-5 minute latency for heavy metal / chemical surge detection",
+      "98.0%+ sensor telemetry uptime in harsh submerged conditions",
+      "Under 2.0% false-positive rate on organic particulate fluctuations",
+      "Integration with state municipal command dashboards via standard REST/MQTT APIs"
+    ],
+    technicalThresholds: [
+      "Minimum TRL 7 (Demonstrated in operational environment)",
+      "Domestic Local Content ≥ 50% (Class 1 / Class 2 Local Supplier)",
+      "Reagent-free or low-maintenance probe design",
+      "Interoperable open data format for municipal telemetry"
+    ],
+    targetLocations: 5,
+    scaleLocations: 50,
+    matchedCount: 4,
+    applicationsCount: 2,
+  },
+  {
+    id: "CH-2026-TR02",
+    title: "Edge-AI Adaptive Traffic Signal & Emergency Vehicle Green-Corridor Network",
+    department: "Intelligent Transportation & Highway Safety Command",
+    ministry: "Ministry of Road Transport and Highways",
+    category: "Smart Mobility / Computer Vision & Edge AI",
+    budget: "₹35,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "90 Days",
+    deadline: "2026-11-30",
+    status: "Open",
+    summary: "Edge-AI computer vision for real-time vehicular density tracking and automated green corridors for emergency medical services.",
+    problemStatement: "Static timer traffic signals fail to adapt to live road congestion surges, causing massive delays to emergency response vehicles. Urban command centers require edge vision nodes to pre-emptively synchronize traffic light cycles along active ambulance routes.",
+    expectedOutcomes: [
+      "40% reduction in emergency ambulance transit delay across pilot corridors",
+      "Sub-200ms edge camera compute latency for vehicular density classification",
+      "Zero disruption to pedestrian crossings during non-emergency traffic cycles",
+      "Bi-directional MQTT integration with Integrated Traffic Command System (ITCS)"
+    ],
+    technicalThresholds: [
+      "Minimum TRL 7 (Demonstrated on operational urban roadways)",
+      "Make in India Domestic Content ≥ 55% (Class-1 local vendor)",
+      "Operability under low-light, dense fog, and torrential rain conditions",
+      "DPIIT startup recognition eligible under GFR 170 relaxation"
+    ],
+    targetLocations: 8,
+    scaleLocations: 80,
+    matchedCount: 2,
+    applicationsCount: 1,
+  },
+  {
+    id: "CH-2026-AG03",
+    title: "Autonomous Drone Multispectral Sensing for Early Crop Disease Detection",
+    department: "National Agritech Mission & Crop Surveillance Directorate",
+    ministry: "Ministry of Agriculture & Farmers Welfare",
+    category: "AgriTech / Autonomous Drones & Multispectral AI",
+    budget: "₹24,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "60 Days",
+    deadline: "2026-12-05",
+    status: "Open",
+    summary: "Hyper-spectral and multispectral drone survey paired with computer vision AI to diagnose crop anomalies and notify farmers.",
+    problemStatement: "Physical scouting of rural farmlands is labor-intensive and detects pest infestation only after severe leaf damage. Automated aerial multispectral analytics can isolate chlorophyll stress patterns a full week earlier, saving vulnerable yields.",
+    expectedOutcomes: [
+      "7-day advance detection of localized bacterial and fungal leaf blights",
+      "Survey coverage of 500+ acres per single battery drone cycle",
+      "Automated localized vernacular advisory SMS sent directly to registered farmers",
+      "Geo-referenced NDVI and moisture maps delivered within 4 hours of flight"
+    ],
+    technicalThresholds: [
+      "DGCA Type-Certified or compliant autonomous drone platform",
+      "Indigenous flight telemetry and edge imaging payload",
+      "Minimum TRL 7 with agricultural field trials in Indian agro-climatic zones",
+      "DPIIT startup exemption for prior experience under GFR Rule 170"
+    ],
+    targetLocations: 6,
+    scaleLocations: 60,
+    matchedCount: 2,
+    applicationsCount: 0,
+  },
+  {
+    id: "CH-2026-LF04",
+    title: "Subsurface IoT Sensor Array for Landfill Leachate & Toxic VOC Detection",
+    department: "Swachh Bharat Urban Innovation & Environmental Safety Desk",
+    ministry: "Ministry of Housing and Urban Affairs",
+    category: "CleanTech / Waste Management & Subsurface IoT",
+    budget: "₹22,50,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "90 Days",
+    deadline: "2026-11-20",
+    status: "Open",
+    summary: "Continuous 24/7 wireless sensor telemetry to detect hazardous landfill emissions and subterranean leachate migration into municipal aquifers.",
+    problemStatement: "Landfill fires and groundwater contamination from unmonitored dump sites pose urgent ecological and public health threats. Municipal bodies lack autonomous sub-surface telemetry to monitor volatile gases and heavy chemical percolation.",
+    expectedOutcomes: [
+      "Sub-3 minute autonomous alert for explosive methane and VOC spikes",
+      "Continuous pH, TDS, and electrical conductivity monitoring of leachate runoff",
+      "Autonomous solar-harvesting power design requiring zero battery replacement for 24 months",
+      "Secure cryptographic transmission of environmental data to Central Pollution Control Board (CPCB)"
+    ],
+    technicalThresholds: [
+      "IP68 corrosion-resistant hermetic probe design",
+      "Domestic content ≥ 50% under Public Procurement (Preference to Make in India)",
+      "Minimum TRL 7 with operational field deployment",
+      "DPIIT recognized entity eligible for GFR tender relaxations"
+    ],
+    targetLocations: 10,
+    scaleLocations: 75,
+    matchedCount: 2,
+    applicationsCount: 1,
+  },
+  {
+    id: "CH-2026-XR05",
+    title: "Ultra-Portable AI-Assisted Chest Radiography for Rural Pulmonary Diagnostics",
+    department: "National Health Systems Resource Center & TB Elimination Cell",
+    ministry: "Ministry of Health and Family Welfare",
+    category: "MedTech / Edge AI & Rural Health Diagnostics",
+    budget: "₹32,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "120 Days",
+    deadline: "2026-12-15",
+    status: "Open",
+    summary: "Handheld or backpack-portable X-ray diagnostics powered by on-device deep learning for rapid pulmonary disease triaging in remote primary health centers.",
+    problemStatement: "Over 65% of rural healthcare centers face an absence of on-site diagnostic radiologists. Sputum tests take days, and patients frequently drop out of clinical tracking. Ultra-portable edge-AI imaging provides immediate confirmation within 30 seconds.",
+    expectedOutcomes: [
+      "Under 30-second on-device AI triage readout for pulmonary tuberculosis and pneumonia",
+      "94%+ diagnostic sensitivity compared to NABL radiology gold standard",
+      "Full offline operational capability in zero-cellular network environments",
+      "Standard FHIR / ABDM compliant health record sync when connectivity resumes"
+    ],
+    technicalThresholds: [
+      "CDSCO compliance or ISO 13485 quality certification",
+      "Edge neural model executing fully on portable compute hardware without cloud dependency",
+      "Minimum TRL 8 with clinical trial validation in Indian hospital cohorts",
+      "DPIIT recognized startup with turnover exemption under GFR Rule 170"
+    ],
+    targetLocations: 8,
+    scaleLocations: 90,
+    matchedCount: 2,
+    applicationsCount: 0,
+  },
+  {
+    id: "CH-2026-DC06",
+    title: "AI-Powered Multilingual Document Extraction & Automated Citizen Application Processing",
+    department: "Department of Administrative Reforms and Public Grievances (DARPG)",
+    ministry: "Ministry of Personnel, Public Grievances and Pensions",
+    category: "AI & Intelligent Document Processing / Multilingual OCR",
+    budget: "₹26,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "90 Days",
+    deadline: "2026-12-10",
+    status: "Open",
+    summary: "Automated extraction and structuring of form fields from handwritten and printed documents across English and Indian languages with 95%+ field accuracy.",
+    problemStatement: "Manual verification of citizen applications and scanned welfare records causes operational delays across administrative centers. Departments require automated OCR and document structure intelligence to extract fields from noisy, multilingual scans into structured databases.",
+    expectedOutcomes: [
+      "Sub-10 second extraction per multi-page document into validated JSON schema",
+      "High character recognition accuracy (>95%) across Hindi, Tamil, Telugu, and English scans",
+      "Automatic categorization of supporting attachments (certificates, ID proofs, income statements)",
+      "Seamless integration with state e-Office and CPGRAMS platforms via open REST APIs"
+    ],
+    technicalThresholds: [
+      "Minimum TRL 7 (Demonstrated on real-world scanned government forms)",
+      "Make in India Domestic Content ≥ 50% (Class-1 local vendor)",
+      "On-premise or sovereign cloud deployment without sending data to unauthorized foreign servers",
+      "DPIIT startup recognition with turnover relaxation under GFR Rule 170"
+    ],
+    targetLocations: 6,
+    scaleLocations: 65,
+    matchedCount: 10,
+    applicationsCount: 2,
+  },
+  {
+    id: "CH-2026-ID07",
+    title: "Touchless Multi-Factor Biometric Verification & Fraud-Resistant Citizen Authentication Rail",
+    department: "Digital India Corporation & National e-Governance Division",
+    ministry: "Ministry of Electronics and Information Technology",
+    category: "Identity Tech / Biometrics & Touchless Authentication",
+    budget: "₹30,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "90 Days",
+    deadline: "2026-12-20",
+    status: "Open",
+    summary: "Contactless camera-based biometric capture and spoof-resistant liveness verification enabling secure citizen authentication without external hardware.",
+    problemStatement: "Physical contact biometric fingerprint readers present hygiene barriers, hardware procurement delays, and failure in rough-handed manual laborers. Government portals require touchless, camera-based multi-factor biometrics with real-time passive liveness detection.",
+    expectedOutcomes: [
+      "Under 3-second contactless biometric capture and matching using standard smartphone camera",
+      "Sub-0.1% False Acceptance Rate (FAR) with robust Presentation Attack Detection (PAD)",
+      "Zero external hardware dependency; works on entry-level Android devices",
+      "End-to-end encrypted cryptographic payload compliant with Indian Digital Personal Data Protection (DPDP) Act"
+    ],
+    technicalThresholds: [
+      "ISO/IEC 30107 Presentation Attack Detection (PAD) Level 1/2 compliance",
+      "Minimum TRL 7 with operational field validation in low-connectivity rural settings",
+      "Domestic IP ownership and Class-1 Make in India local value addition (≥50%)",
+      "DPIIT recognized entity eligible for GFR procurement relaxations"
+    ],
+    targetLocations: 8,
+    scaleLocations: 80,
+    matchedCount: 3,
+    applicationsCount: 1,
+  },
+  {
+    id: "CH-2026-FR08",
+    title: "Automated Document Forensic Tampering Detection & GSTIN Invoicing Reconciliation System",
+    department: "Department of Revenue & Central Board of Indirect Taxes and Customs (CBIC)",
+    ministry: "Ministry of Finance",
+    category: "Civic Tech / Compliance & Anti-Fraud Document Forensics",
+    budget: "₹34,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "120 Days",
+    deadline: "2026-12-25",
+    status: "Open",
+    summary: "Forensic AI auditing of procurement invoices, bank statements, and tax receipts to identify pixel-level splicing, metadata alterations, and GSTIN mismatches.",
+    problemStatement: "Public procurement units face risks of forged vendor credentials, falsified GST invoices, and manipulated turnover certificates. Manual document inspection cannot reliably catch digital font splicing or metadata wiping. An automated forensic screening engine is needed.",
+    expectedOutcomes: [
+      "Automated pixel-level splicing and font-weight anomaly detection on PDF/image uploads",
+      "Real-time GSTIN and tax compliance verification against public GST APIs with automated audit trail",
+      "Cryptographic SHA-256 evidence hashing for every verified document record",
+      "Reduction of manual procurement compliance auditing time by 75%"
+    ],
+    technicalThresholds: [
+      "Minimum TRL 7 with demonstrated detection of digital forgery techniques",
+      "Make in India Domestic Content ≥ 50% (Class-1 local vendor)",
+      "Tamper-proof audit logging with immutable timestamping",
+      "DPIIT startup recognition with prior turnover relaxation under GFR Rule 170"
+    ],
+    targetLocations: 10,
+    scaleLocations: 100,
+    matchedCount: 2,
+    applicationsCount: 1,
+  }
+];
+
+export const initialChallenge: Challenge = sampleChallenges[0];
+
 
 export const sampleStartups: Startup[] = [
   {

@@ -24,6 +24,7 @@ import {
 } from "@/lib/translations";
 import { 
   initialChallenge, 
+  sampleChallenges,
   sampleStartups, 
   sampleApplications, 
   samplePilot, 
@@ -227,13 +228,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const saved = localStorage.getItem(DEMO_STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed.challenges && Array.isArray(parsed.challenges) && parsed.challenges.length > 0) {
+          if (parsed.challenges && Array.isArray(parsed.challenges)) {
+            const existingIds = new Set(parsed.challenges.map((c: any) => c.id));
+            const missing = sampleChallenges.filter(c => !existingIds.has(c.id));
+            if (missing.length > 0) {
+              return [...parsed.challenges, ...missing];
+            }
             return parsed.challenges;
           }
         }
       } catch {}
     }
-    return [initialChallenge];
+    return sampleChallenges;
   });
 
   const [blockchainModalOpen, setBlockchainModalOpen] = useState<boolean>(false);
@@ -347,7 +353,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   // Real State (synced with Supabase / live API)
-  const [realChallenges, setRealChallenges] = useState<Challenge[]>([initialChallenge]);
+  const [realChallenges, setRealChallenges] = useState<Challenge[]>(sampleChallenges);
   const [realChallenge, setRealChallenge] = useState<Challenge>(initialChallenge);
   const [realStartups, setRealStartups] = useState<Startup[]>([]);
   const [realApplications, setRealApplications] = useState<Application[]>([]);

@@ -175,6 +175,90 @@ const CHALLENGE_TEMPLATES: ChallengeTemplate[] = [
       "Minimum TRL 8 with clinical trial validation in Indian hospital cohorts",
       "DPIIT recognized startup with turnover exemption under GFR Rule 170"
     ]
+  },
+  {
+    id: "darpg-document-extraction",
+    name: "DARPG: Multilingual Document OCR & Field Extraction Rail",
+    tagline: "Automated extraction and structuring of scanned forms in 12+ Indian languages",
+    ministry: "Ministry of Personnel, Public Grievances and Pensions",
+    department: "Department of Administrative Reforms and Public Grievances (DARPG)",
+    category: "AI & Intelligent Document Processing / Multilingual OCR",
+    budget: "₹26,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "90 Days",
+    targetLocations: 6,
+    scaleLocations: 65,
+    title: "AI-Powered Multilingual Document Extraction & Automated Citizen Application Processing",
+    rawProblem: "Public service grievance and welfare application forms are submitted as handwritten or low-resolution scanned PDFs across English, Hindi, Tamil, Telugu, and other regional languages. Processing these manually takes days and creates backlogs. We require an AI/OCR pipeline to automatically extract key fields into structured JSON.",
+    summary: "Automated extraction and structuring of form fields from handwritten and printed documents across English and Indian languages with 95%+ field accuracy.",
+    problemStatement: "Manual verification of citizen applications and scanned welfare records causes operational delays across administrative centers. Departments require automated OCR and document structure intelligence to extract fields from noisy, multilingual scans into structured databases.",
+    expectedOutcomes: [
+      "Sub-10 second extraction per multi-page document into validated JSON schema",
+      "High character recognition accuracy (>95%) across Hindi, Tamil, Telugu, and English scans",
+      "Automatic categorization of supporting attachments (certificates, ID proofs, income statements)",
+      "Seamless integration with state e-Office and CPGRAMS platforms via open REST APIs"
+    ],
+    technicalThresholds: [
+      "Minimum TRL 7 (Demonstrated on real-world scanned government forms)",
+      "Make in India Domestic Content ≥ 50% (Class-1 local vendor)",
+      "On-premise or sovereign cloud deployment without sending data to unauthorized foreign servers",
+      "DPIIT startup recognition with turnover relaxation under GFR Rule 170"
+    ]
+  },
+  {
+    id: "meity-touchless-biometrics",
+    name: "MeitY: Touchless Mobile Biometrics & Remote Citizen KYC",
+    tagline: "Smartphone-camera contactless fingerprint and facial liveness verification for remote delivery",
+    ministry: "Ministry of Electronics and Information Technology",
+    department: "Digital India Corporation & National e-Governance Division",
+    category: "Identity Tech / Biometrics & Touchless Authentication",
+    budget: "₹30,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "90 Days",
+    targetLocations: 8,
+    scaleLocations: 80,
+    title: "Touchless Multi-Factor Biometric Verification & Fraud-Resistant Citizen Authentication Rail",
+    rawProblem: "Citizens in remote rural areas lack access to specialized hardware biometric fingerprint scanners, causing delays in welfare disbursement and identity verification. We need contactless biometric authentication that captures and verifies fingerprints or facial liveness using standard smartphone cameras.",
+    summary: "Contactless camera-based biometric capture and spoof-resistant liveness verification enabling secure citizen authentication without external hardware.",
+    problemStatement: "Physical contact biometric fingerprint readers present hygiene barriers, hardware procurement delays, and failure in rough-handed manual laborers. Government portals require touchless, camera-based multi-factor biometrics with real-time passive liveness detection.",
+    expectedOutcomes: [
+      "Under 3-second contactless biometric capture and matching using standard smartphone camera",
+      "Sub-0.1% False Acceptance Rate (FAR) with robust Presentation Attack Detection (PAD)",
+      "Zero external hardware dependency; works on entry-level Android devices",
+      "End-to-end encrypted cryptographic payload compliant with Indian Digital Personal Data Protection (DPDP) Act"
+    ],
+    technicalThresholds: [
+      "ISO/IEC 30107 Presentation Attack Detection (PAD) Level 1/2 compliance",
+      "Minimum TRL 7 with operational field validation in low-connectivity rural settings",
+      "Domestic IP ownership and Class-1 Make in India local value addition (≥50%)",
+      "DPIIT recognized entity eligible for GFR procurement relaxations"
+    ]
+  },
+  {
+    id: "cbic-document-forensics",
+    name: "CBIC: Automated Document Forensics & Invoicing Reconciliation",
+    tagline: "Forensic pixel-level tampering analysis, digital signature checks, and automated GSTIN reconciliation",
+    ministry: "Ministry of Finance",
+    department: "Department of Revenue & Central Board of Indirect Taxes and Customs (CBIC)",
+    category: "Civic Tech / Compliance & Anti-Fraud Document Forensics",
+    budget: "₹34,00,000 (Pilot Phase Allocation • Scalable subject to approval)",
+    pilotDuration: "120 Days",
+    targetLocations: 10,
+    scaleLocations: 100,
+    title: "Automated Document Forensic Tampering Detection & GSTIN Invoicing Reconciliation System",
+    rawProblem: "Fraudulent procurement submissions and tax claims frequently alter invoice amounts, font weights, and metadata on PDF documents before submission. Manual auditing of thousands of vendor files is impossible. We require automated digital forensics to detect font inconsistencies, pixel splicing, metadata tampering, and reconcile GSTINs in real time.",
+    summary: "Forensic AI auditing of procurement invoices, bank statements, and tax receipts to identify pixel-level splicing, metadata alterations, and GSTIN mismatches.",
+    problemStatement: "Public procurement units face risks of forged vendor credentials, falsified GST invoices, and manipulated turnover certificates. Manual document inspection cannot reliably catch digital font splicing or metadata wiping. An automated forensic screening engine is needed.",
+    expectedOutcomes: [
+      "Automated pixel-level splicing and font-weight anomaly detection on PDF/image uploads",
+      "Real-time GSTIN and tax compliance verification against public GST APIs with automated audit trail",
+      "Cryptographic SHA-256 evidence hashing for every verified document record",
+      "Reduction of manual procurement compliance auditing time by 75%"
+    ],
+    technicalThresholds: [
+      "Minimum TRL 7 with demonstrated detection of digital forgery techniques",
+      "Make in India Domestic Content ≥ 50% (Class-1 local vendor)",
+      "Tamper-proof audit logging with immutable timestamping",
+      "DPIIT startup recognition with prior turnover relaxation under GFR Rule 170"
+    ]
   }
 ];
 
