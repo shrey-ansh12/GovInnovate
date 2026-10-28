@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useApp } from "@/context/AppContext";
-import { Building2, Rocket, Award, Layers } from "lucide-react";
+import { Building2, Rocket, Award, Layers, Sparkles } from "lucide-react";
 
 interface DashboardSwitcherProps {
   variant?: "header" | "card" | "prominent";
@@ -18,6 +18,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
   const isGovActive = activeView === "gov_dashboard";
   const isStartupActive = activeView === "startup_dashboard";
   const isEvaluatorActive = activeView === "evaluator_dashboard";
+  const isAiMatchesActive = activeView === "ai_startup_matches";
   const isHubActive = activeView === "landing";
 
   const switchToGov = () => {
@@ -33,6 +34,10 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
   const switchToEvaluator = () => {
     setRole("evaluator");
     setActiveView("evaluator_dashboard");
+  };
+
+  const switchToAiMatches = () => {
+    setActiveView("ai_startup_matches");
   };
 
   const switchToHub = () => {
@@ -52,7 +57,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
           title="View all 3 Dashboards in Hub"
         >
           <Layers className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">3-Dashboards Hub</span>
+          <span className="hidden sm:inline">Hub</span>
         </button>
 
         <button
@@ -96,6 +101,20 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
           <span>Evaluator</span>
           {isEvaluatorActive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>}
         </button>
+
+        <button
+          onClick={switchToAiMatches}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+            isAiMatchesActive
+              ? "bg-[#147452] text-white shadow-xs"
+              : "text-[#147452] hover:bg-[#EBF6F0]"
+          }`}
+          title="Switch to AI Startup Matches"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>Matches</span>
+          {isAiMatchesActive && <span className="w-1.5 h-1.5 rounded-full bg-white"></span>}
+        </button>
       </div>
     );
   }
@@ -105,34 +124,34 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
         <div className="flex items-center gap-2 px-2 text-xs font-mono font-semibold text-[#5B6A78] uppercase tracking-wider shrink-0">
           <span className="w-2 h-2 rounded-full bg-[#147452] animate-pulse"></span>
-          <span>Quick Switch Dashboard:</span>
+          <span>Quick Switch View:</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 w-full sm:w-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 w-full sm:w-auto">
           {/* Hub Overview Tab */}
           <button
             onClick={switchToHub}
-            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               isHubActive
                 ? "bg-[#0A2540] text-white shadow-sm ring-2 ring-[#0A2540]/20"
                 : "bg-[#FAF8F5] text-[#5B6A78] hover:text-[#0A2540] hover:bg-[#F2EFEB] border border-[#E2DED6]"
             }`}
           >
             <Layers className="h-3.5 w-3.5" />
-            <span>Hub Overview</span>
+            <span>Overview</span>
           </button>
 
           {/* Government Tab */}
           <button
             onClick={switchToGov}
-            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               isGovActive
                 ? "bg-[#0F3854] text-white shadow-sm ring-2 ring-[#0F3854]/20"
                 : "bg-[#FAF8F5] text-[#5B6A78] hover:text-[#0A2540] hover:bg-[#F2EFEB] border border-[#E2DED6]"
             }`}
           >
             <Building2 className="h-3.5 w-3.5" />
-            <span>1. Government</span>
+            <span>1. Gov</span>
             {isGovActive && (
               <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-emerald-400 text-[#0F3854] font-bold">
                 ACTIVE
@@ -143,7 +162,7 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
           {/* Startup Tab */}
           <button
             onClick={switchToStartup}
-            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               isStartupActive
                 ? "bg-[#147452] text-white shadow-sm ring-2 ring-[#147452]/20"
                 : "bg-[#FAF8F5] text-[#5B6A78] hover:text-[#0A2540] hover:bg-[#F2EFEB] border border-[#E2DED6]"
@@ -161,16 +180,34 @@ export const DashboardSwitcher: React.FC<DashboardSwitcherProps> = ({
           {/* Evaluator Tab */}
           <button
             onClick={switchToEvaluator}
-            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               isEvaluatorActive
                 ? "bg-[#8A5B0B] text-white shadow-sm ring-2 ring-[#8A5B0B]/20"
                 : "bg-[#FAF8F5] text-[#5B6A78] hover:text-[#0A2540] hover:bg-[#F2EFEB] border border-[#E2DED6]"
             }`}
           >
             <Award className="h-3.5 w-3.5" />
-            <span>3. Evaluator</span>
+            <span>3. Eval</span>
             {isEvaluatorActive && (
               <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-200 text-[#8A5B0B] font-bold">
+                ACTIVE
+              </span>
+            )}
+          </button>
+
+          {/* AI Matches Tab */}
+          <button
+            onClick={switchToAiMatches}
+            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              isAiMatchesActive
+                ? "bg-[#147452] text-white shadow-sm ring-2 ring-[#147452]/20"
+                : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300"
+            }`}
+          >
+            <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+            <span>AI Matches</span>
+            {isAiMatchesActive && (
+              <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-white text-[#147452] font-bold">
                 ACTIVE
               </span>
             )}

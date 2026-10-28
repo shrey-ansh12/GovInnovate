@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { 
   UserRole, 
   AuthUser,
@@ -401,7 +401,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
   const selectChallenge = selectChallengeAction;
   const setChallenge = appMode === "real" ? setRealChallenge : setDemoChallenge;
-  const startups = (appMode === "real" && realStartups.length > 0) ? realStartups : demoStartups;
+  const rawStartups = (appMode === "real" && realStartups.length > 0) ? realStartups : demoStartups;
+  const startups: Startup[] = useMemo(() => {
+    return rawStartups.map(s => {
+      const match = calculateStartupMatch(s, challenge);
+      return {
+        ...s,
+        matchScore: match.matchScore,
+        matchReasons: match.matchReasons,
+        matchBreakdown: match.matchBreakdown,
+        riskAnalysis: match.riskAnalysis
+      };
+    });
+  }, [rawStartups, challenge]);
   const setStartups = appMode === "real" ? setRealStartups : setDemoStartups;
   const applications = (appMode === "real" && realApplications.length > 0) ? realApplications : demoApplications;
   const setApplications = appMode === "real" ? setRealApplications : setDemoApplications;

@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { useApp } from "@/context/AppContext";
+import { calculateStartupMatch } from "@/lib/matchingEngine";
 import { 
   Compass, 
   CheckCircle2, 
@@ -15,11 +16,45 @@ import {
   Award, 
   AlertCircle,
   Database,
-  PlayCircle
+  PlayCircle,
+  Sparkles,
+  Globe,
+  ExternalLink
 } from "lucide-react";
 
 export const LandingPage: React.FC = () => {
-  const { setActiveView, setRole, challenge, appMode, setAppMode, openAuthModal } = useApp();
+  const { 
+    setActiveView, 
+    setRole, 
+    challenge, 
+    challenges,
+    selectChallenge,
+    startups, 
+    appMode, 
+    setAppMode, 
+    openAuthModal 
+  } = useApp();
+
+  const [previewChallengeId, setPreviewChallengeId] = useState<string>(challenge.id || "CH-2026-WQ01");
+
+  const currentPreviewChallenge = useMemo(() => {
+    return challenges.find(c => c.id === previewChallengeId) || challenges[0] || challenge;
+  }, [challenges, previewChallengeId, challenge]);
+
+  const matchedStartupsForPreview = useMemo(() => {
+    return startups
+      .map(s => {
+        const match = calculateStartupMatch(s, currentPreviewChallenge);
+        return {
+          ...s,
+          matchScore: match.matchScore,
+          matchReasons: match.matchReasons,
+          matchBreakdown: match.matchBreakdown
+        };
+      })
+      .filter(s => s.matchScore >= 80)
+      .sort((a, b) => b.matchScore - a.matchScore);
+  }, [startups, currentPreviewChallenge]);
 
   const scrollToWorkflow = () => {
     const el = document.getElementById("visual-workflow");
@@ -71,10 +106,19 @@ export const LandingPage: React.FC = () => {
                   setRole("government");
                   setActiveView("gov_dashboard");
                 }}
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded bg-[#0F3854] text-white text-[15px] font-semibold hover:bg-[#1D4E72] shadow-sm transition-all"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded bg-[#0F3854] text-white text-[15px] font-semibold hover:bg-[#1D4E72] shadow-sm transition-all cursor-pointer"
               >
                 <PlayCircle className="h-5 w-5 text-amber-300" />
                 <span>Enter Demo Mode</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              <button
+                onClick={() => setActiveView("ai_startup_matches")}
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded bg-[#147452] text-white text-[15px] font-semibold hover:bg-[#0f583e] shadow-sm transition-all cursor-pointer"
+              >
+                <Sparkles className="h-5 w-5 text-emerald-200" />
+                <span>Browse Matched Startups</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
 
@@ -83,18 +127,10 @@ export const LandingPage: React.FC = () => {
                   setAppMode("real");
                   openAuthModal("signin");
                 }}
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded bg-white text-[#0A2540] text-[15px] font-semibold border border-[#E2DED6] hover:bg-[#F2EFEB] transition-all"
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded bg-white text-[#0A2540] text-[15px] font-semibold border border-[#E2DED6] hover:bg-[#F2EFEB] transition-all cursor-pointer"
               >
                 <Database className="h-4 w-4 text-emerald-600" />
                 <span>Live Database Workspace</span>
-              </button>
-
-              <button
-                onClick={scrollToWorkflow}
-                className="inline-flex items-center gap-2 px-4 py-3.5 rounded bg-transparent text-[#5B6A78] hover:text-[#0A2540] text-[14px] font-medium transition-all"
-              >
-                <span>View Workflow</span>
-                <Layers className="h-4 w-4" />
               </button>
             </div>
 
@@ -117,7 +153,6 @@ export const LandingPage: React.FC = () => {
           {/* Right Column: Project-Related Civic Infrastructure Image */}
           <div className="lg:col-span-5">
             <div className="relative rounded-lg overflow-hidden border border-[#E2DED6] bg-white shadow-md">
-              {/* Clean Realistic Civic IoT / Infrastructure Photo */}
               <div className="relative h-[320px] sm:h-[370px] w-full bg-[#0F3854] overflow-hidden">
                 <img
                   src="/hero-civic.jpg"
@@ -153,9 +188,12 @@ export const LandingPage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Benefit 1 */}
-          <div className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs">
+          <div 
+            onClick={() => setActiveView("ai_startup_matches")}
+            className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#147452] transition-all group shadow-2xs cursor-pointer"
+          >
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded bg-[#EBF6F0] text-[#147452] flex items-center justify-center group-hover:bg-[#147452] group-hover:text-white transition-colors">
                 <Compass className="h-5 w-5" />
               </div>
               <h3 className="text-lg font-bold text-[#0A2540]">1. Startup Discovery</h3>
@@ -163,13 +201,17 @@ export const LandingPage: React.FC = () => {
                 Explainable, rule-based matching evaluates sector alignment, TRL level (≥7), local content percentage, and DPIIT recognition without opaque black-box claims.
               </p>
             </div>
-            <div className="pt-4 mt-4 border-t border-[#EDE9E1] text-[11px] font-mono text-[#147452] font-semibold">
-              Rule-Based Match Engine
+            <div className="pt-4 mt-4 border-t border-[#EDE9E1] text-[11px] font-mono text-[#147452] font-semibold flex items-center justify-between">
+              <span>Rule-Based Match Engine</span>
+              <span>View Matches →</span>
             </div>
           </div>
 
           {/* Benefit 2 */}
-          <div className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs">
+          <div 
+            onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
+            className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs cursor-pointer"
+          >
             <div className="space-y-4">
               <div className="w-10 h-10 rounded bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white transition-colors">
                 <BarChart3 className="h-5 w-5" />
@@ -185,7 +227,10 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Benefit 3 */}
-          <div className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs">
+          <div 
+            onClick={() => { setRole("government"); setActiveView("pilot_management"); }}
+            className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs cursor-pointer"
+          >
             <div className="space-y-4">
               <div className="w-10 h-10 rounded bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white transition-colors">
                 <Layers className="h-5 w-5" />
@@ -201,7 +246,10 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Benefit 4 */}
-          <div className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs">
+          <div 
+            onClick={() => setActiveView("audit_trail")}
+            className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs cursor-pointer"
+          >
             <div className="space-y-4">
               <div className="w-10 h-10 rounded bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white transition-colors">
                 <ShieldCheck className="h-5 w-5" />
@@ -244,15 +292,15 @@ export const LandingPage: React.FC = () => {
 
           {/* Step 2 */}
           <div 
-            onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }}
-            className="bg-white border border-[#E2DED6] hover:border-[#147452] rounded p-5 cursor-pointer transition-all hover:shadow-xs group"
+            onClick={() => setActiveView("ai_startup_matches")}
+            className="bg-white border-2 border-[#147452] hover:bg-[#EBF6F0]/20 rounded p-5 cursor-pointer transition-all hover:shadow-xs group"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="font-mono text-xs font-bold text-[#147452] bg-[#EBF6F0] px-2 py-0.5 rounded">02</span>
-              <Rocket className="h-4 w-4 text-[#5B6A78] group-hover:text-[#147452]" />
+              <span className="font-mono text-xs font-bold text-white bg-[#147452] px-2 py-0.5 rounded">02</span>
+              <Sparkles className="h-4 w-4 text-[#147452]" />
             </div>
-            <h4 className="font-bold text-sm text-[#0A2540] mb-1">Application</h4>
-            <p className="text-[11px] text-[#5B6A78] leading-snug">Startup updates profile and submits pilot proposal with credentials.</p>
+            <h4 className="font-bold text-sm text-[#0A2540] mb-1">AI Matching</h4>
+            <p className="text-[11px] text-[#5B6A78] leading-snug">Statutory algorithm pairs problem statement with authentic startups.</p>
           </div>
 
           {/* Step 3 */}
@@ -309,6 +357,148 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* LIVE INTERACTIVE CHALLENGE & MATCHING EXPLORER */}
+      <section className="max-w-[1360px] mx-auto px-6 sm:px-8 py-16 border-b border-[#E2DED6] bg-white">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <div className="text-xs font-mono font-bold uppercase text-[#147452] tracking-wider mb-2 flex items-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-[#147452]" />
+              Interactive Matching Demonstration
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">
+              Select Any Challenge & See Distinct Matching Startups
+            </h2>
+            <p className="text-sm text-[#5B6A78] mt-1.5 max-w-2xl">
+              GovInnovate dynamically scores and pairs authentic startups against each public procurement challenge using domain-specific statutory evaluation.
+            </p>
+          </div>
+
+          <button
+            onClick={() => setActiveView("ai_startup_matches")}
+            className="px-5 py-2.5 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white text-xs font-bold flex items-center gap-2 transition-all shrink-0 cursor-pointer shadow-sm"
+          >
+            <span>Open Dedicated AI Matching Panel</span>
+            <ArrowRight className="h-4 w-4 text-emerald-400" />
+          </button>
+        </div>
+
+        {/* Challenge Selection Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-thin">
+          {challenges.map((c) => {
+            const isSelected = c.id === previewChallengeId;
+            let emoji = "🎯";
+            if (c.id.includes("WQ") || c.category.includes("Water")) emoji = "💧";
+            else if (c.id.includes("TR") || c.category.includes("Mobility")) emoji = "🚦";
+            else if (c.id.includes("AG") || c.category.includes("Agri")) emoji = "🌾";
+            else if (c.id.includes("LF") || c.category.includes("CleanTech")) emoji = "♻️";
+            else if (c.id.includes("XR") || c.category.includes("MedTech")) emoji = "🏥";
+            else if (c.id.includes("DC") || c.category.includes("Document")) emoji = "📄";
+            else if (c.id.includes("ID") || c.category.includes("Identity")) emoji = "🆔";
+            else if (c.id.includes("FR") || c.category.includes("Forensic")) emoji = "⚖️";
+
+            const shortTitle = c.title.split("&")[0].split("/")[0].slice(0, 30);
+
+            return (
+              <button
+                key={c.id}
+                onClick={() => {
+                  setPreviewChallengeId(c.id);
+                  selectChallenge(c.id);
+                }}
+                className={`px-3.5 py-2 rounded text-xs font-medium whitespace-nowrap transition-all shrink-0 flex items-center gap-2 border cursor-pointer ${
+                  isSelected
+                    ? "bg-[#0F3854] text-white font-bold border-[#0F3854] shadow-md ring-2 ring-[#0F3854]/20"
+                    : "bg-[#FAF8F5] text-[#5B6A78] border-[#E2DED6] hover:border-[#0F3854] hover:text-[#0A2540]"
+                }`}
+              >
+                <span>{emoji}</span>
+                <span className="font-mono text-[10px] text-slate-400">[{c.id.split("-").pop()}]</span>
+                <span>{shortTitle}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected Challenge Context Banner */}
+        <div className="p-4 rounded-lg bg-[#FAF8F5] border border-[#E2DED6] mb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div>
+              <span className="text-[10px] font-mono font-bold text-[#147452] uppercase bg-[#EBF6F0] px-2 py-0.5 rounded border border-[#C2E5D2]">
+                Active Tender Problem Statement
+              </span>
+              <h3 className="text-base font-bold text-[#0A2540] mt-1.5">
+                [{currentPreviewChallenge.id}] {currentPreviewChallenge.title}
+              </h3>
+              <p className="text-xs text-[#5B6A78] mt-1 leading-relaxed">
+                {currentPreviewChallenge.problemStatement}
+              </p>
+            </div>
+            <div className="text-right shrink-0 font-mono text-xs">
+              <span className="text-[#5B6A78] block">Budget: <strong className="text-[#0A2540]">{currentPreviewChallenge.budget}</strong></span>
+              <span className="text-emerald-700 font-bold block mt-0.5">{matchedStartupsForPreview.length} Candidates Matched (≥80%)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Live Matched Startup Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {matchedStartupsForPreview.map((s) => (
+            <div 
+              key={s.id} 
+              className="p-5 rounded-lg border border-[#E2DED6] hover:border-[#0F3854] bg-[#FAF8F5] transition-all flex flex-col justify-between shadow-2xs"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold flex items-center gap-1">
+                    <Sparkles className="h-3 w-3" />
+                    {s.matchScore}% Match
+                  </span>
+                  <span className="text-[10px] font-mono text-[#5B6A78]">
+                    TRL-{s.trlLevel || 7}
+                  </span>
+                </div>
+
+                <h4 className="font-bold text-sm text-[#0A2540]">{s.name}</h4>
+                <div className="text-[10px] font-mono text-[#0F3854] bg-white border border-[#E2DED6] px-1.5 py-0.5 rounded inline-block mt-1">
+                  {s.sector?.split(";")[0]?.trim()}
+                </div>
+
+                <p className="text-xs text-[#5B6A78] line-clamp-3 mt-2 leading-relaxed">
+                  {s.potentialUseCase || s.publicCapabilitySummary || s.tagline}
+                </p>
+
+                <div className="mt-3 p-2 rounded bg-white border border-[#EDE9E1] text-[11px] text-[#147452] font-mono">
+                  <span className="font-bold block text-[10px] uppercase text-[#0F3854]">Fit Rationale:</span>
+                  <span className="line-clamp-2">{s.matchReasons?.[0] || "Strong capability alignment"}</span>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-[#EDE9E1] flex items-center justify-between text-xs font-mono">
+                <span className="text-[10px] text-[#5B6A78]">
+                  {s.isDpiitVerified ? (
+                    <span className="text-emerald-700 font-semibold">✓ DPIIT</span>
+                  ) : s.isPublicDirectoryEntry ? (
+                    <span className="text-sky-700 font-semibold">Public Claim</span>
+                  ) : (
+                    "Registered"
+                  )}
+                </span>
+                <button
+                  onClick={() => {
+                    selectChallenge(currentPreviewChallenge.id);
+                    setActiveView("ai_startup_matches");
+                  }}
+                  className="text-[#0F3854] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Full Profile</span>
+                  <ArrowRight className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* 3 STAKEHOLDER PORTAL CARDS */}
       <section className="max-w-[1360px] mx-auto px-6 sm:px-8 py-16 border-b border-[#E2DED6]">
         <div className="mb-10">
@@ -335,7 +525,7 @@ export const LandingPage: React.FC = () => {
             <div className="pt-6">
               <button
                 onClick={() => { setRole("government"); setActiveView("gov_dashboard"); }}
-                className="w-full py-2.5 px-4 rounded bg-[#0F3854] text-white text-xs font-semibold hover:bg-[#1D4E72] transition-colors"
+                className="w-full py-2.5 px-4 rounded bg-[#0F3854] text-white text-xs font-semibold hover:bg-[#1D4E72] transition-colors cursor-pointer"
               >
                 Enter Government Portal →
               </button>
@@ -357,7 +547,7 @@ export const LandingPage: React.FC = () => {
             <div className="pt-6">
               <button
                 onClick={() => { setRole("startup"); setActiveView("startup_dashboard"); }}
-                className="w-full py-2.5 px-4 rounded bg-[#147452] text-white text-xs font-semibold hover:bg-[#0f583e] transition-colors"
+                className="w-full py-2.5 px-4 rounded bg-[#147452] text-white text-xs font-semibold hover:bg-[#0f583e] transition-colors cursor-pointer"
               >
                 Enter Startup Workspace →
               </button>
@@ -379,7 +569,7 @@ export const LandingPage: React.FC = () => {
             <div className="pt-6">
               <button
                 onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
-                className="w-full py-2.5 px-4 rounded bg-[#8A5B0B] text-white text-xs font-semibold hover:bg-[#6c4708] transition-colors"
+                className="w-full py-2.5 px-4 rounded bg-[#8A5B0B] text-white text-xs font-semibold hover:bg-[#6c4708] transition-colors cursor-pointer"
               >
                 Enter Evaluation Panel →
               </button>
@@ -428,7 +618,7 @@ export const LandingPage: React.FC = () => {
             </div>
             <button
               onClick={() => { setRole("government"); setActiveView("kpi_monitoring"); }}
-              className="text-xs font-bold text-[#0F3854] hover:underline"
+              className="text-xs font-bold text-[#0F3854] hover:underline cursor-pointer"
             >
               View Pilot KPI Telemetry →
             </button>

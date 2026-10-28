@@ -179,7 +179,7 @@ export const NavigationBar: React.FC = () => {
           </div>
 
           {/* Quick Scenario / Challenge Switcher Bar */}
-          <div className="hidden xl:flex items-center gap-2 bg-[#F2EFEB] px-3 py-1.5 rounded border border-[#E2DED6] text-xs text-[#5B6A78]">
+          <div className="hidden lg:flex items-center gap-2 bg-[#F2EFEB] px-3 py-1.5 rounded border border-[#E2DED6] text-xs text-[#5B6A78]">
             <span className="inline-block w-2 h-2 rounded-full bg-[#147452] animate-pulse shrink-0"></span>
             <span className="font-semibold text-[#0F3854] font-mono shrink-0">Tender:</span>
             <select
@@ -205,6 +205,23 @@ export const NavigationBar: React.FC = () => {
 
           {/* Actions: Multi-language, Auth, Role Switchers */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* AI Startup Matches Direct Button */}
+            <button
+              onClick={() => setActiveView("ai_startup_matches")}
+              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded text-[13px] font-bold transition-all border cursor-pointer ${
+                activeView === "ai_startup_matches"
+                  ? "bg-[#147452] text-white border-[#147452] shadow-xs"
+                  : "bg-white text-[#147452] hover:bg-[#EBF6F0] border-[#C2E5D2]"
+              }`}
+              title="Browse AI Matched Startups"
+            >
+              <Sparkles className="h-4 w-4 text-emerald-500" />
+              <span className="hidden sm:inline">AI Matches</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
+                {startups.length}
+              </span>
+            </button>
+
             {/* Multi-Language Selector Dropdown */}
             <div className="relative" ref={langDropdownRef}>
               <button
