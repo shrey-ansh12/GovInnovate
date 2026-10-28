@@ -4,7 +4,6 @@ import { Challenge } from "@/types";
 import React from "react";
 import { useApp, ActiveView } from "@/context/AppContext";
 
-
 import { 
   Building2, 
   PlusCircle, 
@@ -14,7 +13,8 @@ import {
   FileText,
   Scale,
   Award,
-  Blocks
+  Blocks,
+  SlidersHorizontal
 } from "lucide-react";
 
 export const GovernmentDashboard: React.FC = () => {
@@ -57,6 +57,13 @@ export const GovernmentDashboard: React.FC = () => {
             <span>Create New Challenge</span>
           </button>
           <button
+            onClick={() => setActiveView("ai_startup_matches")}
+            className="px-4 py-2.5 rounded-lg bg-transparent hover:bg-white/10 text-white font-semibold text-xs border border-white/30 transition-colors flex items-center gap-2"
+          >
+            <SlidersHorizontal className="h-4 w-4 text-emerald-300" />
+            <span>Startup Directory ({startups.length})</span>
+          </button>
+          <button
             onClick={() => setActiveView("audit_trail")}
             className="px-4 py-2.5 rounded-lg bg-transparent hover:bg-white/10 text-white font-semibold text-xs border border-white/30 transition-colors flex items-center gap-2"
           >
@@ -68,11 +75,15 @@ export const GovernmentDashboard: React.FC = () => {
 
       {/* Primary KPI Row (Data-driven from state) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-[#E2DED6] shadow-2xs">
+        <div 
+          onClick={() => setActiveView("ai_startup_matches")}
+          className="bg-white p-5 rounded-xl border border-[#E2DED6] shadow-2xs cursor-pointer hover:border-[#0F3854] transition-colors"
+          title="Click to browse startup directory and matches"
+        >
           <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-1">Active Challenge</div>
           <div className="text-2xl font-bold text-[#0A2540] truncate">{challenge.status}</div>
           <div className="text-[11px] text-[#0F3854] font-semibold mt-1 flex items-center gap-1.5 font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0F3854]"></span> {startups.length} Startups Matched
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0F3854]"></span> {startups.length} Startups Available &rarr;
           </div>
         </div>
 

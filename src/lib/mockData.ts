@@ -1,4 +1,5 @@
 import { Challenge, Startup, Application, Pilot, AuditLog, NotificationItem } from "@/types";
+import { importedPublicStartups } from "./importedStartupData";
 
 export const initialChallenge: Challenge = {
   id: "CH-2026-WQ01",
@@ -306,8 +307,11 @@ export const sampleStartups: Startup[] = [
       source: "Direct Upload",
       rawTextPreview: "Certificate issued to: BioSolv Chemical Solvents Pvt Ltd, GIDC Vatva, Ahmedabad."
     }
-  }
+  },
+  ...importedPublicStartups
 ];
+
+export { importedPublicStartups };
 
 export const sampleApplications: Application[] = [
   {

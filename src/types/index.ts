@@ -94,6 +94,18 @@ export interface Startup {
     | "Verification Rejected"
     | string;
   documentRecord?: DocumentVerificationRecord;
+  // Real Public Startup Dataset Fields (govinnovate_public_startup_dataset.csv)
+  productOrSolution?: string;
+  publicCapabilitySummary?: string;
+  potentialUseCase?: string;
+  website?: string;
+  evidenceSourceUrl?: string;
+  sourceType?: string;
+  verificationStatusNote?: string;
+  dpiitRecognitionStatus?: string;
+  matchTags?: string[];
+  dataNotes?: string;
+  isPublicDirectoryEntry?: boolean;
 }
 
 export interface Challenge {

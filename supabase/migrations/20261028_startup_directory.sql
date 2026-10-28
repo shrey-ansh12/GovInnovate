@@ -1,0 +1,262 @@
+-- ============================================================================
+-- GOVINNOVATE PUBLIC STARTUP DIRECTORY SCHEMA & DATA MIGRATION
+-- Migration: 20261028_startup_directory.sql
+-- Description: Dedicated, backward-compatible directory table for real public
+--              startups imported from govinnovate_public_startup_dataset.csv.
+--              Does NOT touch user-created profiles or startup_profiles.
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS public.startup_directory (
+    id TEXT PRIMARY KEY, -- Deterministic ID e.g. 'DIR-EIGENLYTICS'
+    startup_name TEXT NOT NULL,
+    product_or_solution TEXT,
+    sector TEXT,
+    public_capability_summary TEXT,
+    potential_govinnovate_use_case TEXT,
+    website TEXT,
+    evidence_source_url TEXT,
+    source_type TEXT,
+    verification_status TEXT NOT NULL DEFAULT 'Public profile located',
+    dpiit_recognition_status TEXT NOT NULL DEFAULT 'Not verified in this dataset',
+    match_tags TEXT,
+    data_notes TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+CREATE INDEX IF NOT EXISTS idx_startup_directory_name ON public.startup_directory(startup_name);
+CREATE INDEX IF NOT EXISTS idx_startup_directory_sector ON public.startup_directory(sector);
+
+-- ROW LEVEL SECURITY (RLS)
+ALTER TABLE public.startup_directory ENABLE ROW LEVEL SECURITY;
+
+-- 1. Read Policy: All visitors (anon and authenticated) can browse the public directory
+DROP POLICY IF EXISTS "Public can view startup directory" ON public.startup_directory;
+CREATE POLICY "Public can view startup directory" ON public.startup_directory
+    FOR SELECT TO public
+    USING (true);
+
+-- 2. Write Policy: Only service role can modify directory records (prevents public tampering)
+DROP POLICY IF EXISTS "Service role can modify startup directory" ON public.startup_directory;
+CREATE POLICY "Service role can modify startup directory" ON public.startup_directory
+    FOR ALL TO service_role
+    USING (true)
+    WITH CHECK (true);
+
+GRANT ALL ON TABLE public.startup_directory TO postgres, service_role;
+GRANT SELECT ON TABLE public.startup_directory TO anon, authenticated;
+
+-- ============================================================================
+-- IDEMPOTENT PRE-SEED OF 12 VERIFIED DATASET PROFILES
+-- Uses ON CONFLICT (id) DO UPDATE to enable safe repeated execution without duplicates
+-- ============================================================================
+
+INSERT INTO public.startup_directory (
+    id,
+    startup_name,
+    product_or_solution,
+    sector,
+    public_capability_summary,
+    potential_govinnovate_use_case,
+    website,
+    evidence_source_url,
+    source_type,
+    verification_status,
+    dpiit_recognition_status,
+    match_tags,
+    data_notes
+) VALUES
+(
+    'DIR-EIGENLYTICS',
+    'Eigenlytics Data Solutions Private Limited',
+    'DocEye',
+    'AI; DeepTech; Intelligent Document Processing',
+    'Public exhibitor profile describes DocEye as a solution for recognizing and extracting information from digital and physical documents and automating document-driven operations.',
+    'Extract fields from submitted forms and supporting documents before rule-based validation.',
+    'https://eigenlytics.com',
+    'https://startupmahakumbak.org/exhibitor_directory/SM_2025_Exhibitor_Directory.pdf',
+    'Startup Mahakumbh exhibitor directory; official company website',
+    'Public profile located; company claims and current product status require direct validation',
+    'Not verified in this dataset',
+    'OCR; document extraction; intelligent document processing; workflow automation',
+    'Directory result was found on Startup Mahakumbh''s official domain; verify the exact PDF URL before presenting.'
+),
+(
+    'DIR-TOUCHLESS-ID',
+    'Touchless ID Pvt Ltd',
+    'Touchless ID',
+    'Identity technology; biometrics',
+    'A Government of India Startup India COVID-19 solutions shortlist describes Touchless ID as offering touchless multi-factor authentication using mobile-camera biometrics.',
+    'Possible identity-verification workflow component, subject to suitability, privacy review and validation of current product availability.',
+    'https://identy.io',
+    'https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/covid_resource_section/COVIDResource%26Programs_Listicle%20of%20Covid%20Startup%20Solutions_29.04.20_86%20shortlist.pdf',
+    'Startup India / Government of India public PDF',
+    'Listed in historical government publication; current company and product status not independently verified',
+    'Not verified in this dataset',
+    'identity verification; biometrics; authentication',
+    'Historical source from 2020; do not imply current availability or current DPIIT status.'
+),
+(
+    'DIR-AADRILA',
+    'Aadrila Technologies',
+    'Document Intelligence and KYC & Identity suites',
+    'AI; document processing; identity',
+    'Company website describes AI-powered document processing and KYC/identity products.',
+    'Potential match for document intake, KYC-style checks and identity-related workflows.',
+    'https://aadrila.ai',
+    'https://aadrila.ai/',
+    'Company website',
+    'Company-published capability; independently validate claims and deployment references',
+    'Website displays Startup India affiliation; recognition status not independently checked',
+    'document AI; KYC; identity verification; risk',
+    'Do not treat website claims as proof of government approval or certification.'
+),
+(
+    'DIR-COGNITIVE-STRING',
+    'Cognitive String Private Limited',
+    'DocuAILens',
+    'AI; OCR; document intelligence',
+    'Company website describes OCR and document-structure extraction for invoices, financial statements, contracts and forms, including multilingual documents.',
+    'Extract structured fields from uploaded applications and supporting records.',
+    'https://cognitivestring.com',
+    'https://cognitivestring.com/',
+    'Company website',
+    'Company-published capability; independently validate claims and product status',
+    'Website claims DPIIT recognition; not independently verified in this dataset',
+    'OCR; multilingual documents; field extraction; document parsing',
+    'Recognition is recorded as a company claim, not as independently confirmed.'
+),
+(
+    'DIR-THATCHED',
+    'THATCHED',
+    'THATCHED Convert',
+    'Language AI; OCR; document conversion',
+    'Company website describes converting PDFs and scans in English, Telugu, Tamil and Hindi into editable Word and Excel files.',
+    'Pre-process scanned or multilingual supporting documents before downstream review.',
+    'https://www.thatched.ai/',
+    'https://www.thatched.ai/',
+    'Company website',
+    'Company-published capability; independently validate output quality and product status',
+    'Not verified in this dataset',
+    'OCR; Indian languages; PDF conversion; document preprocessing',
+    'Document conversion is not the same as authenticity verification.'
+),
+(
+    'DIR-MINDT',
+    'MindT',
+    'Document AI & data analysis',
+    'AI; OCR; document digitisation',
+    'Company website describes converting scanned PDFs in Indian languages into searchable structured outputs such as XML, EPUB or JSON.',
+    'Digitise and structure scanned records before applying eligibility rules.',
+    'https://www.mindt.co.in/',
+    'https://www.mindt.co.in/',
+    'Company website',
+    'Company-published capability; independently validate claims and product status',
+    'Not verified in this dataset',
+    'OCR; Indian languages; data extraction; digitisation',
+    'Use as a potential capability match, not a pre-approved vendor.'
+),
+(
+    'DIR-VOVIX',
+    'VOVIX Private Limited',
+    'VOVIX Lens',
+    'AI; document processing; workflow automation',
+    'Company website describes document intelligence for invoices, statements and KYC documents, with export to structured formats.',
+    'Extract and standardise fields from finance or identity-related documents.',
+    'https://www.vovix.in/',
+    'https://www.vovix.in/',
+    'Company website',
+    'Company-published capability; independently validate claims and product status',
+    'Website states it is registered on Startup India; not independently verified here',
+    'document AI; KYC; invoice processing; workflow automation',
+    'Startup India registration wording is reproduced as a company-published claim, not a verified eligibility decision.'
+),
+(
+    'DIR-KRIYAM',
+    'Kriyam AI Studio',
+    'DocWise / DocForensics (as described on website)',
+    'AI; document intelligence; tampering analysis',
+    'Website describes document parsing, field extraction, document classification, tampering checks, metadata checks and digital-signature checks.',
+    'Potential support for extracting document fields and flagging possible tampering indicators for human review.',
+    'https://studio.kriyam.ai/',
+    'https://studio.kriyam.ai/',
+    'Company website',
+    'Company-published capability; independently validate claims, benchmarks and product status',
+    'Not verified in this dataset',
+    'document AI; tampering indicators; digital signatures; PII protection',
+    'Automated tampering flags are not conclusive proof of forgery.'
+),
+(
+    'DIR-PRESCALE',
+    'PreScale Labs',
+    'Document AI / Prelexa (as described on website)',
+    'AI; intelligent document processing',
+    'Company website describes processing PDFs, scans and images into structured JSON or tables using OCR and AI.',
+    'Extract fields from application forms and supporting documents for subsequent rule checks.',
+    'https://prescalelabs.com/product',
+    'https://prescalelabs.com/product',
+    'Company website',
+    'Company-published capability; independently validate claims and product status',
+    'Not verified in this dataset',
+    'OCR; field extraction; structured JSON; document processing',
+    'Accuracy figures on the company website have not been independently tested.'
+),
+(
+    'DIR-ANUMITI',
+    'Anumiti',
+    'NETRA API / KAVACH (as described on website)',
+    'AI; compliance; document intelligence',
+    'Company website describes document extraction and validation workflows, including GSTIN-related checks and audit trails.',
+    'Potential component for structured extraction and selected compliance checks, subject to confirming supported APIs and authorization.',
+    'https://www.anumiti.com/',
+    'https://www.anumiti.com/',
+    'Company website',
+    'Company-published capability; independently validate claims and API access',
+    'Not verified in this dataset',
+    'document AI; compliance; GSTIN checks; audit trails',
+    'Do not send real personal or sensitive documents to a third-party service without authorization and a privacy/security review.'
+),
+(
+    'DIR-ENHIRA',
+    'Enhira Software Exports',
+    'Document digitisation and intelligent extraction services',
+    'Document digitisation; enterprise AI',
+    'Company website describes document digitisation, management and AI-assisted extraction services.',
+    'Potential supplier for digitisation and extraction of legacy paper records.',
+    'https://enhira.co.in/',
+    'https://enhira.co.in/',
+    'Company website',
+    'Company-published capability; independently validate references and current service scope',
+    'Not verified in this dataset',
+    'document digitisation; extraction; records management',
+    'Included as a potential solution provider, not asserted to be an early-stage startup.'
+),
+(
+    'DIR-DOCSFLOW',
+    'DocsFlow AI',
+    'Document data extraction API',
+    'AI; OCR; workflow automation',
+    'Website describes extracting structured data from PDFs, forms, scans and websites using OCR and workflow automation.',
+    'Possible API-based extraction option, subject to checking product maturity and integration requirements.',
+    'https://docsflowai.com/about',
+    'https://docsflowai.com/about',
+    'Company website',
+    'Company-published capability; independently validate company details and product status',
+    'Not verified in this dataset',
+    'OCR; document extraction; APIs; workflow automation',
+    'Treat company-provided metrics and compliance claims as unverified until independently substantiated.'
+)
+ON CONFLICT (id) DO UPDATE SET
+    startup_name = EXCLUDED.startup_name,
+    product_or_solution = EXCLUDED.product_or_solution,
+    sector = EXCLUDED.sector,
+    public_capability_summary = EXCLUDED.public_capability_summary,
+    potential_govinnovate_use_case = EXCLUDED.potential_govinnovate_use_case,
+    website = EXCLUDED.website,
+    evidence_source_url = EXCLUDED.evidence_source_url,
+    source_type = EXCLUDED.source_type,
+    verification_status = EXCLUDED.verification_status,
+    dpiit_recognition_status = EXCLUDED.dpiit_recognition_status,
+    match_tags = EXCLUDED.match_tags,
+    data_notes = EXCLUDED.data_notes,
+    updated_at = timezone('utc'::text, now());

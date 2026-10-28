@@ -15,12 +15,23 @@ import {
   Lock,
   RefreshCw,
   FileText,
-  AlertTriangle,
   Building2,
   CheckCircle2,
   AlertOctagon,
-  Download
+  Globe,
+  ExternalLink,
+  FileCheck2
 } from "lucide-react";
+
+function isValidExternalUrl(url?: string): boolean {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
 
 export const StartupProfile: React.FC = () => {
   const { 
@@ -121,11 +132,11 @@ export const StartupProfile: React.FC = () => {
                 setDigiLockerDpiitInput(found.dpiitNumber);
               }
             }}
-            className="p-1.5 rounded border border-[#E2DED6] bg-[#FAF8F5] font-semibold text-[#0A2540]"
+            className="p-1.5 rounded border border-[#E2DED6] bg-[#FAF8F5] font-semibold text-[#0A2540] max-w-md truncate"
           >
             {startups.map(s => (
               <option key={s.id} value={s.id}>
-                {s.name} {s.tamperStatus === "FLAGGED_FOR_REVIEW" ? "⚠️ [FLAGGED]" : ""}
+                {s.name} {s.isPublicDirectoryEntry ? "[Directory]" : ""} {s.tamperStatus === "FLAGGED_FOR_REVIEW" ? "⚠️ [FLAGGED]" : ""}
               </option>
             ))}
           </select>
@@ -179,21 +190,37 @@ export const StartupProfile: React.FC = () => {
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-bold text-[#0A2540]">{startup.name}</h1>
+                
+                {/* HONEST STATUS BADGE */}
                 {startup.isDpiitVerified ? (
                   <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
                     <ShieldCheck className="h-3.5 w-3.5" />
                     DPIIT Verified: {startup.dpiitNumber}
+                  </span>
+                ) : startup.isPublicDirectoryEntry ? (
+                  <span 
+                    className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-sky-50 text-sky-800 border border-sky-200"
+                    title={startup.dataNotes || "Published company claim; requires direct validation"}
+                  >
+                    <Globe className="h-3 w-3 text-sky-600" />
+                    {startup.verificationStatusNote || startup.verificationStage || "Public Profile Located"}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
                     DPIIT Verification Pending
                   </span>
                 )}
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#E2DED6] text-[#5B6A78]">
-                  Status: {startup.verificationStage || "Document Uploaded"}
-                </span>
+
+                {startup.sector && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#E2DED6] text-[#0F3854]">
+                    Sector: {startup.sector.split(";")[0]?.trim()}
+                  </span>
+                )}
               </div>
+
               <p className="text-xs text-[#5B6A78] mt-1">{startup.tagline}</p>
+
+              {/* CLICKABLE SOURCE & WEBSITE LINKS */}
               <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-[#5B6A78] mt-3">
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3.5 w-3.5 text-[#7E8B97]" /> {startup.location}
@@ -207,6 +234,34 @@ export const StartupProfile: React.FC = () => {
                 <span className="flex items-center gap-1">
                   <Layers className="h-3.5 w-3.5 text-[#7E8B97]" /> TRL-{startup.trlLevel} ({startup.localContentPercentage}% Local Content)
                 </span>
+
+                {isValidExternalUrl(startup.website) && (
+                  <a
+                    href={startup.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 font-semibold text-[#0F3854] hover:text-[#147452] hover:underline"
+                    title={`Open ${startup.name} official website in a new tab`}
+                  >
+                    <Globe className="h-3.5 w-3.5" />
+                    <span>Website</span>
+                    <ExternalLink className="h-2.5 w-2.5 text-[#5B6A78]" />
+                  </a>
+                )}
+
+                {isValidExternalUrl(startup.evidenceSourceUrl) && (
+                  <a
+                    href={startup.evidenceSourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 font-semibold text-[#147452] hover:underline"
+                    title={`Open evidence source in a new tab (${startup.sourceType || "Document"})`}
+                  >
+                    <FileCheck2 className="h-3.5 w-3.5" />
+                    <span>Evidence Source</span>
+                    <ExternalLink className="h-2.5 w-2.5" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -251,81 +306,115 @@ export const StartupProfile: React.FC = () => {
           </div>
         </div>
 
-        {/* Inline Edit Controls if editMode is true */}
+        {/* Edit Form (if toggled) */}
         {editMode && (
-          <div className="p-4 bg-[#FAF8F5] border-b border-[#EDE9E1] grid sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
+          <div className="py-4 border-b border-[#EDE9E1] grid sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
             <div>
-              <label className="text-[#7E8B97] block mb-1">Tagline:</label>
+              <label className="block text-[#5B6A78] mb-1 font-bold">Tagline:</label>
               <input
                 type="text"
                 value={editTagline}
                 onChange={(e) => setEditTagline(e.target.value)}
-                className="w-full p-2 bg-white border border-[#E2DED6] rounded text-xs"
+                className="w-full p-2 rounded border border-[#E2DED6] bg-[#FAF8F5]"
               />
             </div>
             <div>
-              <label className="text-[#7E8B97] block mb-1">TRL Level (1-9):</label>
+              <label className="block text-[#5B6A78] mb-1 font-bold">TRL Level (1-9):</label>
               <input
                 type="number"
                 min="1"
                 max="9"
                 value={editTrl}
-                onChange={(e) => setEditTrl(Number(e.target.value))}
-                className="w-full p-2 bg-white border border-[#E2DED6] rounded text-xs"
+                onChange={(e) => setEditTrl(parseInt(e.target.value) || 7)}
+                className="w-full p-2 rounded border border-[#E2DED6] bg-[#FAF8F5]"
               />
             </div>
             <div>
-              <label className="text-[#7E8B97] block mb-1">Local Content %:</label>
+              <label className="block text-[#5B6A78] mb-1 font-bold">Local Content %:</label>
               <input
                 type="number"
                 min="0"
                 max="100"
                 value={editLocalContent}
-                onChange={(e) => setEditLocalContent(Number(e.target.value))}
-                className="w-full p-2 bg-white border border-[#E2DED6] rounded text-xs"
+                onChange={(e) => setEditLocalContent(parseInt(e.target.value) || 50)}
+                className="w-full p-2 rounded border border-[#E2DED6] bg-[#FAF8F5]"
               />
             </div>
             <div>
-              <label className="text-[#7E8B97] block mb-1">Patents Count:</label>
+              <label className="block text-[#5B6A78] mb-1 font-bold">Granted Patents:</label>
               <input
                 type="number"
                 min="0"
                 value={editPatents}
-                onChange={(e) => setEditPatents(Number(e.target.value))}
-                className="w-full p-2 bg-white border border-[#E2DED6] rounded text-xs"
+                onChange={(e) => setEditPatents(parseInt(e.target.value) || 0)}
+                className="w-full p-2 rounded border border-[#E2DED6] bg-[#FAF8F5]"
               />
             </div>
           </div>
         )}
 
-        {/* DPIIT CERTIFICATE UPLOAD & VERIFICATION ZONE */}
+        {/* PUBLIC CAPABILITY & USE CASE DETAIL (For Imported Profiles) */}
+        {(startup.publicCapabilitySummary || startup.potentialUseCase || startup.dataNotes) && (
+          <div className="mt-5 p-4 rounded bg-[#FAF8F5] border border-[#E2DED6] text-xs space-y-2.5">
+            <div className="flex items-center gap-2 font-mono font-bold text-[11px] text-[#0F3854] uppercase tracking-wider">
+              <Globe className="h-4 w-4 text-[#147452]" />
+              <span>Public Directory Capability Assessment & Documentation</span>
+            </div>
+
+            {startup.potentialUseCase && (
+              <div>
+                <span className="font-mono font-bold text-[10px] uppercase tracking-wider text-[#0F3854] block">
+                  Potential GovInnovate Use Case:
+                </span>
+                <p className="text-[#141F2B] font-medium mt-0.5 leading-relaxed">{startup.potentialUseCase}</p>
+              </div>
+            )}
+
+            {startup.publicCapabilitySummary && (
+              <div className="pt-2 border-t border-[#EDE9E1]">
+                <span className="font-mono font-bold text-[10px] uppercase tracking-wider text-[#5B6A78] block">
+                  Public Capability Summary:
+                </span>
+                <p className="text-[#5B6A78] mt-0.5 leading-relaxed">{startup.publicCapabilitySummary}</p>
+              </div>
+            )}
+
+            {startup.dataNotes && (
+              <div className="pt-2 border-t border-[#EDE9E1] text-[11px] font-mono text-amber-900 bg-amber-50/50 p-2 rounded border border-amber-200/60">
+                <strong>Reviewer Verification Note:</strong> {startup.dataNotes}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* DPIIT Statutory Document Verification Section */}
         <div className="pt-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 gap-3 border-b border-[#EDE9E1]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#0A2540] flex items-center gap-2">
-                <FileText className="h-4 w-4 text-[#0F3854]" />
-                DPIIT Recognition Certificate & Statutory Document Verification
+              <h3 className="text-sm font-bold text-[#0A2540]">
+                Statutory Document Verification (DPIIT GFR 170 Recognition)
               </h3>
               <p className="text-xs text-[#5B6A78] mt-0.5">
-                Upload your official DPIIT Recognition Certificate (PDF) for automated OCR field parsing, SHA-256 fingerprinting, and GFR startup exemption verification.
+                Upload official DPIIT recognition certificate PDF to verify company identity, or pull from DigiLocker repository.
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setDigiLockerModalOpen(true)}
-                className="px-3.5 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#F2EFEB] text-[#0F3854] font-semibold text-xs border border-[#E2DED6] flex items-center gap-1.5 transition-colors font-mono"
+                className="px-3 py-1.5 rounded bg-[#FAF8F5] hover:bg-[#F2EFEB] text-[#0F3854] border border-[#E2DED6] font-semibold text-xs flex items-center gap-1.5 transition-colors font-mono"
               >
-                <Building2 className="h-3.5 w-3.5 text-[#0F3854]" />
-                <span>Pull via DigiLocker Sandbox</span>
+                <Building2 className="h-3.5 w-3.5" />
+                <span>Pull from DigiLocker</span>
               </button>
+
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="px-3.5 py-1.5 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs font-mono"
+                className="px-3 py-1.5 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs font-mono"
               >
                 <Upload className="h-3.5 w-3.5" />
-                <span>{isUploading ? "Parsing PDF..." : "Upload Certificate (PDF)"}</span>
+                <span>{isUploading ? "Parsing..." : "Upload Certificate PDF"}</span>
               </button>
               <input
                 ref={fileInputRef}
@@ -397,7 +486,7 @@ export const StartupProfile: React.FC = () => {
           ) : (
             <div className="mt-4 p-6 rounded border-2 border-dashed border-[#E2DED6] bg-[#FAF8F5] text-center text-xs font-mono text-[#5B6A78]">
               <Upload className="h-6 w-6 text-[#7E8B97] mx-auto mb-2" />
-              <p>No document attached yet. Upload a DPIIT Certificate PDF or pull from DigiLocker Gateway to establish statutory GFR eligibility.</p>
+              <p>No formal DPIIT certificate attached yet. Upload a certificate PDF or pull from DigiLocker Gateway to establish statutory GFR eligibility.</p>
             </div>
           )}
         </div>
@@ -408,7 +497,7 @@ export const StartupProfile: React.FC = () => {
         <div className="lg:col-span-8 space-y-6">
           <div className="bg-white rounded border border-[#E2DED6] p-6 shadow-2xs">
             <h2 className="text-base font-bold text-[#0A2540] mb-4">
-              Registered Products & Hardware Prototypes
+              Registered Products & Solution Prototypes
             </h2>
 
             <div className="space-y-4">
@@ -426,11 +515,16 @@ export const StartupProfile: React.FC = () => {
             </div>
 
             <div className="mt-6 pt-4 border-t border-[#EDE9E1]">
-              <h4 className="text-xs font-mono font-bold uppercase text-[#5B6A78] mb-2">Core Tech Stack</h4>
+              <h4 className="text-xs font-mono font-bold uppercase text-[#5B6A78] mb-2">Core Tech Stack & Match Tags</h4>
               <div className="flex flex-wrap gap-2 font-mono text-xs">
                 {startup.techStack.map((tech, idx) => (
                   <span key={idx} className="px-2.5 py-1 rounded bg-[#FAF8F5] text-[#5B6A78] border border-[#E2DED6]">
                     {tech}
+                  </span>
+                ))}
+                {startup.matchTags && startup.matchTags.filter(t => !startup.techStack.includes(t)).map((tag, idx) => (
+                  <span key={`prof-tag-${idx}`} className="px-2.5 py-1 rounded bg-sky-50 text-sky-800 border border-sky-200">
+                    {tag}
                   </span>
                 ))}
               </div>
@@ -452,7 +546,7 @@ export const StartupProfile: React.FC = () => {
             </p>
             <div className="space-y-2 text-xs font-mono">
               <div className="flex justify-between py-1 border-b border-[#1D4E72]">
-                <span className="text-slate-300">Hardware Readiness</span>
+                <span className="text-slate-300">Technical Readiness</span>
                 <span className="font-bold text-emerald-300">TRL-{startup.trlLevel}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-[#1D4E72]">

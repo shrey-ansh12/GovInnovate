@@ -39,7 +39,8 @@ export const NavigationBar: React.FC = () => {
     setAppMode,
     isLiveDbConnected,
     currentUser,
-    logoutUser
+    logoutUser,
+    startups
   } = useApp();
 
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -332,18 +333,18 @@ export const NavigationBar: React.FC = () => {
 
       {/* 3. SECONDARY FAST-HOP FLOW NAVIGATION */}
       <div className="bg-[#0F3854] text-slate-200 px-4 py-2 text-xs overflow-x-auto whitespace-nowrap border-b border-[#1D4E72]">
-        <div className="max-w-[1360px] mx-auto flex items-center gap-4">
-          <span className="font-semibold text-slate-300 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> {t("scenario.flow")}
-          </span>
+        <div className="max-w-[1360px] mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
+            <span className="font-semibold text-slate-300 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider mr-1">
+              <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> {t("scenario.flow")}
+            </span>
             <NavPill label={t("flow.landing")} active={activeView === "landing"} onClick={() => setActiveView("landing")} />
             <span className="text-slate-500">→</span>
             <NavPill label={t("flow.govDashboard")} active={activeView === "gov_dashboard"} onClick={() => { setRole("government"); setActiveView("gov_dashboard"); }} />
             <span className="text-slate-500">→</span>
             <NavPill label={t("flow.createChallenge")} active={activeView === "create_challenge"} onClick={() => { setRole("government"); setActiveView("create_challenge"); }} />
             <span className="text-slate-500">→</span>
-            <NavPill label={t("flow.aiMatches")} active={activeView === "ai_startup_matches"} onClick={() => setActiveView("ai_startup_matches")} />
+            <NavPill label={`${t("flow.aiMatches")} (${startups?.length || 0})`} active={activeView === "ai_startup_matches"} onClick={() => setActiveView("ai_startup_matches")} />
             <span className="text-slate-500">→</span>
             <NavPill label={t("flow.startupProfile")} active={activeView === "startup_profile"} onClick={() => setActiveView("startup_profile")} />
             <span className="text-slate-500">→</span>

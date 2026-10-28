@@ -261,7 +261,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const saved = localStorage.getItem(DEMO_STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed.startups) return parsed.startups;
+          if (parsed.startups && Array.isArray(parsed.startups)) {
+            const existingIds = new Set(parsed.startups.map((s: any) => s.id));
+            const missing = sampleStartups.filter(s => !existingIds.has(s.id));
+            if (missing.length > 0) {
+              return [...parsed.startups, ...missing];
+            }
+            return parsed.startups;
+          }
         }
       } catch {
         // Ignore
@@ -514,6 +521,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           patentsCount: a.patents_count || 1,
           evidenceLinks: a.evidence_links || [],
         })));
+      }
+
+      // Real Mode Startups Directory
+      const resStartups = await fetch("/api/startups", { headers });
+      const startupsData = await resStartups.json();
+      if (startupsData.success && Array.isArray(startupsData.startups)) {
+        setRealStartups(startupsData.startups);
       }
     } catch (err) {
       console.error("Failed to refresh live data:", err);
