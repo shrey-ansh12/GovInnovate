@@ -97,3 +97,13 @@ body {
   border: none !important;
   box-shadow: none !important;
 }
+
+/* Prevent Google Translate font tags from capturing pointer events or breaking React synthetic event delegation */
+font {
+  pointer-events: none !important;
+}
+
+/* Ensure Google Translate dropdown and frame stay completely invisible */
+.goog-te-combo {
+  display: none !important;
+}
