@@ -4,7 +4,7 @@ import { AppProvider } from "@/context/AppContext";
 import { GoogleTranslateProvider } from "@/components/GoogleTranslateProvider";
 
 export const metadata: Metadata = {
-  title: "GovInnovate | National Public Innovation Sandbox",
+  title: "GovInnovate | National Public Innovation Platform",
   description: "Empowering Public Sector Missions Through Verified Startup Innovation under GFR 2017 Rule 173 Statutory Safe Harbor.",
 };
 

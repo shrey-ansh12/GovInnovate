@@ -30,7 +30,7 @@ export const Chatbot: React.FC = () => {
     {
       id: "msg-1",
       sender: "bot",
-      text: "Namaste! I am the GovInnovate Civic Assistant. How can I help you navigate public innovation challenges, DPIIT startup relaxations, or the 90-day sandbox pilot?",
+      text: "Namaste! I am the GovInnovate Civic Assistant. How can I help you navigate public innovation challenges, DPIIT startup relaxations, or the 90-day pilot?",
       timestamp: "Just now",
       source: "GovInnovate Platform",
     },
@@ -107,7 +107,7 @@ export const Chatbot: React.FC = () => {
 
   const quickChips = [
     "What are GFR 149/170 startup exemptions?",
-    "How does the 90-day sandbox pilot work?",
+    "How does the 90-day pilot work?",
     "Explain the 5-pillar scoring formula",
     "How to switch between Real and Demo mode?",
   ];
@@ -118,11 +118,11 @@ export const Chatbot: React.FC = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-[#0F3854] text-white rounded-full shadow-xl hover:bg-[#1D4E72] hover:scale-105 transition-all duration-200 border border-[#1D4E72]"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-[#0F3854] text-white rounded-full shadow-lg hover:bg-[#154569] hover:shadow-[0_8px_30px_rgba(15,56,84,0.45)] hover:-translate-y-1 active:translate-y-0 active:scale-95 transition-all duration-300 cursor-pointer border border-[#1D4E72]/80 group"
           aria-label="Open GovInnovate Civic Assistant"
         >
           <div className="relative">
-            <Bot className="h-5 w-5 text-emerald-400" />
+            <Bot className="h-5 w-5 text-emerald-400 group-hover:drop-shadow-[0_0_8px_rgba(52,211,153,0.8)] transition-all" />
             <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
           </div>
           <span className="text-xs font-semibold tracking-wide">Civic Assistant</span>
@@ -131,7 +131,7 @@ export const Chatbot: React.FC = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[92vw] sm:w-[410px] h-[550px] max-h-[85vh] bg-white rounded-xl shadow-2xl border border-[#E2DED6] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 w-[92vw] sm:w-[410px] h-[550px] max-h-[85vh] bg-white rounded-2xl shadow-[0_20px_50px_rgba(10,37,64,0.25)] border border-[#D5D0C7] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Header */}
           <div className="bg-[#0F3854] text-white p-4 flex items-center justify-between border-b border-[#1D4E72]">
             <div className="flex items-center gap-2.5">
@@ -145,7 +145,7 @@ export const Chatbot: React.FC = () => {
                     AI Knowledge
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-300">GFR 2017 & Sandbox Workflow Guide</p>
+                <p className="text-[10px] text-slate-300">GFR 2017 & Pilot Workflow Guide</p>
               </div>
             </div>
             <button
@@ -211,7 +211,7 @@ export const Chatbot: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => handleSend(chip)}
-                className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#F2EFEB] hover:bg-[#E7E3DC] text-[10px] font-medium text-[#0F3854] border border-[#E2DED6] transition-colors shrink-0"
+                className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#F2EFEB] hover:bg-[#E7E3DC] hover:border-[#CBD5E1] hover:shadow-2xs hover:-translate-y-0.5 active:translate-y-0 text-[10px] font-medium text-[#0F3854] border border-[#E2DED6] transition-all shrink-0 cursor-pointer"
               >
                 {chip}
               </button>
@@ -238,7 +238,7 @@ export const Chatbot: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="p-2 rounded bg-[#0F3854] text-white hover:bg-[#1D4E72] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-lg bg-[#0F3854] text-white hover:bg-[#154569] hover:shadow-[0_0_12px_rgba(15,56,84,0.35)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
               >
                 <Send className="h-4 w-4" />
               </button>

@@ -206,7 +206,7 @@ export const ScaleUp: React.FC = () => {
                     Pilot Concluded (No Scale)
                   </div>
                   <p className="text-[11px] text-[#5B6A78] mt-1">
-                    Conclude sandbox pilot without commercial scale-up with recorded deficiencies.
+                    Conclude pilot without commercial scale-up with recorded deficiencies.
                   </p>
                 </div>
               </label>

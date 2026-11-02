@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         configured: false,
-        message: "Application validated and registered in local sandbox session.",
+        message: "Application validated and registered in local session.",
         application: {
           id: generatedId,
           challengeId,

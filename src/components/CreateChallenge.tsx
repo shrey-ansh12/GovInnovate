@@ -404,9 +404,9 @@ export const CreateChallenge: React.FC = () => {
       <div>
         <div className="flex items-center gap-2 text-xs font-mono font-medium text-[#0F3854] uppercase tracking-wider mb-2">
           <Building2 className="h-4 w-4" />
-          Government Procurement Desk • GFR 2017 Sandbox Framework
+          Government Procurement Desk • GFR 2017 Pilot Framework
           <span className="ml-2 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-100 text-emerald-800 border border-emerald-300">
-            {appMode === "real" ? "Real Database Persistence" : "Sandbox Demo Mode"}
+            {appMode === "real" ? "Real Database Persistence" : "Demo Mode"}
           </span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">

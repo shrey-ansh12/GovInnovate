@@ -1,6 +1,6 @@
 # GovInnovate - Startup-Friendly Public Procurement Platform
 
-A modern GovTech web application prototype enabling government departments to identify, sandbox pilot, evaluate, procure, and scale innovative solutions from DPIIT-recognized startups under General Financial Rules (GFR 2017) startup exemptions.
+A modern GovTech web application prototype enabling government departments to identify, pilot, evaluate, procure, and scale innovative solutions from DPIIT-recognized startups under General Financial Rules (GFR 2017) startup exemptions.
 
 ---
 
@@ -24,7 +24,7 @@ A modern GovTech web application prototype enabling government departments to id
    - AI Challenge Generator: Decompose unstructured departmental pain points into structured challenges with quantifiable SLAs.
    - AI Startup Matching: Real-time discovery of eligible startups with match scores & risk flags.
    - Application Review & DPIIT Verification: Validate GFR Rule 149/170 relaxations.
-   - Pilot Management: Commission 90-day sandbox pilot with on-ground telemetry tracking.
+   - Pilot Management: Commission 90-day pilot with on-ground telemetry tracking.
    - Direct Procurement & Scale-Up: Approve validation findings and sanction commercial rollout from 5 to 50 locations.
 
 2. **DPIIT Verified Startup (`/startup_dashboard`):**

@@ -42,7 +42,7 @@ export const BlockchainSafetyBanner: React.FC<BlockchainSafetyBannerProps> = ({ 
           </div>
           <button
             onClick={openBlockchainModal}
-            className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all shadow-xs flex items-center gap-1.5"
+            className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 hover:shadow-[0_0_16px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 active:translate-y-0 text-white font-bold text-xs transition-all shadow-xs flex items-center gap-1.5 cursor-pointer group"
             title="Open Blockchain Explorer & Proofs"
           >
             <Blocks className="h-4 w-4" />

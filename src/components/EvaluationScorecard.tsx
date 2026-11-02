@@ -94,7 +94,7 @@ export const EvaluationScorecard: React.FC = () => {
           viability: "Procurement cost breakdown adheres to GFR Rule 173 guidelines."
         });
         setEvidenceReferences("Technical proposal document, lab verification certificates, DPIIT recognition letter.");
-        setFeedback(`Preliminary evaluation for ${app.startupName}: Meets core technical thresholds for 90-day sandbox pilot.`);
+        setFeedback(`Preliminary evaluation for ${app.startupName}: Meets core technical thresholds for 90-day pilot.`);
       }
     }
   }, [app?.id]);

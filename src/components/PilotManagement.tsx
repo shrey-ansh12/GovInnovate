@@ -154,7 +154,7 @@ export const PilotManagement: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-medium text-emerald-400 uppercase tracking-wider mb-2">
               <Activity className="h-4 w-4" />
-              90-Day Municipal Pilot Sandbox • Live Telemetry & Evidence Verification
+              90-Day Municipal Pilot • Live Telemetry & Evidence Verification
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
               {pilot.title}
@@ -186,7 +186,7 @@ export const PilotManagement: React.FC = () => {
         {/* Progress Bar of the 90 days */}
         <div className="mt-8 pt-6 border-t border-[#1D4E72]">
           <div className="flex items-center justify-between text-xs text-slate-300 mb-2 font-mono">
-            <span>Pilot Sandbox Day: <strong className="text-white">Day {pilot.currentDay} of {pilot.totalDays}</strong></span>
+            <span>Pilot Day: <strong className="text-white">Day {pilot.currentDay} of {pilot.totalDays}</strong></span>
             <span className="text-emerald-300 font-semibold">Phase: {pilot.phase}</span>
           </div>
           <div className="h-2 w-full bg-[#0A2540] rounded overflow-hidden border border-[#1D4E72]">
@@ -215,7 +215,7 @@ export const PilotManagement: React.FC = () => {
       <div className="mb-8">
         <h2 className="text-base font-bold text-[#0A2540] mb-4 flex items-center gap-2">
           <MapPin className="h-4 w-4 text-[#0F3854]" />
-          5 Active Municipal Sandbox Monitoring Sites
+          5 Active Municipal Monitoring Sites
         </h2>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -226,7 +226,7 @@ export const PilotManagement: React.FC = () => {
             { name: "East Industrial Border", ph: "7.6 pH", turb: "2.1 NTU", status: "Flagged & Neutralized", lead: "0.004 mg/L" },
             { name: "South Distribution Gate", ph: "7.3 pH", turb: "1.3 NTU", status: "Nominal", lead: "0.001 mg/L" },
           ].map((site, i) => (
-            <div key={i} className="bg-white rounded border border-[#E2DED6] p-4 space-y-2 shadow-2xs">
+            <div key={i} className="bg-white rounded-xl border border-[#E2DED6] p-4 space-y-2 shadow-2xs hover:shadow-md hover:-translate-y-0.5 hover:border-[#CBD5E1] transition-all duration-200">
               <div className="flex items-center justify-between font-mono">
                 <span className="text-[10px] uppercase font-semibold text-[#5B6A78]">Site 0{i+1}</span>
                 <span className="inline-block w-2 h-2 rounded-full bg-[#147452]"></span>

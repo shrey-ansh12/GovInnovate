@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      source: "DigiLocker Sandbox Gateway",
+      source: "DigiLocker Gateway",
       protocol: "DigiLocker Pull URI v2.1 (OAuth 2.0 PKCE)",
       documentRecord: {
         id: `DL-PULL-${Date.now().toString().slice(-6)}`,
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
         officialStatus: "Officially Verified", // DigiLocker pull carries direct issuer signature
         verifiedBy: "DigiLocker Gateway (Govt of India)",
         verifiedAt: new Date().toISOString().replace("T", " ").slice(0, 19),
-        source: "DigiLocker Sandbox",
+        source: "DigiLocker",
         rawTextPreview: "DigiLocker Cryptographically Signed Document URI: in.gov.dpiit-DPREC-" + normalizedDpiit
       }
     });

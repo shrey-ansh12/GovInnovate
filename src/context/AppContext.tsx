@@ -145,7 +145,7 @@ interface AppContextType {
   verifyEligibilityAction: (appId: string) => Promise<void> | void;
   shortlistApplicationAction: (appId: string) => Promise<void> | void;
   
-  // Document Verification (Real PDF & DigiLocker Sandbox)
+  // Document Verification (Real PDF & DigiLocker)
   uploadAndParseDpiitAction: (startupId: string, file: File) => Promise<boolean>;
   pullDigiLockerAction: (startupId: string, dpiitNumber: string) => Promise<boolean>;
   officialReviewDpiitAction: (startupId: string, approved: boolean, notes?: string) => void;
@@ -1265,7 +1265,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       addAuditLog(
         "DIGILOCKER_URI_PULL_SUCCESS",
-        `DigiLocker Sandbox URI retrieved for ${startupId}: URI ${data.digiLockerUri}, Doc SHA-256: ${docRecord.fileHash.slice(0, 16)}.... Preliminary verification passed.`,
+        `DigiLocker URI retrieved for ${startupId}: URI ${data.digiLockerUri}, Doc SHA-256: ${docRecord.fileHash.slice(0, 16)}.... Preliminary verification passed.`,
         "Security",
         "startup"
       );
@@ -1667,7 +1667,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: customPilot?.id || `PILOT-WQ-${new Date().getFullYear()}-01`,
       challengeId: challenge.id,
       startupId: shortlistedApp?.startupId || "ST-AQUASENSE",
-      title: customPilot?.title || `90-Day Sandbox Pilot: ${challenge.title}`,
+      title: customPilot?.title || `90-Day Pilot: ${challenge.title}`,
       currentDay: customPilot?.currentDay || 45,
       totalDays: 90,
       locationsCount: challenge.targetLocations || 5,

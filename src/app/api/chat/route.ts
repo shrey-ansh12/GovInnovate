@@ -9,10 +9,10 @@ const KNOWLEDGE_BASE = [
     reference: "Manual for Procurement of Goods 2017 / GFR Rule 149 & 170(i)"
   },
   {
-    keywords: ["pilot", "90-day", "sandbox", "field trial", "duration", "sanction"],
-    topic: "90-Day Civic Sandbox Pilot",
-    answer: "The 90-day sandbox pilot allows government departments to deploy a startup's working technology (TRL 7+) across initial intake points (typically 5 sites) with milestone-governed payouts. Real-time telemetry, false-positive rates, and uptime are independently tracked before sanctioning scale-up.",
-    reference: "GovInnovate Sandbox Framework & Departmental Pilot Guidelines"
+    keywords: ["pilot", "90-day", "field trial", "duration", "sanction"],
+    topic: "90-Day Civic Pilot",
+    answer: "The 90-day pilot allows government departments to deploy a startup's working technology (TRL 7+) across initial intake points (typically 5 sites) with milestone-governed payouts. Real-time telemetry, false-positive rates, and uptime are independently tracked before sanctioning scale-up.",
+    reference: "GovInnovate Framework & Departmental Pilot Guidelines"
   },
   {
     keywords: ["score", "scoring", "5-pillar", "evaluat", "criteria", "metric"],
@@ -35,7 +35,7 @@ const KNOWLEDGE_BASE = [
   {
     keywords: ["demo", "real mode", "difference", "explore"],
     topic: "Real Mode vs. Demo Mode",
-    answer: "GovInnovate offers two distinct modes: 'Real Mode' connects to persistent Supabase databases with real authentication and role enforcement; 'Demo Mode' provides an isolated sandbox with pre-loaded scenarios (such as the Jal Shakti water sensing challenge) so evaluators can test workflows safely without writing to live government records.",
+    answer: "GovInnovate offers two distinct modes: 'Real Mode' connects to persistent Supabase databases with real authentication and role enforcement; 'Demo Mode' provides an isolated demo environment with pre-loaded scenarios (such as the Jal Shakti water sensing challenge) so evaluators can test workflows safely without writing to live government records.",
     reference: "GovInnovate Platform Architecture"
   },
   {
@@ -62,11 +62,11 @@ export async function POST(req: NextRequest) {
         const messages = [
           {
             role: "system",
-            content: `You are GovInnovate Civic AI Assistant — a specialized assistant for the GovInnovate Public Sector Innovation Sandbox.
+            content: `You are GovInnovate Civic AI Assistant — a specialized assistant for the GovInnovate Public Sector Innovation Platform.
 Your role is to explain how government departments identify, pilot, evaluate, and scale innovative solutions from DPIIT startups under GFR 2017 rules.
 Always maintain a helpful, civic, and professional tone.
-Cite applicable rules (e.g. GFR 149/170, DPIIT criteria, 5-Pillar Scorecard, 90-day sandbox pilot steps).
-Always include the disclaimer that GovInnovate is a procurement evaluation sandbox and does not replace statutory tender approvals or constitute automatic contract award.`
+Cite applicable rules (e.g. GFR 149/170, DPIIT criteria, 5-Pillar Scorecard, 90-day pilot steps).
+Always include the disclaimer that GovInnovate is a procurement evaluation platform and does not replace statutory tender approvals or constitute automatic contract award.`
           },
           ...(Array.isArray(conversationHistory) ? conversationHistory.slice(-6) : []),
           { role: "user", content: message }
@@ -122,7 +122,7 @@ Always include the disclaimer that GovInnovate is a procurement evaluation sandb
     if (maxScore > 0) {
       answerText = `${bestMatch.answer}\n\n**Statutory Reference:** ${bestMatch.reference}`;
     } else {
-      answerText = `GovInnovate is a transparent procurement-to-pilot sandbox connecting public sector challenges with verified DPIIT startups under GFR 2017 Rule 149/170 exemptions. You can ask about:\n• How GFR startup turnover/experience exemptions work\n• The 90-day sandbox pilot lifecycle\n• 5-Pillar evaluation scorecard (Innovation, Feasibility, Impact, Scalability, Viability)\n• How to publish a challenge or submit a proposal\n• Switching between Real Mode and Demo Mode`;
+      answerText = `GovInnovate is a transparent procurement-to-pilot platform connecting public sector challenges with verified DPIIT startups under GFR 2017 Rule 149/170 exemptions. You can ask about:\n• How GFR startup turnover/experience exemptions work\n• The 90-day pilot lifecycle\n• 5-Pillar evaluation scorecard (Innovation, Feasibility, Impact, Scalability, Viability)\n• How to publish a challenge or submit a proposal\n• Switching between Real Mode and Demo Mode`;
     }
 
     return NextResponse.json({

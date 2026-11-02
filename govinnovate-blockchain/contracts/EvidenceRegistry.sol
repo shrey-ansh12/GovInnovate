@@ -54,7 +54,7 @@ contract EvidenceRegistry {
     /**
      * @notice Register a tamper-evident SHA-256 document hash associated with an evidence ID and pilot ID.
      * @param evidenceId Unique 32-byte identifier for the evidence or milestone artifact.
-     * @param pilotId Unique 32-byte identifier for the pilot challenge sandbox.
+     * @param pilotId Unique 32-byte identifier for the pilot challenge.
      * @param documentHash The SHA-256 cryptographic digest of the document bytes.
      */
     function registerEvidence(

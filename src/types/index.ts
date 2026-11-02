@@ -39,7 +39,7 @@ export interface DocumentVerificationRecord {
   verifiedBy?: string;
   verifiedAt?: string;
   rejectionReason?: string;
-  source: "Direct Upload" | "DigiLocker Sandbox";
+  source: "Direct Upload" | "DigiLocker";
   rawTextPreview?: string;
 }
 

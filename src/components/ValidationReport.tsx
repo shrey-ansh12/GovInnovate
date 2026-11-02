@@ -26,7 +26,7 @@ export const ValidationReport: React.FC = () => {
               <span className="text-xs font-mono text-[#5B6A78]">Doc Ref: GOV-VAL-2026-WQ90</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight mt-2">
-              90-Day Sandbox Pilot Performance Validation
+              90-Day Pilot Performance Validation
             </h1>
             <p className="text-xs text-[#5B6A78] mt-1">
               Issued by: National Water Mission Technical Board & Independent Water Testing Laboratory

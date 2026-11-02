@@ -70,7 +70,7 @@ export const NavigationBar: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="inline-flex items-center gap-1.5 font-medium text-slate-100">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>National Public Innovation Sandbox • Transparent Procurement-to-Pilot Rails</span>
+              <span>National Public Innovation Platform • Transparent Procurement-to-Pilot Rails</span>
             </div>
             <span className="hidden md:inline text-white/30">•</span>
             <span className="hidden md:inline text-slate-300 font-normal">GFR 2017 Innovation Guidelines (Safe Harbor)</span>
@@ -116,7 +116,7 @@ export const NavigationBar: React.FC = () => {
             <span className="flex items-center gap-1.5 font-medium">
               <PlayCircle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
               <span>
-                <strong>Demo Sandbox Active:</strong> You are exploring simulated scenario data. Real database records and live tenders are strictly unaffected.
+                <strong>Demo Mode Active:</strong> You are exploring simulated scenario data. Real database records and live tenders are strictly unaffected.
               </span>
             </span>
             <button
@@ -161,8 +161,8 @@ export const NavigationBar: React.FC = () => {
             className="flex items-center gap-3 cursor-pointer group shrink-0" 
             onClick={() => setActiveView("landing")}
           >
-            <div className="w-9 h-9 rounded-sm bg-[#0F3854] flex items-center justify-center text-white shadow-xs">
-              <span className="material-symbols-outlined text-[20px]">account_balance</span>
+            <div className="w-9 h-9 rounded-lg bg-[#0F3854] flex items-center justify-center text-white shadow-xs group-hover:shadow-[0_0_14px_rgba(15,56,84,0.35)] group-hover:scale-105 transition-all duration-200">
+              <span className="material-symbols-outlined text-[20px] transition-transform duration-200 group-hover:scale-110">account_balance</span>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
@@ -427,10 +427,10 @@ export const NavigationBar: React.FC = () => {
 const NavPill: React.FC<{ label: string; active: boolean; onClick: () => void }> = ({ label, active, onClick }) => (
   <button
     onClick={onClick}
-    className={`px-3 py-1 rounded text-[11px] font-mono transition-all ${
+    className={`px-3 py-1 rounded-full text-[11px] font-mono transition-all duration-200 cursor-pointer ${
       active 
-        ? "bg-white text-[#0F3854] font-bold shadow-xs" 
-        : "text-slate-300 hover:text-white hover:bg-white/10"
+        ? "bg-white text-[#0F3854] font-bold shadow-xs ring-2 ring-emerald-400/40 hover:-translate-y-0.5" 
+        : "text-slate-300 hover:text-white hover:bg-white/10 hover:-translate-y-0.5"
     }`}
   >
     {label}

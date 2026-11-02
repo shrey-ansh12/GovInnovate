@@ -357,13 +357,13 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm font-sans transition-all">
       <div 
-        className="relative w-full max-w-xl bg-white rounded shadow-2xl border border-[#E2DED6] overflow-hidden text-[#141F2B]"
+        className="relative w-full max-w-xl bg-white rounded-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] border border-[#E2DED6] overflow-hidden text-[#141F2B] animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Banner */}
-        <div className="p-6 bg-[#0F3854] text-white border-b border-[#1D4E72]">
+        <div className="p-6 bg-gradient-to-r from-[#0F3854] to-[#144264] text-white border-b border-[#1D4E72]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded bg-white/10 border border-white/20">
@@ -377,7 +377,7 @@ const AuthModalInner: React.FC<AuthModalInnerProps> = ({ initialMode, initialRol
               </div>
               <div>
                 <span className="text-[10px] font-mono font-medium uppercase tracking-wider px-2 py-0.5 rounded bg-white/10 border border-white/20">
-                  {appMode === "real" ? "Real Authentication (Supabase)" : "Sandbox Prototype (Demo Mode)"}
+                  {appMode === "real" ? "Real Authentication (Supabase)" : "Prototype (Demo Mode)"}
                 </span>
                 <h2 className="text-xl font-semibold mt-1">
                   {mode === "signup" ? "Create Account & Register" : mode === "forgot" ? "Reset Password" : "Sign In to Platform"}

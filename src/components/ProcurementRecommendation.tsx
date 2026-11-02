@@ -56,14 +56,14 @@ export const ProcurementRecommendation: React.FC = () => {
               Evaluation Benchmark & Technical Feasibility
             </h3>
             <p className="leading-relaxed">
-              Following verified completion of the 90-day sandbox pilot under Sanction Order PILOT-WQ-2026-01:
+              Following verified completion of the 90-day pilot under Sanction Order PILOT-WQ-2026-01:
             </p>
             <ul className="space-y-1.5 list-disc pl-5 font-mono text-[#5B6A78]">
               <li>
                 <strong className="text-[#141F2B]">Proprietary Optical Technology:</strong> The contractor (AquaSense AI) holds 3 patents on reagent-free submerged sensors, eliminating continuous consumable tender overheads.
               </li>
               <li>
-                <strong className="text-[#141F2B]">Sandbox Performance Benchmark:</strong> Exceeded all 5 service level agreements (SLAs), achieving 99.8% sensor uptime and 2.8-minute alert latency against the 5-minute requirement.
+                <strong className="text-[#141F2B]">Pilot Performance Benchmark:</strong> Exceeded all 5 service level agreements (SLAs), achieving 99.8% sensor uptime and 2.8-minute alert latency against the 5-minute requirement.
               </li>
               <li>
                 <strong className="text-[#141F2B]">Demonstrated Value for Money:</strong> Generates quantified taxpayer savings of ₹4.8 Crore per annum once fully deployed across 50 municipal wards.
@@ -74,7 +74,7 @@ export const ProcurementRecommendation: React.FC = () => {
           {/* Allocation Breakdown */}
           <div className="grid sm:grid-cols-3 gap-4 text-xs font-mono">
             <div className="p-4 rounded border border-[#E2DED6] bg-white">
-              <p className="text-[#5B6A78] uppercase text-[10px]">Phase 1 Sandbox</p>
+              <p className="text-[#5B6A78] uppercase text-[10px]">Phase 1 Pilot</p>
               <p className="text-lg font-bold text-[#0A2540] mt-1">₹28.50 Lakhs</p>
               <p className="text-[11px] text-[#147452] mt-1">5 Sites Completed</p>
             </div>

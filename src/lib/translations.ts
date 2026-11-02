@@ -20,7 +20,7 @@ export const translations: Record<SupportedLanguage, Record<string, string>> = {
   en: {
     // Brand & Header
     "brand.name": "GovInnovate",
-    "brand.badge": "GovTech Sandbox",
+    "brand.badge": "GovTech Platform",
     "brand.tagline": "Public Procurement Mechanism for Startups",
     
     // Auth & Actions

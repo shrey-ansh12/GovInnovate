@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         configured: false,
-        message: "Challenge validated successfully. Saved to local sandbox state (Supabase not configured).",
+        message: "Challenge validated successfully. Saved to local state (Supabase not configured).",
         challenge: {
           id: generatedId,
           title,
@@ -163,7 +163,7 @@ export async function POST(req: NextRequest) {
         actor_name: department,
         actor_role: "government",
         action: "CHALLENGE_CREATED",
-        details: `Procurement Challenge "${title}" published under GFR 2017 sandbox rules.`,
+        details: `Procurement Challenge "${title}" published under GFR 2017 pilot rules.`,
         badge: "Procurement",
         entity_type: "challenge",
         entity_id: challengeId,

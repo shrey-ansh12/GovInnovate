@@ -61,7 +61,7 @@ export const ApplicationReview: React.FC = () => {
             Review Submitted Startup Proposals ({applications.length})
           </h1>
           <p className="text-xs text-[#5B6A78] mt-1">
-            Review DPIIT eligibility, inspect 5-pillar technical scores, compare candidates side-by-side, and sanction sandbox pilots.
+            Review DPIIT eligibility, inspect 5-pillar technical scores, compare candidates side-by-side, and sanction pilots.
           </p>
         </div>
 
@@ -347,7 +347,7 @@ export const ApplicationReview: React.FC = () => {
                         className="px-4 py-2 rounded bg-[#0F3854] hover:bg-[#1D4E72] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs"
                       >
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                        <span>Commission 90-Day Pilot Sandbox</span>
+                        <span>Commission 90-Day Pilot</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </button>
                     )}
@@ -361,8 +361,8 @@ export const ApplicationReview: React.FC = () => {
 
       {/* SIDE-BY-SIDE COMPARISON MODAL */}
       {compareModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-2xl border border-[#E2DED6] max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] border border-[#E2DED6] max-w-5xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-150">
             {/* Modal Header */}
             <div className="p-6 border-b border-[#EDE9E1] flex items-center justify-between sticky top-0 bg-white z-10">
               <div className="flex items-center gap-2">
@@ -496,7 +496,7 @@ export const ApplicationReview: React.FC = () => {
               </div>
 
               <div className="mt-6 p-4 rounded bg-[#FAF8F5] border border-[#E2DED6] text-xs text-[#5B6A78]">
-                <strong>Procurement Assessment Summary:</strong> AquaSense AI Innovations demonstrates higher technical readiness (TRL-8 vs TRL-7), 78% local content, 3 granted patents, and an objective score of 95/100, fulfilling all statutory requirements for the 5-location sandbox pilot.
+                <strong>Procurement Assessment Summary:</strong> AquaSense AI Innovations demonstrates higher technical readiness (TRL-8 vs TRL-7), 78% local content, 3 granted patents, and an objective score of 95/100, fulfilling all statutory requirements for the 5-location pilot.
               </div>
             </div>
 

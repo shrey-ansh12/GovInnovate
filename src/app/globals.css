@@ -2,7 +2,7 @@
 
 @theme {
   --color-nordic-paper: #FAF8F5;
-  --color-nordic-card: #FFFFFF:
+  --color-nordic-card: #FFFFFF;
   --color-nordic-slate: #0F3854;
   --color-nordic-slateLight: #1D4E72;
   --color-nordic-navy: #0A2540; 
@@ -21,32 +21,139 @@
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+/* ==========================================================================
+   PREMIUM BASE & SMOOTH RENDERING
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+}
+
 body {
   background-color: #FAF8F5;
   color: #141F2B;
   font-family: 'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(15, 56, 84, 0.018) 0px, transparent 50%),
+    radial-gradient(at 85% 85%, rgba(20, 116, 82, 0.018) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
-/* Custom scrollbar for GovTech portal */
+/* Custom polished scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
+  background: #F4F1EA;
 }
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
-  border-radius: 4px;
+  border-radius: 9999px;
+  border: 1.5px solid #F4F1EA;
+  transition: background-color 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
 }
 
-details summary::-webkit-details-marker {
-  display: none;
+/* ==========================================================================
+   KEYFRAME ANIMATIONS
+   ========================================================================== */
+
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulseGlowEmerald {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(20, 116, 82, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(20, 116, 82, 0);
+  }
+}
+
+@keyframes pulseGlowAmber {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(217, 119, 6, 0);
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes shimmerGleam {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ==========================================================================
+   SUBTLE ICON GLOW EFFECTS (HOVER & ACTIVE STATES)
+   ========================================================================== */
+
+svg.lucide, 
+.material-symbols-outlined {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+              filter 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.2s ease;
+}
+
+/* Interactive elements trigger subtle icon glow */
+button:hover svg.lucide,
+a:hover svg.lucide,
+.group:hover svg.lucide,
+.cursor-pointer:hover svg.lucide {
+  filter: drop-shadow(0 0 5px rgba(20, 116, 82, 0.4));
+}
+
+/* Targeted color glows for maximum visual sophistication */
+svg.text-emerald-300, svg.text-emerald-400, svg.text-emerald-500, svg.text-emerald-600,
+.text-emerald-400 svg, .text-emerald-500 svg, .text-emerald-600 svg,
+button:hover .text-emerald-300, button:hover .text-emerald-400, button:hover .text-emerald-500,
+.group:hover .text-emerald-400, .group:hover .text-emerald-500 {
+  filter: drop-shadow(0 0 6px rgba(20, 116, 82, 0.55));
+}
+
+svg.text-amber-300, svg.text-amber-400, svg.text-amber-500,
+.text-amber-400 svg, .text-amber-500 svg,
+button:hover .text-amber-300, button:hover .text-amber-400,
+.group:hover .text-amber-400, .group:hover .text-amber-500 {
+  filter: drop-shadow(0 0 6px rgba(217, 119, 6, 0.55));
+}
+
+svg.text-blue-300, svg.text-blue-400, svg.text-cyan-300, svg.text-cyan-400,
+button:hover .text-blue-400, button:hover .text-cyan-400,
+.group:hover .text-blue-400, .group:hover .text-cyan-400 {
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.55));
+}
+
+/* Direct hover on icons gives tactile micro-scale */
+svg.lucide:hover {
+  transform: scale(1.08);
 }
 
 /* Material symbol fallback sizing */
@@ -66,7 +173,134 @@ details summary::-webkit-details-marker {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Hide default Google Translate top bar and tooltips for clean UI */
+button:hover .material-symbols-outlined,
+.group:hover .material-symbols-outlined {
+  filter: drop-shadow(0 0 5px rgba(20, 116, 82, 0.4));
+  transform: scale(1.05);
+}
+
+/* ==========================================================================
+   ELEGANT BUTTONS & REACTIVE TRANSITIONS
+   ========================================================================== */
+
+button:not(:disabled),
+a[role="button"] {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              color 0.2s ease;
+}
+
+/* Elevated hover for buttons with background/padding */
+button:not(:disabled):hover {
+  box-shadow: 0 4px 14px -2px rgba(10, 37, 64, 0.12), 0 2px 6px -1px rgba(10, 37, 64, 0.08);
+}
+
+/* Tactical click response */
+button:not(:disabled):active {
+  transform: scale(0.982);
+  transition-duration: 0.08s;
+}
+
+/* Primary dark brand button extra sheen */
+button.bg-\[\#0F3854\]:hover {
+  background-color: #154569;
+  box-shadow: 0 6px 18px -2px rgba(15, 56, 84, 0.35);
+}
+
+/* Primary emerald button extra sheen */
+button.bg-\[\#147452\]:hover {
+  background-color: #106245;
+  box-shadow: 0 6px 18px -2px rgba(20, 116, 82, 0.35);
+}
+
+/* ==========================================================================
+   PREMIUM CARD ELEVATION & BORDER REFINEMENT
+   ========================================================================== */
+
+/* All bordered white cards receive smooth elevation physics */
+.bg-white.rounded-xl.border,
+.bg-white.rounded-lg.border,
+.bg-white.rounded-2xl.border,
+.bg-white.rounded.border {
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s ease;
+}
+
+/* Interactive cards lift gracefully on hover */
+.cursor-pointer.bg-white.rounded-xl.border:hover,
+.cursor-pointer.bg-white.rounded-lg.border:hover,
+.cursor-pointer.bg-white.rounded-2xl.border:hover {
+  transform: translateY(-2.5px);
+  box-shadow: 0 12px 28px -6px rgba(10, 37, 64, 0.09), 0 6px 14px -4px rgba(10, 37, 64, 0.05);
+  border-color: #CBD5E1;
+}
+
+/* Subtly highlight card header/top boundary */
+.bg-white.rounded-xl.border {
+  box-shadow: 0 1px 3px 0 rgba(15, 56, 84, 0.04), 0 1px 2px -1px rgba(15, 56, 84, 0.03);
+}
+
+/* ==========================================================================
+   INPUTS & FORM CONTROLS REACTIVITY
+   ========================================================================== */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  transition: border-color 0.18s ease, 
+              box-shadow 0.18s ease, 
+              background-color 0.18s ease;
+}
+
+input:hover:not(:disabled),
+textarea:hover:not(:disabled),
+select:hover:not(:disabled) {
+  border-color: #B5AFA4;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #0F3854 !important;
+  box-shadow: 0 0 0 3px rgba(15, 56, 84, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ==========================================================================
+   PULSE & LIVE STATUS BADGES
+   ========================================================================== */
+
+.animate-pulse {
+  animation: pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Live green telemetry dot radial glow */
+.bg-emerald-400.rounded-full,
+.bg-emerald-500.rounded-full,
+.bg-\[\#147452\].rounded-full {
+  box-shadow: 0 0 6px rgba(20, 116, 82, 0.6);
+}
+
+/* Amber indicator radial glow */
+.bg-amber-400.rounded-full,
+.bg-amber-500.rounded-full {
+  box-shadow: 0 0 6px rgba(217, 119, 6, 0.6);
+}
+
+/* ==========================================================================
+   GOOGLE TRANSLATE & SYSTEM OVERRIDES
+   ========================================================================== */
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
 .goog-te-banner-frame,
 .goog-te-banner-frame.skiptranslate,
 #goog-gt-tt,
@@ -98,7 +332,7 @@ body {
   box-shadow: none !important;
 }
 
-/* Prevent Google Translate font tags from capturing pointer events or breaking React synthetic event delegation */
+/* Prevent Google Translate font tags from capturing pointer events */
 font {
   pointer-events: none !important;
 }

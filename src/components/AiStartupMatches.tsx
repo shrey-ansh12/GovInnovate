@@ -137,7 +137,7 @@ export const AiStartupMatches: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-medium text-emerald-400 uppercase tracking-wider mb-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Statutory Sandbox Tender Rails • {challenges.length} Active Challenges Published</span>
+              <span>Statutory Pilot Tender Rails • {challenges.length} Active Challenges Published</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
               <span>{challenge.title}</span>

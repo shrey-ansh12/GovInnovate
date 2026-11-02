@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         mockMode: true,
-        message: "Supabase credentials are not configured in environment variables. Running in safe sandbox mode.",
+        message: "Supabase credentials are not configured in environment variables. Running in safe demo mode.",
         user: {
           id: `USR-${Date.now().toString().slice(-6)}`,
           email,
@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
     try {
       await supabase.from("notifications").insert({
         recipient_user_id: userId,
-        title: "Welcome to GovInnovate Sandbox",
+        title: "Welcome to GovInnovate",
         message: `Your account is registered as ${fullName} (${assignedRole.toUpperCase()}).`,
         type: "success"
       });

@@ -119,7 +119,7 @@ Issuance Date    : ${doc.date}
 Regulatory Status: ${doc.status}
 SHA-256 Checksum : ${doc.hash}
 Statutory Safe Harbor: GFR 2017 Rule 149/170/173
-Verification Rail: GovInnovate Public Sector Sandbox
+Verification Rail: GovInnovate Public Sector Platform
 =====================================================
 This digital enclosure is authenticated by the GovInnovate
 Cryptographic Verification Engine. Any byte alteration 

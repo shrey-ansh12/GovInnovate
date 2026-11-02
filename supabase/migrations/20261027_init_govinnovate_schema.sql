@@ -1,7 +1,7 @@
 -- ============================================================================
 -- GOVINNOVATE DATABASE SCHEMA & ROW LEVEL SECURITY (RLS) POLICIES
 -- Version: 20261027_init_govinnovate_schema.sql
--- Description: Core schema for GovInnovate Public Sector Innovation Sandbox
+-- Description: Core schema for GovInnovate Public Sector Innovation Platform
 -- ============================================================================
 
 -- 1. EXTENSIONS

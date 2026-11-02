@@ -7,7 +7,7 @@ Welcome to the **GovInnovate Blockchain Evidence Integrity Rail**. This subsyste
 ## 1. Architectural Rationale: Why SHA-256 & Why Blockchain?
 
 ### A. Why SHA-256 Checksums?
-In public sector innovation sandboxes, government departments require verifiable assurance that laboratory test reports, sensor telemetry logs, DPIIT recognition certificates, and milestone deliverables have not been altered after submission.
+In public sector innovation pilots, government departments require verifiable assurance that laboratory test reports, sensor telemetry logs, DPIIT recognition certificates, and milestone deliverables have not been altered after submission.
 
 * **Deterministic & Collision-Resistant:** Any input byte stream produces a unique 64-character hexadecimal digest (256 bits).
 * **Strict Avalanche Effect:** Altering even a single bit in a 50-page PDF document completely scrambles the output hash, immediately flagging unauthorized alterations.
@@ -107,7 +107,7 @@ The GovInnovate platform includes an automated local demonstration mode that ope
    ```
 3. Copy the deployed contract address (e.g., `0x5FbDB2315678afecb367f032d93F642f64180aa3`) to `GovInnovate/.env.local`.
 
-### Option B: In-Memory Simulated Sandbox (Zero-Config Hackathon Mode)
+### Option B: In-Memory Simulated Mode (Zero-Config Hackathon Mode)
 If no local node is running, the backend transparently activates `SimulatedBlockchainRegistry`:
 * Simulates smart contract registration with deterministic state and collision prevention.
 * Clearly marks all records with `[DEMO SIMULATED LEDGER]` badges.

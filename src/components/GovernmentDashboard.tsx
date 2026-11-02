@@ -46,31 +46,31 @@ export const GovernmentDashboard: React.FC = () => {
   return (
     <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-8 font-sans space-y-6">
       {/* Top Banner / Hero */}
-      <div className="bg-[#0F3854] text-white rounded-xl p-6 sm:p-8 border border-[#1D4E72] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-sm">
+      <div className="bg-gradient-to-r from-[#0F3854] to-[#124263] text-white rounded-2xl p-6 sm:p-8 border border-[#1D4E72]/90 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-md">
         <div>
           <div className="flex items-center gap-2 text-xs font-mono font-medium text-emerald-400 uppercase tracking-wider mb-2">
             <Building2 className="h-4 w-4" />
-            Public Procurement Innovation Desk • GFR Sandbox Rails
+            Public Procurement Innovation Desk • GFR Pilot Rails
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
             Government Department Procurement Hub
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
-            Publish procurement challenges, review DPIIT startup bids, perform side-by-side comparisons, oversee 90-day sandbox pilots, and record scale decisions.
+            Publish procurement challenges, review DPIIT startup bids, perform side-by-side comparisons, oversee 90-day pilots, and record scale decisions.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setActiveView("create_challenge")}
-            className="px-5 py-2.5 rounded-lg bg-white text-[#0F3854] font-bold text-xs hover:bg-slate-100 flex items-center gap-2 transition-colors shadow-2xs"
+            className="px-5 py-2.5 rounded-lg bg-white text-[#0F3854] font-bold text-xs hover:bg-slate-100 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 transition-all shadow-2xs cursor-pointer group"
           >
             <PlusCircle className="h-4 w-4 text-[#0F3854]" />
             <span>Create New Challenge</span>
           </button>
           <button
             onClick={() => setActiveView("ai_startup_matches")}
-            className="px-4 py-2.5 rounded-lg bg-[#147452] hover:bg-[#0f583e] text-white font-semibold text-xs border border-emerald-400/30 transition-colors flex items-center gap-2 shadow-2xs"
+            className="px-4 py-2.5 rounded-lg bg-[#147452] hover:bg-[#106245] text-white font-semibold text-xs border border-emerald-400/30 hover:shadow-[0_0_14px_rgba(20,116,82,0.4)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2 shadow-2xs cursor-pointer group"
           >
             <Sparkles className="h-4 w-4 text-emerald-300" />
             <span>AI Startup Matches ({startups.length})</span>
@@ -99,7 +99,7 @@ export const GovernmentDashboard: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div 
           onClick={() => setActiveView("ai_startup_matches")}
-          className="bg-white p-5 rounded-xl border border-[#E2DED6] shadow-2xs cursor-pointer hover:border-[#0F3854] transition-colors"
+          className="bg-white p-5 rounded-xl border border-[#E2DED6] shadow-2xs cursor-pointer hover:border-[#0F3854] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
           title="Click to browse startup directory and matches"
         >
           <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6A78] mb-1">Active Challenge</div>
@@ -142,7 +142,7 @@ export const GovernmentDashboard: React.FC = () => {
               Active Procurement Challenges ({challenges.length})
             </h2>
             <p className="text-xs text-[#5B6A78] mt-0.5">
-              Live tenders published in the National Innovation Sandbox. Select any challenge to immediately view distinct matching startups.
+              Live tenders published in the National Innovation Platform. Select any challenge to immediately view distinct matching startups.
             </p>
           </div>
           <button
@@ -316,7 +316,7 @@ export const GovernmentDashboard: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2] px-2.5 py-0.5 rounded">
-                Active Sandbox Track
+                Active Pilot Track
               </span>
               <span className="text-xs font-mono text-[#5B6A78]">ID: {challenge.id}</span>
               {challenge.blockchainTx && (
@@ -344,7 +344,7 @@ export const GovernmentDashboard: React.FC = () => {
               onClick={() => setActiveView("pilot_management")}
               className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#0F3854] text-white hover:bg-[#1D4E72] transition-colors flex items-center gap-1.5 shadow-2xs"
             >
-              <span>Manage Pilot Sandbox</span>
+              <span>Manage Pilot</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>

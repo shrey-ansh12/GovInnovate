@@ -185,7 +185,7 @@ export const StartupDashboard: React.FC = () => {
   return (
     <div className="max-w-[1360px] mx-auto px-4 sm:px-8 py-8 font-sans space-y-6">
       {/* 3. STARTUP BANNER */}
-      <div className="bg-[#0F3854] text-white rounded-xl p-6 sm:p-8 border border-[#1D4E72] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+      <div className="bg-gradient-to-r from-[#0F3854] to-[#124263] text-white rounded-2xl p-6 sm:p-8 border border-[#1D4E72]/90 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md">
         <div>
           <div className="flex items-center gap-2 text-xs font-mono font-medium text-emerald-400 uppercase tracking-wider mb-2">
             <Rocket className="h-4 w-4" />
@@ -267,7 +267,7 @@ export const StartupDashboard: React.FC = () => {
                   {challenge.title}
                 </h3>
                 <p className="text-xs text-[#5B6A78] mt-1">
-                  <strong>{challenge.department}</strong> ({challenge.ministry}) • Sandbox Allocation: <strong className="text-[#0A2540]">{challenge.budget}</strong>
+                  <strong>{challenge.department}</strong> ({challenge.ministry}) • Pilot Allocation: <strong className="text-[#0A2540]">{challenge.budget}</strong>
                 </p>
               </div>
 
@@ -594,7 +594,7 @@ export const StartupDashboard: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-mono text-[#5B6A78] uppercase mb-1">
-                      Proposed Sandbox Cost
+                      Proposed Pilot Cost
                     </label>
                     <input
                       type="text"
@@ -646,7 +646,7 @@ export const StartupDashboard: React.FC = () => {
           <div className="bg-[#FEF7EA] rounded-xl p-4 border border-[#F6E1B9] text-xs text-[#8A5B0B] space-y-1">
             <span className="font-bold block">GFR 2017 Rule 170(i) & 149 Exemption Applied:</span>
             <p className="leading-relaxed">
-              As a DPIIT-recognized entity, prior turnover thresholds and prior experience penalties are waived for this sandbox pilot stage, subject to technical threshold validation.
+              As a DPIIT-recognized entity, prior turnover thresholds and prior experience penalties are waived for this pilot stage, subject to technical threshold validation.
             </p>
           </div>
         </div>

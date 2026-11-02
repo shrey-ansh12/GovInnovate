@@ -85,7 +85,7 @@ export const LandingPage: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#F2EFEB] border border-[#E2DED6] text-xs text-[#0F3854] font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-[#147452]"></span>
-              <span>Public Sector Sandbox Framework • DPIIT Aligned</span>
+              <span>Public Sector Innovation Framework • DPIIT Aligned</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-bold text-[#0A2540] leading-[1.12] tracking-tight">
@@ -93,7 +93,7 @@ export const LandingPage: React.FC = () => {
             </h1>
 
             <p className="text-base sm:text-lg text-[#5B6A78] leading-relaxed max-w-2xl">
-              Bridging public sector challenges with verified startup innovations. Transform civic procurement from rigid multi-year tenders into transparent 90-day sandbox pilots with empirical validation, structured milestone tracking, and complete audit clarity.
+              Bridging public sector challenges with verified startup innovations. Transform civic procurement from rigid multi-year tenders into transparent 90-day pilots with empirical validation, structured milestone tracking, and complete audit clarity.
             </p>
 
             {/* Action CTAs */}
@@ -104,18 +104,18 @@ export const LandingPage: React.FC = () => {
                   setRole("government");
                   setActiveView("gov_dashboard");
                 }}
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded bg-[#0F3854] text-white text-[15px] font-semibold hover:bg-[#1D4E72] shadow-sm transition-all cursor-pointer"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#0F3854] text-white text-[15px] font-semibold hover:bg-[#154569] shadow-sm hover:shadow-[0_6px_20px_rgba(15,56,84,0.3)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all cursor-pointer group"
               >
-                <PlayCircle className="h-5 w-5 text-amber-300" />
+                <PlayCircle className="h-5 w-5 text-amber-300 group-hover:drop-shadow-[0_0_8px_rgba(253,224,71,0.7)] transition-all" />
                 <span>Enter Demo Mode</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
 
               <button
                 onClick={() => setActiveView("ai_startup_matches")}
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded bg-[#147452] text-white text-[15px] font-semibold hover:bg-[#0f583e] shadow-sm transition-all cursor-pointer"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#147452] text-white text-[15px] font-semibold hover:bg-[#106245] shadow-sm hover:shadow-[0_6px_20px_rgba(20,116,82,0.3)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all cursor-pointer group"
               >
-                <Sparkles className="h-5 w-5 text-emerald-200" />
+                <Sparkles className="h-5 w-5 text-emerald-200 group-hover:drop-shadow-[0_0_8px_rgba(167,243,208,0.7)] transition-all" />
                 <span>Browse Matched Startups</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
@@ -125,9 +125,9 @@ export const LandingPage: React.FC = () => {
                   setAppMode("real");
                   openAuthModal("signin");
                 }}
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded bg-white text-[#0A2540] text-[15px] font-semibold border border-[#E2DED6] hover:bg-[#F2EFEB] transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-lg bg-white text-[#0A2540] text-[15px] font-semibold border border-[#E2DED6] hover:bg-[#F2EFEB] hover:border-[#CBD5E1] hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer group"
               >
-                <Database className="h-4 w-4 text-emerald-600" />
+                <Database className="h-4 w-4 text-emerald-600 group-hover:drop-shadow-[0_0_8px_rgba(5,150,105,0.6)] transition-all" />
                 <span>Live Database Workspace</span>
               </button>
             </div>
@@ -181,11 +181,11 @@ export const LandingPage: React.FC = () => {
 
           {/* Right Column: Project-Related Civic Infrastructure Image */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-lg overflow-hidden border border-[#E2DED6] bg-white shadow-md">
+            <div className="relative rounded-xl overflow-hidden border border-[#E2DED6] bg-white shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="relative h-[320px] sm:h-[370px] w-full bg-[#0F3854] overflow-hidden">
                 <img
                   src="/hero-civic.jpg"
-                  alt="Public Sector Water & Environmental Sensor Innovation Sandbox"
+                  alt="Public Sector Water & Environmental Sensor Innovation Platform"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -193,7 +193,7 @@ export const LandingPage: React.FC = () => {
               {/* Bottom Civic Descriptor */}
               <div className="p-4 bg-white border-t border-[#EDE9E1] flex items-center justify-between font-mono text-xs">
                 <div>
-                  <div className="font-bold text-[#0A2540]">Public Innovation Sandbox Infrastructure</div>
+                  <div className="font-bold text-[#0A2540]">Public Innovation Infrastructure</div>
                   <div className="text-[11px] text-[#5B6A78]">Municipal Sensor Telemetry & Field Validation Rails</div>
                 </div>
                 <span className="px-2.5 py-1 rounded bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2] text-[10px] font-bold uppercase shrink-0">
@@ -209,7 +209,7 @@ export const LandingPage: React.FC = () => {
       <section className="max-w-[1360px] mx-auto px-6 sm:px-8 py-16 border-b border-[#E2DED6]">
         <div className="mb-10">
           <div className="text-xs font-mono font-semibold uppercase text-[#0F3854] tracking-wider mb-2">Platform Capabilities</div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">Four Pillars of Sandbox Procurement</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">Four Pillars of Innovation Procurement</h2>
           <p className="text-sm text-[#5B6A78] mt-2 max-w-2xl">
             Engineered to overcome common public procurement bottlenecks while guaranteeing statutory transparency and audit readiness.
           </p>
@@ -219,10 +219,10 @@ export const LandingPage: React.FC = () => {
           {/* Benefit 1 */}
           <div 
             onClick={() => setActiveView("ai_startup_matches")}
-            className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#147452] transition-all group shadow-2xs cursor-pointer"
+            className="bg-white border border-[#E2DED6] rounded-xl p-6 flex flex-col justify-between hover:border-[#147452] hover:shadow-md hover:-translate-y-1 transition-all duration-200 group shadow-2xs cursor-pointer"
           >
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded bg-[#EBF6F0] text-[#147452] flex items-center justify-center group-hover:bg-[#147452] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-lg bg-[#EBF6F0] text-[#147452] flex items-center justify-center group-hover:bg-[#147452] group-hover:text-white group-hover:shadow-[0_0_12px_rgba(20,116,82,0.4)] transition-all duration-200">
                 <Compass className="h-5 w-5" />
               </div>
               <h3 className="text-lg font-bold text-[#0A2540]">1. Startup Discovery</h3>
@@ -239,10 +239,10 @@ export const LandingPage: React.FC = () => {
           {/* Benefit 2 */}
           <div 
             onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
-            className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs cursor-pointer"
+            className="bg-white border border-[#E2DED6] rounded-xl p-6 flex flex-col justify-between hover:border-[#0F3854] hover:shadow-md hover:-translate-y-1 transition-all duration-200 group shadow-2xs cursor-pointer"
           >
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-lg bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white group-hover:shadow-[0_0_12px_rgba(15,56,84,0.4)] transition-all duration-200">
                 <BarChart3 className="h-5 w-5" />
               </div>
               <h3 className="text-lg font-bold text-[#0A2540]">2. Structured Evaluation</h3>
@@ -258,10 +258,10 @@ export const LandingPage: React.FC = () => {
           {/* Benefit 3 */}
           <div 
             onClick={() => { setRole("government"); setActiveView("pilot_management"); }}
-            className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs cursor-pointer"
+            className="bg-white border border-[#E2DED6] rounded-xl p-6 flex flex-col justify-between hover:border-[#0F3854] hover:shadow-md hover:-translate-y-1 transition-all duration-200 group shadow-2xs cursor-pointer"
           >
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-lg bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white group-hover:shadow-[0_0_12px_rgba(15,56,84,0.4)] transition-all duration-200">
                 <Layers className="h-5 w-5" />
               </div>
               <h3 className="text-lg font-bold text-[#0A2540]">3. Milestone-Based Monitoring</h3>
@@ -277,10 +277,10 @@ export const LandingPage: React.FC = () => {
           {/* Benefit 4 */}
           <div 
             onClick={() => setActiveView("audit_trail")}
-            className="bg-white border border-[#E2DED6] rounded p-6 flex flex-col justify-between hover:border-[#0F3854] transition-all group shadow-2xs cursor-pointer"
+            className="bg-white border border-[#E2DED6] rounded-xl p-6 flex flex-col justify-between hover:border-[#0F3854] hover:shadow-md hover:-translate-y-1 transition-all duration-200 group shadow-2xs cursor-pointer"
           >
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white transition-colors">
+              <div className="w-10 h-10 rounded-lg bg-[#F2EFEB] text-[#0F3854] flex items-center justify-center group-hover:bg-[#0F3854] group-hover:text-white group-hover:shadow-[0_0_12px_rgba(15,56,84,0.4)] transition-all duration-200">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <h3 className="text-lg font-bold text-[#0A2540]">4. Transparent Audit Trails</h3>
@@ -299,7 +299,7 @@ export const LandingPage: React.FC = () => {
       <section id="visual-workflow" className="max-w-[1360px] mx-auto px-6 sm:px-8 py-16 border-b border-[#E2DED6]">
         <div className="mb-10">
           <div className="text-xs font-mono font-semibold uppercase text-[#0F3854] tracking-wider mb-2">End-to-End Governance</div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">The 6-Stage Sandbox Workflow</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">The 6-Stage Pilot Workflow</h2>
           <p className="text-sm text-[#5B6A78] mt-2">
             Click on any phase to jump directly into the interactive workflow demonstration.
           </p>
@@ -309,7 +309,7 @@ export const LandingPage: React.FC = () => {
           {/* Step 1 */}
           <div 
             onClick={() => { setRole("government"); setActiveView("create_challenge"); }}
-            className="bg-white border border-[#E2DED6] hover:border-[#0F3854] rounded p-5 cursor-pointer transition-all hover:shadow-xs group"
+            className="bg-white border border-[#E2DED6] hover:border-[#0F3854] rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 group"
           >
             <div className="flex items-center justify-between mb-3">
               <span className="font-mono text-xs font-bold text-[#0F3854] bg-[#F2EFEB] px-2 py-0.5 rounded">01</span>
@@ -322,7 +322,7 @@ export const LandingPage: React.FC = () => {
           {/* Step 2 */}
           <div 
             onClick={() => setActiveView("ai_startup_matches")}
-            className="bg-white border-2 border-[#147452] hover:bg-[#EBF6F0]/20 rounded p-5 cursor-pointer transition-all hover:shadow-xs group"
+            className="bg-white border-2 border-[#147452] hover:bg-[#EBF6F0]/20 rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 group"
           >
             <div className="flex items-center justify-between mb-3">
               <span className="font-mono text-xs font-bold text-white bg-[#147452] px-2 py-0.5 rounded">02</span>
@@ -335,7 +335,7 @@ export const LandingPage: React.FC = () => {
           {/* Step 3 */}
           <div 
             onClick={() => { setRole("evaluator"); setActiveView("evaluation_scorecard"); }}
-            className="bg-white border border-[#E2DED6] hover:border-[#8A5B0B] rounded p-5 cursor-pointer transition-all hover:shadow-xs group"
+            className="bg-white border border-[#E2DED6] hover:border-[#8A5B0B] rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 group"
           >
             <div className="flex items-center justify-between mb-3">
               <span className="font-mono text-xs font-bold text-[#8A5B0B] bg-[#FEF7EA] px-2 py-0.5 rounded">03</span>
@@ -348,20 +348,20 @@ export const LandingPage: React.FC = () => {
           {/* Step 4 */}
           <div 
             onClick={() => { setRole("government"); setActiveView("pilot_management"); }}
-            className="bg-white border border-[#E2DED6] hover:border-[#0F3854] rounded p-5 cursor-pointer transition-all hover:shadow-xs group"
+            className="bg-white border border-[#E2DED6] hover:border-[#0F3854] rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 group"
           >
             <div className="flex items-center justify-between mb-3">
               <span className="font-mono text-xs font-bold text-[#0F3854] bg-[#F2EFEB] px-2 py-0.5 rounded">04</span>
               <Layers className="h-4 w-4 text-[#5B6A78] group-hover:text-[#0F3854]" />
             </div>
             <h4 className="font-bold text-sm text-[#0A2540] mb-1">Pilot</h4>
-            <p className="text-[11px] text-[#5B6A78] leading-snug">90-day sandbox pilot launched with milestones, KPIs, and evidence gates.</p>
+            <p className="text-[11px] text-[#5B6A78] leading-snug">90-day pilot launched with milestones, KPIs, and evidence gates.</p>
           </div>
 
           {/* Step 5 */}
           <div 
             onClick={() => { setRole("government"); setActiveView("kpi_monitoring"); }}
-            className="bg-white border border-[#E2DED6] hover:border-[#0F3854] rounded p-5 cursor-pointer transition-all hover:shadow-xs group"
+            className="bg-white border border-[#E2DED6] hover:border-[#0F3854] rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 group"
           >
             <div className="flex items-center justify-between mb-3">
               <span className="font-mono text-xs font-bold text-[#0F3854] bg-[#F2EFEB] px-2 py-0.5 rounded">05</span>
@@ -548,7 +548,7 @@ export const LandingPage: React.FC = () => {
               </div>
               <h3 className="text-lg font-bold text-[#0A2540]">Procurement Officers</h3>
               <p className="text-xs text-[#5B6A78] leading-relaxed">
-                Create challenges, review eligible startup applications, perform side-by-side candidate comparisons, sanction sandbox pilots, and record scale-up decisions.
+                Create challenges, review eligible startup applications, perform side-by-side candidate comparisons, sanction pilots, and record scale-up decisions.
               </p>
             </div>
             <div className="pt-6 space-y-2">
@@ -633,7 +633,7 @@ export const LandingPage: React.FC = () => {
         <div className="bg-white border border-[#E2DED6] rounded p-8">
           <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#EDE9E1]">
             <div>
-              <span className="text-xs font-mono font-bold text-[#0F3854] uppercase tracking-wider">Illustrative Sandbox Case Study</span>
+              <span className="text-xs font-mono font-bold text-[#0F3854] uppercase tracking-wider">Illustrative Pilot Case Study</span>
               <h3 className="text-xl font-bold text-[#0A2540] mt-1">{challenge.title}</h3>
             </div>
             <span className="px-3 py-1 rounded text-xs font-mono font-medium bg-[#EBF6F0] text-[#147452] border border-[#C2E5D2]">
@@ -645,7 +645,7 @@ export const LandingPage: React.FC = () => {
             <div className="space-y-2">
               <div className="text-xs font-bold text-[#141F2B]">Department & Scope</div>
               <p className="text-xs text-[#5B6A78] leading-relaxed">
-                {challenge.department} ({challenge.ministry}). 90-day sandbox pilot across {challenge.targetLocations} municipal intake stations.
+                {challenge.department} ({challenge.ministry}). 90-day pilot across {challenge.targetLocations} municipal intake stations.
               </p>
             </div>
             <div className="space-y-2">
@@ -691,7 +691,7 @@ export const LandingPage: React.FC = () => {
                 <span className="text-[#5B6A78] group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="pt-3 text-xs text-[#5B6A78] leading-relaxed border-t border-[#EDE9E1] mt-3">
-                No. Procurement decisions are always subject to applicable GFR, GeM rules, departmental procurement policies, and competent-authority approval. GovInnovate provides a structured sandbox environment to validate early-stage solutions before formal procurement or scale-up decisions are considered by authorized committees.
+                No. Procurement decisions are always subject to applicable GFR, GeM rules, departmental procurement policies, and competent-authority approval. GovInnovate provides a structured validation environment to test early-stage solutions before formal procurement or scale-up decisions are considered by authorized committees.
               </div>
             </details>
 

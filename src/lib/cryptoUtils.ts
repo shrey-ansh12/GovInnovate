@@ -20,7 +20,7 @@ export async function sha256Hex(data: string | Uint8Array): Promise<string> {
       const crypto = require("crypto");
       return crypto.createHash("sha256").update(data).digest("hex");
     } catch {
-      // Fallback simple 64-char hex generator if crypto is absent in test sandbox
+      // Fallback simple 64-char hex generator if crypto is absent in test environment
       let hash = 0;
       const str = typeof data === "string" ? data : new TextDecoder().decode(data);
       for (let i = 0; i < str.length; i++) {

@@ -159,7 +159,7 @@ export async function registerEvidenceOnBlockchain(
     blockNumber: 1048200 + simulatedLedger.size,
     timestamp,
     signer: simulatedSigner,
-    network: "GovInnovate Local Sandbox (Simulated Hardhat Ledger)",
+    network: "GovInnovate Local (Simulated Hardhat Ledger)",
   };
 }
 

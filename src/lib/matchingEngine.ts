@@ -185,7 +185,7 @@ export function calculateStartupMatch(
   if (currentTrl >= 8) {
     score += 15;
     matchReasons.push(`TRL-${currentTrl} Commercial Field-Ready: Exceeds minimum threshold (TRL ${requiredTrl})`);
-    details.push(`High technological readiness (TRL-${currentTrl}) reduces sandbox deployment risk`);
+    details.push(`High technological readiness (TRL-${currentTrl}) reduces pilot deployment risk`);
   } else if (currentTrl === 7) {
     score += 12;
     if (startup.isPublicDirectoryEntry) {

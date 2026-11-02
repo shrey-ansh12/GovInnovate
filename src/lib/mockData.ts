@@ -443,7 +443,7 @@ export const sampleStartups: Startup[] = [
       entityMismatchFlag: false,
       preliminaryStatus: "Passed",
       officialStatus: "Pending Review",
-      source: "DigiLocker Sandbox",
+      source: "DigiLocker",
       rawTextPreview: "DigiLocker Verified: in.gov.dpiit-DPREC-33918-TS."
     }
   },
@@ -577,7 +577,7 @@ export const sampleApplications: Application[] = [
         viability: "78% local content and sensible ₹28.5L pilot budget align with public value-for-money principles."
       },
       evidenceReferences: "CPCB-benchmarked lab validation doc and IIT Madras calibration test report verified.",
-      feedback: "Strongly recommended for 5-location sandbox pilot. Hardware reliability and zero-reagent approach are standout advantages.",
+      feedback: "Strongly recommended for 5-location pilot. Hardware reliability and zero-reagent approach are standout advantages.",
       evaluatorName: "Prof. Vinod Nair (Chairman, Expert Technical Committee)",
       evaluatedAt: "2026-10-06 14:20:11"
     }
@@ -757,7 +757,7 @@ export const sampleAuditLogs: AuditLog[] = [
     user: "Dr. Rajeshwar Sharma (Director, Water Mission)",
     role: "government",
     action: "CHALLENGE_CREATED",
-    details: "Created procurement challenge CH-2026-WQ01 'AI-Based Water Quality Monitoring' under pilot sandbox framework.",
+    details: "Created procurement challenge CH-2026-WQ01 'AI-Based Water Quality Monitoring' under pilot framework.",
     badge: "Procurement",
     prevHash: "0000000000000000000000000000000000000000000000000000000000000000",
     blockHash: "9f82d10374e29b87a64c120e3f89410385721a9c40217498cdae71928f48a1c9"
@@ -812,7 +812,7 @@ export const sampleAuditLogs: AuditLog[] = [
     user: "Govt Procurement Committee",
     role: "government",
     action: "PILOT_AUTHORIZED",
-    details: "Issued 90-day sandbox pilot sanction PILOT-WQ-2026-01 across 5 intake locations with ₹28.5L budget.",
+    details: "Issued 90-day pilot sanction PILOT-WQ-2026-01 across 5 intake locations with ₹28.5L budget.",
     badge: "Procurement",
     prevHash: "10385721a9c40217498cdae71928f48a1c99f82d10374e29b87a64c120e3f894",
     blockHash: "e29b87a64c120e3f89410385721a9c40217498cdae71928f48a1c99f82d10374"

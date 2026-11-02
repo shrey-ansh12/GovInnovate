@@ -71,7 +71,7 @@ const initialDemoRecords: EvidenceRecord[] = [
   },
 ];
 
-// In-Memory map for demo/sandbox mode
+// In-Memory map for demo mode
 const inMemoryEvidenceStore = new Map<string, EvidenceRecord>();
 initialDemoRecords.forEach(r => inMemoryEvidenceStore.set(r.id, r));
 

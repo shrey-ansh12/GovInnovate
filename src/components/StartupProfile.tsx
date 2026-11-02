@@ -578,14 +578,14 @@ export const StartupProfile: React.FC = () => {
         </div>
       </div>
 
-      {/* DIGILOCKER GATEWAY SANDBOX MODAL */}
+      {/* DIGILOCKER GATEWAY MODAL */}
       {digiLockerModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-2xl border border-[#E2DED6] max-w-lg w-full p-6 text-xs font-mono">
             <div className="flex items-center justify-between pb-3 border-b border-[#EDE9E1]">
               <div className="flex items-center gap-2 text-[#0F3854] font-bold text-sm">
                 <Building2 className="h-5 w-5" />
-                <span>DigiLocker Pull Gateway • Sandbox Mode</span>
+                <span>DigiLocker Pull Gateway • Demo Mode</span>
               </div>
               <button 
                 onClick={() => setDigiLockerModalOpen(false)}

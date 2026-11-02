@@ -99,13 +99,13 @@ export const BlockchainSafetyModal: React.FC = () => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-[#E2DED6] flex flex-col max-h-[90vh] overflow-hidden"
+        className="w-full max-w-4xl bg-white rounded-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] border border-[#E2DED6] flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
-        <div className="bg-[#0F3854] text-white px-6 py-5 flex items-center justify-between border-b border-[#1D4E72] shrink-0">
+        <div className="bg-gradient-to-r from-[#0F3854] to-[#144264] text-white px-6 py-5 flex items-center justify-between border-b border-[#1D4E72] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-emerald-300">
               <ShieldCheck className="h-6 w-6" />
@@ -316,7 +316,7 @@ export const BlockchainSafetyModal: React.FC = () => {
           {activeTab === "contract" && (
             <div className="space-y-4">
               <div className="p-4 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs space-y-3 overflow-x-auto">
-                <div className="text-emerald-400 font-bold">// EvidenceRegistry.sol - EVM Sandbox Safe-Harbor Contract</div>
+                <div className="text-emerald-400 font-bold">// EvidenceRegistry.sol - EVM Safe-Harbor Contract</div>
                 <div className="text-slate-400">// SPDX-License-Identifier: MIT</div>
                 <div className="text-slate-200">
                   pragma solidity ^0.8.20;<br /><br />
@@ -342,7 +342,7 @@ export const BlockchainSafetyModal: React.FC = () => {
               <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E2DED6] text-xs text-[#5B6A78] space-y-1">
                 <span className="font-bold text-[#0A2540] block">Statutory Non-Repudiation Assurance:</span>
                 <p>
-                  This smart contract guarantees that no tender criteria, startup bid, or evaluator score can be silently changed after submission. GFR 2017 Rule 173 and CVC guidelines require this level of vigilance for public innovation sandboxes.
+                  This smart contract guarantees that no tender criteria, startup bid, or evaluator score can be silently changed after submission. GFR 2017 Rule 173 and CVC guidelines require this level of vigilance for public innovation pilots.
                 </p>
               </div>
             </div>

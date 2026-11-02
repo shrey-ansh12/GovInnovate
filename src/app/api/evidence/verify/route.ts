@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
       verificationTimestamp: new Date().toISOString(),
       blockchainDetails: {
         isRegistered: blockchainRecord.found,
-        network: blockchainRecord.isSimulated ? "GovInnovate Sandbox (Simulated Hardhat)" : "EVM Blockchain",
+        network: blockchainRecord.isSimulated ? "GovInnovate Simulated Hardhat" : "EVM Blockchain",
         contractAddress: process.env.BLOCKCHAIN_CONTRACT_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3",
         txHash: dbRecord.blockchainTxHash,
         timestamp: blockchainRecord.timestamp || dbRecord.blockchainTimestamp,
