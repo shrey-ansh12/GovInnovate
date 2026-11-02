@@ -7,11 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:blockchain": "npm --prefix ../govinnovate-blockchain test",
+    "test:blockchain": "npm --prefix govinnovate-blockchain test",
     "test:evidence": "node scripts/demo-evidence-integrity-blockchain.mjs",
     "test:startups": "node scripts/test-startup-dataset-integration.mjs",
     "test:api": "node scripts/test-api-validation.mjs",
-    "test:all": "node scripts/demo-evidence-integrity-blockchain.mjs && node scripts/test-startup-dataset-integration.mjs && node scripts/test-api-validation.mjs && npm --prefix ../govinnovate-blockchain test"
+    "test:all": "node scripts/demo-evidence-integrity-blockchain.mjs && node scripts/test-startup-dataset-integration.mjs && node scripts/test-api-validation.mjs && npm --prefix govinnovate-blockchain test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",

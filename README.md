@@ -77,3 +77,37 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 2. Import repository in [Vercel](https://vercel.com).
 3. (Optional) Provide `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 4. Deploy!
+
+
+---
+
+## 🧪 Automated Testing & Blockchain Verification
+
+GovInnovate includes a comprehensive 81-test automated suite covering smart contracts, cryptographic evidence hashing, startup matching, and API validation:
+
+```bash
+# 1. Run All Test Suites (81/81 Passing)
+npm run test:all
+
+# 2. Hardhat EVM Smart Contract Tests (11 passing)
+npm run test:blockchain
+# Or directly inside the blockchain directory:
+cd govinnovate-blockchain && npx.cmd hardhat test
+
+# 3. Blockchain Evidence & SHA-256 Tamper Integrity Tests (9 passing)
+npm run test:evidence
+# Or:
+node scripts/demo-evidence-integrity-blockchain.mjs
+
+# 4. Authentic DPIIT Startup Dataset & AI Matching Tests (52 passing)
+npm run test:startups
+# Or:
+node scripts/test-startup-dataset-integration.mjs
+
+# 5. API & Workflow Statutory Validation Tests (9 passing)
+npm run test:api
+# Or:
+node scripts/test-api-validation.mjs
+```
+
+---
