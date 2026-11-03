@@ -289,7 +289,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const saved = localStorage.getItem(DEMO_STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed.applications) return parsed.applications;
+          if (parsed.applications && Array.isArray(parsed.applications)) {
+            const existingIds = new Set(parsed.applications.map((a: any) => a.id));
+            const missing = sampleApplications.filter(a => !existingIds.has(a.id));
+            if (missing.length > 0) {
+              return [...parsed.applications, ...missing];
+            }
+            return parsed.applications;
+          }
         }
       } catch {
         // Ignore

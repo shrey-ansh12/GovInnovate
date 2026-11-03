@@ -23,7 +23,6 @@ import { NotificationsView } from "@/components/NotificationsView";
 import { AuditTrail } from "@/components/AuditTrail";
 import { AuthModal } from "@/components/AuthModal";
 import { BlockchainSafetyModal } from "@/components/BlockchainSafetyModal";
-import { Chatbot } from "@/components/Chatbot";
 
 export default function Home() {
   const { activeView } = useApp();
@@ -79,7 +78,6 @@ export default function Home() {
       <main className="flex-1">
         {renderActiveView()}
       </main>
-      <Chatbot />
       {activeView !== "landing" && (
         <footer className="bg-[#0F3854] border-t border-[#1D4E72] text-slate-300 py-6 px-6 text-xs">
           <div className="max-w-[1360px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">

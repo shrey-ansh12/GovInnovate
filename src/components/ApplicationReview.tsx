@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useApp } from "@/context/AppContext";
+import { sampleApplications } from "@/lib/mockData";
 import { 
   ShieldCheck, 
   Award, 
@@ -39,8 +40,15 @@ export const ApplicationReview: React.FC = () => {
   const [reviewModalApp, setReviewModalApp] = useState<any | null>(null);
   const [rejectReasonInput, setRejectReasonInput] = useState("");
 
-  // Match application with startup for rich data comparison
-  const enrichedApplications = applications.map(app => {
+  // Match application with startup for rich data comparison, ensuring candidate startups are present for side-by-side comparison
+  const displayApplications = React.useMemo(() => {
+    if (applications && applications.length >= 2) return applications;
+    const existingIds = new Set(applications.map(a => a.id));
+    const missing = sampleApplications.filter(a => !existingIds.has(a.id));
+    return [...applications, ...missing];
+  }, [applications]);
+
+  const enrichedApplications = displayApplications.map(app => {
     const startup = startups.find(s => s.id === app.startupId);
     return {
       ...app,
@@ -58,7 +66,7 @@ export const ApplicationReview: React.FC = () => {
             Tender Applications & Shortlisting Queue
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#0A2540] tracking-tight">
-            Review Submitted Startup Proposals ({applications.length})
+            Review Submitted Startup Proposals ({enrichedApplications.length})
           </h1>
           <p className="text-xs text-[#5B6A78] mt-1">
             Review DPIIT eligibility, inspect 5-pillar technical scores, compare candidates side-by-side, and sanction pilots.
@@ -464,12 +472,13 @@ export const ApplicationReview: React.FC = () => {
                     </tr>
                     <tr>
                       <td className="p-3 font-mono text-[#5B6A78]">Reagent / Consumable Requirement</td>
-                      <td className="p-3 text-xs text-[#147452] font-semibold">
-                        Zero Reagents (Optical Spectrophotometry)
-                      </td>
-                      <td className="p-3 text-xs text-[#5B6A78]">
-                        Standard Buoy Telemetry (Surface physical params)
-                      </td>
+                      {enrichedApplications.map(app => (
+                        <td key={app.id} className={`p-3 text-xs ${app.startupId === "ST-AQUASENSE" ? "text-[#147452] font-semibold" : "text-[#5B6A78]"}`}>
+                          {app.startupId === "ST-AQUASENSE"
+                            ? "Zero Reagents (Optical Spectrophotometry)"
+                            : "Standard Buoy Telemetry (Surface physical params)"}
+                        </td>
+                      ))}
                     </tr>
                     <tr>
                       <td className="p-3 font-mono text-[#5B6A78]">Procurement Committee Action</td>
